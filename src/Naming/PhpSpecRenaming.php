@@ -49,8 +49,8 @@ final class PhpSpecRenaming
         $classMethodName = StringUtils::underscoreAndHyphenToCamelCase($classMethodName);
 
         // add "test", so PHPUnit runs the method
-        if (! \str_starts_with((string) $classMethodName, 'test')) {
-            $classMethodName = 'test' . ucfirst((string) $classMethodName);
+        if (! \str_starts_with($classMethodName, 'test')) {
+            $classMethodName = 'test' . ucfirst($classMethodName);
         }
 
         $classMethod->name = new Identifier($classMethodName);

@@ -19,22 +19,23 @@ use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\NodeManipulator\ClassInsertManipulator;
+use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\LetManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
-use Rector\PhpSpecToPHPUnit\Rector\AbstractPhpSpecToPHPUnitRector;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
-use Rector\PHPUnit\NodeFactory\SetUpClassMethodFactory;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
  */
-final class PhpSpecClassToPHPUnitClassRector extends AbstractPhpSpecToPHPUnitRector
+final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 {
     public function __construct(
         private readonly ClassInsertManipulator $classInsertManipulator,
         private readonly LetManipulator $letManipulator,
         private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly SetUpClassMethodFactory $setUpClassMethodFactory
+        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
     }
 
@@ -51,7 +52,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractPhpSpecToPHPUnitRec
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isInPhpSpecBehavior($node)) {
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
             return null;
         }
 
@@ -82,13 +83,18 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractPhpSpecToPHPUnitRec
         return $this->removeSelfTypeMethod($node, $testedObjectType);
     }
 
+    public function getRuleDefinition(): RuleDefinition
+    {
+        
+    }
+
     private function createLetClassMethod(string $propertyName, ObjectType $testedObjectType): ClassMethod
     {
         $propertyFetch = new PropertyFetch(new Variable('this'), $propertyName);
 
         $testedObjectType = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode(
             $testedObjectType,
-            TypeKind::RETURN()
+            TypeKind::RETURN
         );
         if (! $testedObjectType instanceof Name) {
             throw new ShouldNotHappenException();
@@ -105,8 +111,12 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractPhpSpecToPHPUnitRec
      */
     private function removeSelfTypeMethod(Class_ $class, ObjectType $testedObjectType): Class_
     {
-        foreach ($class->getMethods() as $classMethod) {
-            $classMethodStmts = (array) $classMethod->stmts;
+        foreach ($class->stmts as $key => $classStmt) {
+            if (! $classStmt instanceof ClassMethod) {
+                continue;
+            }
+
+            $classMethodStmts = (array) $classStmt->stmts;
             if (count($classMethodStmts) !== 1) {
                 continue;
             }
@@ -136,8 +146,8 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractPhpSpecToPHPUnitRec
                 continue;
             }
 
-            // remove it
-            $this->removeNodeFromStatements($class, $classMethod);
+            // remove class method
+            unset($class->stmts[$key]);
         }
 
         return $class;

@@ -10,17 +10,20 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\UnionType;
 use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Core\NodeManipulator\ClassInsertManipulator;
+use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
-use Rector\PhpSpecToPHPUnit\Rector\AbstractPhpSpecToPHPUnitRector;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
  */
-final class AddMockPropertiesRector extends AbstractPhpSpecToPHPUnitRector
+final class AddMockPropertiesRector extends AbstractRector
 {
     public function __construct(
         private readonly ClassInsertManipulator $classInsertManipulator,
-        private readonly PhpSpecMockCollector $phpSpecMockCollector
+        private readonly PhpSpecMockCollector $phpSpecMockCollector,
+        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector
     ) {
     }
 
@@ -37,7 +40,7 @@ final class AddMockPropertiesRector extends AbstractPhpSpecToPHPUnitRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isInPhpSpecBehavior($node)) {
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
             return null;
         }
 
@@ -68,5 +71,10 @@ final class AddMockPropertiesRector extends AbstractPhpSpecToPHPUnitRector
         }
 
         return null;
+    }
+
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('wip', []);
     }
 }

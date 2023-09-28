@@ -8,16 +8,17 @@ use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\PHPUnitTypeDeclarationDecorator;
-use Rector\PhpSpecToPHPUnit\Rector\AbstractPhpSpecToPHPUnitRector;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
  */
-final class PhpSpecMethodToPHPUnitMethodRector extends AbstractPhpSpecToPHPUnitRector
+final class PhpSpecMethodToPHPUnitMethodRector extends AbstractRector
 {
     public function __construct(
         private readonly PHPUnitTypeDeclarationDecorator $phpUnitTypeDeclarationDecorator,
@@ -44,7 +45,7 @@ final class PhpSpecMethodToPHPUnitMethodRector extends AbstractPhpSpecToPHPUnitR
         }
 
         if ($this->isName($node, 'letGo')) {
-            $node->name = new Identifier(MethodName::TEAR_DOWN);
+            $node->name = new Identifier('tearDown');
             $this->visibilityManipulator->makeProtected($node);
             $this->phpUnitTypeDeclarationDecorator->decorate($node);
         } elseif ($this->isName($node, 'let')) {
@@ -58,6 +59,11 @@ final class PhpSpecMethodToPHPUnitMethodRector extends AbstractPhpSpecToPHPUnitR
         }
 
         return $node;
+    }
+
+    public function getRuleDefinition(): RuleDefinition
+    {
+        
     }
 
     private function processTestMethod(ClassMethod $classMethod): void

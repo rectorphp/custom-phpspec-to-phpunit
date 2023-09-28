@@ -8,8 +8,10 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
+use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
-use Rector\PhpSpecToPHPUnit\Rector\AbstractPhpSpecToPHPUnitRector;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * $mock->call()
@@ -18,10 +20,11 @@ use Rector\PhpSpecToPHPUnit\Rector\AbstractPhpSpecToPHPUnitRector;
  *
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
  */
-final class MockVariableToPropertyFetchRector extends AbstractPhpSpecToPHPUnitRector
+final class MockVariableToPropertyFetchRector extends AbstractRector
 {
     public function __construct(
-        private readonly PhpSpecMockCollector $phpSpecMockCollector
+        private readonly PhpSpecMockCollector $phpSpecMockCollector,
+        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
     }
 
@@ -43,7 +46,7 @@ final class MockVariableToPropertyFetchRector extends AbstractPhpSpecToPHPUnitRe
             return null;
         }
 
-        if (! $this->isInPhpSpecBehavior($class)) {
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($class)) {
             return null;
         }
 
@@ -55,5 +58,9 @@ final class MockVariableToPropertyFetchRector extends AbstractPhpSpecToPHPUnitRe
         $variableName = $this->getName($node);
 
         return new PropertyFetch(new Variable('this'), $variableName);
+    }
+
+    public function getRuleDefinition(): RuleDefinition
+    {
     }
 }

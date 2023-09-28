@@ -22,16 +22,18 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use PHPStan\Type\Type;
 use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
-use Rector\PhpSpecToPHPUnit\Rector\AbstractPhpSpecToPHPUnitRector;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
  */
-final class PhpSpecMocksToPHPUnitMocksRector extends AbstractPhpSpecToPHPUnitRector
+final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
@@ -66,6 +68,11 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractPhpSpecToPHPUnitRec
         }
 
         return $this->processMethodCall($node);
+    }
+
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('wip', []);
     }
 
     private function processMethodParamsToMocks(ClassMethod $classMethod): void
@@ -223,12 +230,14 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractPhpSpecToPHPUnitRec
 
     private function createIsTypeOrIsInstanceOf(StaticCall $staticCall): MethodCall
     {
-        $args = $staticCall->args;
-        $type = $this->valueResolver->getValue($args[0]->value);
+        $args = $staticCall->getArgs();
+        $firstArg = $args[0];
 
-        $name = $this->typeAnalyzer->isPhpReservedType($type) ? 'isType' : 'isInstanceOf';
+        $argType = $this->valueResolver->getValue($firstArg->value);
 
-        return $this->nodeFactory->createLocalMethodCall($name, $args);
+        $methodName = $this->isPhpReservedType($argType) ? 'isType' : 'isInstanceOf';
+
+        return $this->nodeFactory->createLocalMethodCall($methodName, $args);
     }
 
     private function createMockVarDoc(Param $param, Name $name): string
@@ -241,5 +250,14 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractPhpSpecToPHPUnitRec
         }
 
         return sprintf('/** @var %s|\%s $%s */', $paramType, MockObject::class, $variableName);
+    }
+
+    private function isPhpReservedType(Type $type): bool
+    {
+        if ($type->isScalar()->yes()) {
+            return true;
+        }
+
+        return false;
     }
 }

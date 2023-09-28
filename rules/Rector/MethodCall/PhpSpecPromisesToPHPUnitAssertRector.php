@@ -17,17 +17,17 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\MatchersManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\DuringMethodCallFactory;
-use Rector\PhpSpecToPHPUnit\Rector\AbstractPhpSpecToPHPUnitRector;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
  */
-final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractPhpSpecToPHPUnitRector
+final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 {
     /**
      * @changelog https://github.com/phpspec/phpspec/blob/master/src/PhpSpec/Wrapper/Subject.php
@@ -107,8 +107,9 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractPhpSpecToPHPUni
 
     /**
      * @param MethodCall $node
+     * @return \PhpParser\Node|Node\Stmt[]|null
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|array|null
     {
         $this->isPrepared = false;
         $this->matchersKeys = [];
