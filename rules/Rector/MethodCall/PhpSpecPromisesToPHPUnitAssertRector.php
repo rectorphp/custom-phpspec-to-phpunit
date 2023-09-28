@@ -225,7 +225,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractPhpSpecToPHPUni
 
     private function getTestedObjectPropertyFetch(): PropertyFetch
     {
-        if ($this->testedObjectPropertyFetch === null) {
+        if (! $this->testedObjectPropertyFetch instanceof PropertyFetch) {
             throw new ShouldNotHappenException();
         }
 

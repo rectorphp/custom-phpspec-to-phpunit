@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit;
 
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPUnit\Framework\TestCase;
 use Rector\Core\PhpParser\AstResolver;
 use Rector\Core\ValueObject\MethodName;
 use Rector\Testing\PHPUnit\StaticPHPUnitEnvironment;
@@ -26,7 +27,7 @@ final class PHPUnitTypeDeclarationDecorator
             return;
         }
 
-        $setUpClassMethod = $this->astResolver->resolveClassMethod('PHPUnit\Framework\TestCase', MethodName::SET_UP);
+        $setUpClassMethod = $this->astResolver->resolveClassMethod(TestCase::class, MethodName::SET_UP);
         if (! $setUpClassMethod instanceof ClassMethod) {
             return;
         }

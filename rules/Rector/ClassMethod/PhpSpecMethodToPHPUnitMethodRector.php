@@ -75,9 +75,9 @@ final class PhpSpecMethodToPHPUnitMethodRector extends AbstractPhpSpecToPHPUnitR
         foreach ((array) $classMethod->stmts as $key => $stmt) {
             $printedStmtContent = $this->print($stmt);
 
-            if (\str_contains($printedStmtContent, 'duringInstantiation') && $previousStmt instanceof Stmt) {
+            if (\str_contains((string) $printedStmtContent, 'duringInstantiation') && $previousStmt instanceof Stmt) {
                 $printedPreviousStmt = $this->print($previousStmt);
-                if (\str_contains($printedPreviousStmt, 'beConstructedThrough')) {
+                if (\str_contains((string) $printedPreviousStmt, 'beConstructedThrough')) {
                     $classMethod->stmts[$key - 1] = $stmt;
                     $classMethod->stmts[$key] = $previousStmt;
                 }

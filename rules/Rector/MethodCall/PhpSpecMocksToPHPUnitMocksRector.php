@@ -22,8 +22,8 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\Php\TypeAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Rector\PhpSpecToPHPUnit\Rector\AbstractPhpSpecToPHPUnitRector;
@@ -35,7 +35,6 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractPhpSpecToPHPUnitRec
 {
     public function __construct(
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
-        private readonly TypeAnalyzer $typeAnalyzer
     ) {
     }
 
@@ -79,7 +78,7 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractPhpSpecToPHPUnitRec
             }
 
             $createMockCall = $this->createCreateMockCall($param, $param->type);
-            if ($createMockCall !== null) {
+            if ($createMockCall instanceof Expression) {
                 $assigns[] = $createMockCall;
             }
         }
@@ -241,11 +240,6 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractPhpSpecToPHPUnitRec
             throw new ShouldNotHappenException();
         }
 
-        return sprintf(
-            '/** @var %s|\%s $%s */',
-            $paramType,
-            'PHPUnit\Framework\MockObject\MockObject',
-            $variableName
-        );
+        return sprintf('/** @var %s|\%s $%s */', $paramType, MockObject::class, $variableName);
     }
 }

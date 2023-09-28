@@ -12,11 +12,11 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Namespace_;
+use PHPUnit\Framework\TestCase;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
-use Rector\Core\Util\StaticRectorStrings;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Symplify\PackageBuilder\Strings\StringFormatConverter;
+use Rector\PhpSpecToPHPUnit\StringUtils;
 
 final class PhpSpecRenaming
 {
@@ -25,9 +25,13 @@ final class PhpSpecRenaming
      */
     private const SPEC = 'Spec';
 
+    /**
+     * @var string[]
+     */
+    private const METHOD_PREFIXES = ['it_should_have_', 'it_should_be', 'it_should_', 'it_is_', 'it_', 'is_'];
+
     public function __construct(
         private readonly NodeNameResolver $nodeNameResolver,
-        private readonly StringFormatConverter $stringFormatConverter,
         private readonly BetterNodeFinder $betterNodeFinder
     ) {
     }
@@ -45,8 +49,8 @@ final class PhpSpecRenaming
         $classMethodName = $this->stringFormatConverter->underscoreAndHyphenToCamelCase($classMethodName);
 
         // add "test", so PHPUnit runs the method
-        if (! \str_starts_with($classMethodName, 'test')) {
-            $classMethodName = 'test' . ucfirst($classMethodName);
+        if (! \str_starts_with((string) $classMethodName, 'test')) {
+            $classMethodName = 'test' . ucfirst((string) $classMethodName);
         }
 
         $classMethod->name = new Identifier($classMethodName);
@@ -54,7 +58,7 @@ final class PhpSpecRenaming
 
     public function renameExtends(Class_ $class): void
     {
-        $class->extends = new FullyQualified('PHPUnit\Framework\TestCase');
+        $class->extends = new FullyQualified(TestCase::class);
     }
 
     public function renameNamespace(Class_ $class): void
@@ -100,7 +104,7 @@ final class PhpSpecRenaming
         $shortClassName = $this->nodeNameResolver->getShortName($class);
         $bareClassName = StaticRectorStrings::removeSuffixes($shortClassName, [self::SPEC, 'Test']);
 
-        return lcfirst($bareClassName);
+        return lcfirst((string) $bareClassName);
     }
 
     public function resolveTestedClass(Node $node): string
@@ -108,6 +112,7 @@ final class PhpSpecRenaming
         if ($node instanceof ClassLike) {
             $className = (string) $this->nodeNameResolver->getName($node);
         } else {
+            // @todo
             $classLike = $this->betterNodeFinder->findParentType($node, ClassLike::class);
             if (! $classLike instanceof ClassLike) {
                 throw new ShouldNotHappenException();
@@ -116,18 +121,16 @@ final class PhpSpecRenaming
             $className = (string) $this->nodeNameResolver->getName($classLike);
         }
 
-        $newClassName = StaticRectorStrings::removePrefixes($className, ['spec\\']);
-        return StaticRectorStrings::removeSuffixes($newClassName, [self::SPEC]);
+        $newClassName = StringUtils::removePrefixes($className, ['spec\\']);
+
+        return StringUtils::removeSuffixes($newClassName, [self::SPEC]);
     }
 
     private function removeNamePrefixes(string $name): string
     {
         $originalName = $name;
 
-        $name = StaticRectorStrings::removePrefixes(
-            $name,
-            ['it_should_have_', 'it_should_be', 'it_should_', 'it_is_', 'it_', 'is_']
-        );
+        $name = StringUtils::removePrefixes($name, self::METHOD_PREFIXES);
 
         if ($name === '') {
             return $originalName;
