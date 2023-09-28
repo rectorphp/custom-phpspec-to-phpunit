@@ -7,7 +7,7 @@ parameters:
         - rules
         - rules-tests
 
-    # reportUnmatchedIgnoredErrors: false
+    reportUnmatchedIgnoredErrors: false
 
     excludePaths:
         - */Source/*
@@ -16,9 +16,6 @@ parameters:
     ignoreErrors:
         # rector co-variant
         - '#Parameter \#1 \$node (.*?) of method Rector\\(.*?)\(\) should be contravariant with parameter \$node \(PhpParser\\Node\) of method Rector\\Core\\Contract\\Rector\\RectorInterface\:\:refactor\(\)#'
-
-        # false positive
-        - '#Access to an undefined property Rector\\Core\\Contract\\PhpParser\\Node\\StmtsAwareInterface\:\:\$stmts#'
 
         # bool property
         -
