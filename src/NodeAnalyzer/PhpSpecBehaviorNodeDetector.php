@@ -24,7 +24,6 @@ final class PhpSpecBehaviorNodeDetector
     public function isInPhpSpecBehavior(Class_|ClassMethod|MethodCall|Scope $element): bool
     {
         if ($element instanceof Scope) {
-
         }
 
         if ($element instanceof ClassLike) {
@@ -42,7 +41,7 @@ final class PhpSpecBehaviorNodeDetector
     private function isScopeInsideObjectBehaviorClass(Scope $scope): bool
     {
         $classReflection = $scope->getClassReflection();
-        if (!$classReflection instanceof ClassReflection) {
+        if (! $classReflection instanceof ClassReflection) {
             return false;
         }
 
