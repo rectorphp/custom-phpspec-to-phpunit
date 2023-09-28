@@ -72,6 +72,7 @@ final class PhpSpecMethodToPHPUnitMethodRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
+        return new RuleDefinition('wip', []);
     }
 
     private function processTestMethod(ClassMethod $classMethod): ?ClassMethod
