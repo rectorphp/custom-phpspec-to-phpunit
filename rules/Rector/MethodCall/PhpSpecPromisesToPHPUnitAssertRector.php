@@ -144,7 +144,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractPhpSpecToPHPUni
             );
         }
 
-        $this->processMatchersKeys($node);
+        $nodesToReturn = $this->processMatchersKeys($node);
 
         $args = $node->args;
         foreach (self::NEW_METHOD_TO_OLD_METHODS as $newMethod => $oldMethods) {
@@ -243,8 +243,9 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractPhpSpecToPHPUni
 
     /**
      * @changelog https://johannespichler.com/writing-custom-phpspec-matchers/
+     * @return Node\Stmt[]|null
      */
-    private function processMatchersKeys(MethodCall $methodCall): void
+    private function processMatchersKeys(MethodCall $methodCall): ?array
     {
         foreach ($this->matchersKeys as $matcherKey) {
             if (! $this->isName($methodCall->name, 'should' . ucfirst($matcherKey))) {
@@ -270,12 +271,10 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractPhpSpecToPHPUni
             $methodCall->args = [];
             $funcCall->args[] = new Arg($methodCall);
 
-            $this->nodesToAddCollector->addNodesAfterNode([$assign, $funcCall], $methodCall);
-
-            $this->removeNode($methodCall);
-
-            return;
+            return [new Node\Stmt\Expression($assign), $funcCall];
         }
+
+        return null;
     }
 
     private function shouldSkip(MethodCall $methodCall): bool

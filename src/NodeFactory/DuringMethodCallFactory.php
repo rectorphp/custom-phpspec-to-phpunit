@@ -11,17 +11,18 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Identifier;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\PhpParser\Node\Value\ValueResolver;
-use Rector\PostRector\Collector\NodesToAddCollector;
 
 final class DuringMethodCallFactory
 {
     public function __construct(
         private readonly ValueResolver $valueResolver,
-        private readonly NodesToAddCollector $nodesToAddCollector
     ) {
     }
 
-    public function create(MethodCall $methodCall, PropertyFetch $propertyFetch): MethodCall
+    /**
+     * @return \PhpParser\Node[]
+     */
+    public function create(MethodCall $methodCall, PropertyFetch $propertyFetch): array
     {
         if (! isset($methodCall->args[0])) {
             throw new ShouldNotHappenException();
@@ -47,9 +48,6 @@ final class DuringMethodCallFactory
         $parentMethodCall = $methodCall->var;
         $parentMethodCall->name = new Identifier('expectException');
 
-        // add $this->object->someCall($withArgs)
-        $this->nodesToAddCollector->addNodeAfterNode($thisObjectPropertyMethodCall, $methodCall);
-
-        return $parentMethodCall;
+        return [$thisObjectPropertyMethodCall, $parentMethodCall];
     }
 }

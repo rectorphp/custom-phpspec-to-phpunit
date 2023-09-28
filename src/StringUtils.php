@@ -33,4 +33,12 @@ final class StringUtils
 
         return $name;
     }
+
+    public static function underscoreAndHyphenToCamelCase(string $content): string
+    {
+        $content = str_replace(['-', '_'], ' ', $content);
+        $content = ucwords($content);
+
+        return str_replace(' ', '', $content);
+    }
 }

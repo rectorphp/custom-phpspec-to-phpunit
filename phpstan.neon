@@ -43,3 +43,8 @@ parameters:
         - '#Cognitive complexity for "Rector\\PHPUnit\\PHPUnit60\\Rector\\MethodCall\\DelegateExceptionArgumentsRector\:\:refactor\(\)" is 11, keep it under 10#'
 
         - '#PhpParser\\Node\\Stmt\\Expression is not generic#'
+
+        # bool property
+        -
+             message: '#Negated boolean expression is always true#'
+             path: src/NodeFactory/AssertMethodCallFactory.php

@@ -46,7 +46,7 @@ final class PhpSpecRenaming
         $classMethodName = $this->removeNamePrefixes($classMethodName);
 
         // from PhpSpec to PHPUnit method naming convention
-        $classMethodName = $this->stringFormatConverter->underscoreAndHyphenToCamelCase($classMethodName);
+        $classMethodName = StringUtils::underscoreAndHyphenToCamelCase($classMethodName);
 
         // add "test", so PHPUnit runs the method
         if (! \str_starts_with((string) $classMethodName, 'test')) {
@@ -73,7 +73,7 @@ final class PhpSpecRenaming
             return;
         }
 
-        $newNamespaceName = StaticRectorStrings::removePrefixes($namespaceName, ['spec\\']);
+        $newNamespaceName = StringUtils::removePrefixes($namespaceName, ['spec\\']);
 
         $namespace->name = new Name('Tests\\' . $newNamespaceName);
     }
@@ -88,7 +88,7 @@ final class PhpSpecRenaming
         }
 
         // 2. change class name
-        $newClassName = StaticRectorStrings::removeSuffixes($classShortName, [self::SPEC]);
+        $newClassName = StringUtils::removeSuffixes($classShortName, [self::SPEC]);
         $newTestClassName = $newClassName . 'Test';
 
         $class->name = new Identifier($newTestClassName);
@@ -102,9 +102,9 @@ final class PhpSpecRenaming
         }
 
         $shortClassName = $this->nodeNameResolver->getShortName($class);
-        $bareClassName = StaticRectorStrings::removeSuffixes($shortClassName, [self::SPEC, 'Test']);
+        $bareClassName = StringUtils::removeSuffixes($shortClassName, [self::SPEC, 'Test']);
 
-        return lcfirst((string) $bareClassName);
+        return lcfirst($bareClassName);
     }
 
     public function resolveTestedClass(Node $node): string
