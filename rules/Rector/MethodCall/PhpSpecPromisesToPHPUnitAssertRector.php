@@ -20,9 +20,11 @@ use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\MatchersManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\DuringMethodCallFactory;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
@@ -93,7 +95,8 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly AssertMethodCallFactory $assertMethodCallFactory,
         private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
-        private readonly DuringMethodCallFactory $duringMethodCallFactory
+        private readonly DuringMethodCallFactory $duringMethodCallFactory,
+        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector
     ) {
     }
 
@@ -111,12 +114,12 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
      */
     public function refactor(Node $node): Node|array|null
     {
-        $this->isPrepared = false;
-        $this->matchersKeys = [];
-
-        if (! $this->isInPhpSpecBehavior($node)) {
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
             return null;
         }
+
+        $this->isPrepared = false;
+        $this->matchersKeys = [];
 
         if ($this->isName($node->name, 'getWrappedObject')) {
             return $node->var;
@@ -190,6 +193,11 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
         $node->var = $this->getTestedObjectPropertyFetch();
 
         return $node;
+    }
+
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('wip', []);
     }
 
     private function processDuringInstantiation(MethodCall $methodCall): MethodCall

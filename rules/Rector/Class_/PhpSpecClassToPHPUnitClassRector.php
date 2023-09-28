@@ -85,7 +85,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        
+        return new RuleDefinition('wip', []);
     }
 
     private function createLetClassMethod(string $propertyName, ObjectType $testedObjectType): ClassMethod
@@ -103,7 +103,11 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         $new = new New_($testedObjectType);
         $assign = new Assign($propertyFetch, $new);
 
-        return $this->setUpClassMethodFactory->createSetUpMethod([$assign]);
+        return new ClassMethod('setUp', [
+            'flags' => Class_::MODIFIER_PROTECTED,
+            'returnType' => new Node\Identifier('void'),
+            'stmts' => [new Expression($assign)],
+        ]);
     }
 
     /**

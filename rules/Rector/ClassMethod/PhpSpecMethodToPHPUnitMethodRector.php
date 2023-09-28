@@ -11,6 +11,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PHPUnitTypeDeclarationDecorator;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -24,6 +25,7 @@ final class PhpSpecMethodToPHPUnitMethodRector extends AbstractRector
         private readonly PHPUnitTypeDeclarationDecorator $phpUnitTypeDeclarationDecorator,
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly VisibilityManipulator $visibilityManipulator,
+        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
     }
 
@@ -40,45 +42,54 @@ final class PhpSpecMethodToPHPUnitMethodRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isInPhpSpecBehavior($node)) {
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
             return null;
         }
 
-        if ($this->isName($node, 'letGo')) {
+        if ($this->isName($node->name, 'letGo')) {
             $node->name = new Identifier('tearDown');
             $this->visibilityManipulator->makeProtected($node);
+
             $this->phpUnitTypeDeclarationDecorator->decorate($node);
-        } elseif ($this->isName($node, 'let')) {
+
+            return $node;
+        }
+
+        if ($this->isName($node->name, 'let')) {
             $node->name = new Identifier(MethodName::SET_UP);
             $this->visibilityManipulator->makeProtected($node);
             $this->phpUnitTypeDeclarationDecorator->decorate($node);
-        } elseif ($node->isPublic()) {
-            $this->processTestMethod($node);
-        } else {
-            return null;
+
+            return $node;
         }
 
-        return $node;
+        if ($node->isPublic()) {
+            return $this->processTestMethod($node);
+        }
+
+        return null;
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
-        
     }
 
-    private function processTestMethod(ClassMethod $classMethod): void
+    private function processTestMethod(ClassMethod $classMethod): ?ClassMethod
     {
         // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
         if ($this->isName($classMethod, 'getMatchers')) {
-            return;
+            return null;
         }
 
         // change name to phpunit test case format
         $this->phpSpecRenaming->renameMethod($classMethod);
 
+        $hasChanged = false;
+
         // reorder instantiation + expected exception
         $previousStmt = null;
         foreach ((array) $classMethod->stmts as $key => $stmt) {
+            // @todo why print?
             $printedStmtContent = $this->print($stmt);
 
             if (\str_contains((string) $printedStmtContent, 'duringInstantiation') && $previousStmt instanceof Stmt) {
@@ -90,6 +101,13 @@ final class PhpSpecMethodToPHPUnitMethodRector extends AbstractRector
             }
 
             $previousStmt = $stmt;
+            $hasChanged = true;
         }
+
+        if ($hasChanged) {
+            return $classMethod;
+        }
+
+        return null;
     }
 }

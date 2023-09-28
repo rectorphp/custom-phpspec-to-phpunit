@@ -27,6 +27,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -37,6 +38,7 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
+        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
     }
 
@@ -53,7 +55,7 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isInPhpSpecBehavior($node)) {
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
             return null;
         }
 

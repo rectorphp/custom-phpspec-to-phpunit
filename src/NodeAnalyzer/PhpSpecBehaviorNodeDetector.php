@@ -19,7 +19,7 @@ final class PhpSpecBehaviorNodeDetector
     ) {
     }
 
-    public function isInPhpSpecBehavior(Node $node): bool
+    public function isInPhpSpecBehavior(Node\Stmt\Class_|Node\Stmt\ClassMethod|Node\Expr\MethodCall $node): bool
     {
         if ($node instanceof ClassLike) {
             return $this->nodeTypeResolver->isObjectType($node, new ObjectType('PhpSpec\ObjectBehavior'));
