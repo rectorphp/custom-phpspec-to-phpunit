@@ -24,6 +24,7 @@ final class PhpSpecBehaviorNodeDetector
     public function isInPhpSpecBehavior(Class_|ClassMethod|MethodCall|Scope $element): bool
     {
         if ($element instanceof Scope) {
+            return $this->isScopeInsideObjectBehaviorClass($element);
         }
 
         if ($element instanceof ClassLike) {
