@@ -21,19 +21,28 @@ final class PhpSpecBehaviorNodeDetector
     ) {
     }
 
-    public function isInPhpSpecBehavior(Class_|ClassMethod|MethodCall $node): bool
+    public function isInPhpSpecBehavior(Class_|ClassMethod|MethodCall|Scope $element): bool
     {
-        if ($node instanceof ClassLike) {
-            return $this->nodeTypeResolver->isObjectType($node, new ObjectType('PhpSpec\ObjectBehavior'));
+        if ($element instanceof Scope) {
+
         }
 
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if ($element instanceof ClassLike) {
+            return $this->nodeTypeResolver->isObjectType($element, new ObjectType('PhpSpec\ObjectBehavior'));
+        }
+
+        $scope = $element->getAttribute(AttributeKey::SCOPE);
         if (! $scope instanceof Scope) {
             return false;
         }
 
+        return $this->isScopeInsideObjectBehaviorClass($scope);
+    }
+
+    private function isScopeInsideObjectBehaviorClass(Scope $scope): bool
+    {
         $classReflection = $scope->getClassReflection();
-        if (! $classReflection instanceof ClassReflection) {
+        if (!$classReflection instanceof ClassReflection) {
             return false;
         }
 

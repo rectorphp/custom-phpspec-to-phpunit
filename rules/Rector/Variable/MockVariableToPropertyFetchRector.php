@@ -47,13 +47,13 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
             return null;
         }
 
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($class)) {
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($scope)) {
             return null;
         }
 
-        if (! $this->phpSpecMockCollector->isVariableMockInProperty($class, $node)) {
-            return null;
-        }
+//        if (! $this->phpSpecMockCollector->isVariableMockInProperty($class, $node)) {
+//            return null;
+//        }
 
         /** @var string $variableName */
         $variableName = $this->getName($node);
