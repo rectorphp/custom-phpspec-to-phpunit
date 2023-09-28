@@ -8,7 +8,7 @@
     },
     "require-dev": {
         "rector/rector-src": "dev-main",
-        "phpunit/phpunit": "^10.2",
+        "phpunit/phpunit": "^10.3",
         "phpstan/phpstan": "^1.10.34",
         "symplify/phpstan-rules": "^11.4",
         "symplify/phpstan-extensions": "^11.2",
@@ -34,11 +34,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Rector\\PhpSpecToPHPUnit\\Tests\\": ["tests", "rules-tests"]
-        },
-        "classmap": [
-            "stubs"
-        ]
+            "Rector\\PhpSpecToPHPUnit\\Tests\\": ["rules-tests"]
+        }
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --ansi --error-format symplify",

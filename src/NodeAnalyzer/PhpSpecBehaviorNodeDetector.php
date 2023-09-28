@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\NodeAnalyzer;
 
-use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
+use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
@@ -19,7 +21,7 @@ final class PhpSpecBehaviorNodeDetector
     ) {
     }
 
-    public function isInPhpSpecBehavior(Node\Stmt\Class_|Node\Stmt\ClassMethod|Node\Expr\MethodCall $node): bool
+    public function isInPhpSpecBehavior(Class_|ClassMethod|MethodCall $node): bool
     {
         if ($node instanceof ClassLike) {
             return $this->nodeTypeResolver->isObjectType($node, new ObjectType('PhpSpec\ObjectBehavior'));

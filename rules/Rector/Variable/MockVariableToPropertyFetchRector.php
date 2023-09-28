@@ -7,8 +7,9 @@ namespace Rector\PhpSpecToPHPUnit\Rector\Variable;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Stmt\Class_;
+use PHPStan\Analyser\Scope;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -41,8 +42,8 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        $class = $this->betterNodeFinder->findParentType($node, Class_::class);
-        if (! $class instanceof Class_) {
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if (! $scope instanceof Scope) {
             return null;
         }
 
