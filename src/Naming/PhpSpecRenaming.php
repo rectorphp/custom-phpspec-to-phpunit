@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Naming;
 
-use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPUnit\Framework\TestCase;
 use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpSpecToPHPUnit\StringUtils;
 
@@ -31,7 +28,6 @@ final class PhpSpecRenaming
 
     public function __construct(
         private readonly NodeNameResolver $nodeNameResolver,
-        private readonly BetterNodeFinder $betterNodeFinder
     ) {
     }
 
@@ -89,19 +85,9 @@ final class PhpSpecRenaming
         return lcfirst($bareClassName);
     }
 
-    public function resolveTestedClass(Node $node): string
+    public function resolveTestedClass(Class_ $class): string
     {
-        if ($node instanceof ClassLike) {
-            $className = (string) $this->nodeNameResolver->getName($node);
-        } else {
-            // @todo
-            $classLike = $this->betterNodeFinder->findParentType($node, ClassLike::class);
-            if (! $classLike instanceof ClassLike) {
-                throw new ShouldNotHappenException();
-            }
-
-            $className = (string) $this->nodeNameResolver->getName($classLike);
-        }
+        $className = (string) $this->nodeNameResolver->getName($class);
 
         $newClassName = StringUtils::removePrefixes($className, ['spec\\']);
 
