@@ -6,6 +6,7 @@ namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
@@ -19,6 +20,7 @@ final class TestClassMethodRector extends AbstractRector
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
+        private readonly BetterNodeFinder $betterNodeFinder,
     ) {
     }
 
@@ -85,7 +87,7 @@ final class TestClassMethodRector extends AbstractRector
 
     private function hasMethodCall(Node\Stmt $stmt, string $methodName): bool
     {
-        return (bool) $this->betterNodeFinder->findFirst($stmt, function (Node $node): bool {
+        return (bool) $this->betterNodeFinder->findFirst($stmt, function (Node $node) use ($methodName): bool {
             if (! $node instanceof Node\Expr\MethodCall) {
                 return false;
             }
