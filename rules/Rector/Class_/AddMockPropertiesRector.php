@@ -9,7 +9,6 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\UnionType;
 use PHPUnit\Framework\MockObject\MockObject;
-use Rector\Core\NodeManipulator\ClassInsertManipulator;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
@@ -21,9 +20,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class AddMockPropertiesRector extends AbstractRector
 {
     public function __construct(
-        private readonly ClassInsertManipulator $classInsertManipulator,
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector
+        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
     }
 
@@ -64,10 +62,11 @@ final class AddMockPropertiesRector extends AbstractRector
             $this->phpSpecMockCollector->addPropertyMock($className, $name);
 
             $variableType = $this->phpSpecMockCollector->getTypeForClassAndVariable($node, $name);
-
             $unionType = new UnionType([new ObjectType($variableType), new ObjectType(MockObject::class)]);
 
-            $this->classInsertManipulator->addPropertyToClass($node, $name, $unionType);
+            // add property
+            $property = $this->nodeFactory->createPrivatePropertyFromNameAndType($name, $unionType);
+            $node->stmts = array_merge([$property], (array) $node->stmts);
         }
 
         return null;

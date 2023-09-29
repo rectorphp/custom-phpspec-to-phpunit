@@ -18,7 +18,6 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\NodeManipulator\ClassInsertManipulator;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\LetManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
@@ -33,7 +32,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 {
     public function __construct(
-        private readonly ClassInsertManipulator $classInsertManipulator,
         private readonly LetManipulator $letManipulator,
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
@@ -67,7 +65,10 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         $testedClass = $this->phpSpecRenaming->resolveTestedClass($node);
 
         $testedObjectType = new ObjectType($testedClass);
-        $this->classInsertManipulator->addPropertyToClass($node, $propertyName, $testedObjectType);
+
+        // add property
+        $property = $this->nodeFactory->createPrivatePropertyFromNameAndType($propertyName, $testedObjectType);
+        $node->stmts = array_merge([$property], (array) $node->stmts);
 
         $classMethod = $node->getMethod('let');
 
@@ -78,7 +79,8 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
             }
 
             $letClassMethod = $this->createLetClassMethod($propertyName, $testedObjectType);
-            $this->classInsertManipulator->addAsFirstMethod($node, $letClassMethod);
+
+            $node->stmts = array_merge([$letClassMethod], (array) $node->stmts);
         }
 
         return $this->removeSelfTypeMethod($node, $testedObjectType);

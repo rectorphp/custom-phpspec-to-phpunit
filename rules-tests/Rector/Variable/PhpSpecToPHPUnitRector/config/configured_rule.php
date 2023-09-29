@@ -16,8 +16,8 @@ return static function (RectorConfig $rectorConfig): void {
         //        PhpSpecMocksToPHPUnitMocksRector::class,
         //        PhpSpecPromisesToPHPUnitAssertRector::class,
         //        PhpSpecMethodToPHPUnitMethodRector::class,
-        //        PhpSpecClassToPHPUnitClassRector::class,
+        PhpSpecClassToPHPUnitClassRector::class,
         //        AddMockPropertiesRector::class,
-        MockVariableToPropertyFetchRector::class,
+        //        MockVariableToPropertyFetchRector::class,
     ]);
 };
