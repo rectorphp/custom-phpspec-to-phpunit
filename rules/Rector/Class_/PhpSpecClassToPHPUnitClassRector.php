@@ -56,9 +56,6 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
             return null;
         }
 
-        // 1. change namespace name to PHPUnit-like
-        $this->phpSpecRenaming->renameNamespace($node);
-
         $propertyName = $this->phpSpecRenaming->resolveObjectPropertyName($node);
 
         $this->phpSpecRenaming->renameClass($node);
@@ -68,6 +65,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
         $testedObjectType = new ObjectType($testedClass);
         $this->classInsertManipulator->addPropertyToClass($node, $propertyName, $testedObjectType);
+
         $classMethod = $node->getMethod('let');
 
         // add let if missing

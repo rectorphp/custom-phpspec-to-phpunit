@@ -11,7 +11,6 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Namespace_;
 use PHPUnit\Framework\TestCase;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
@@ -59,23 +58,6 @@ final class PhpSpecRenaming
     public function renameExtends(Class_ $class): void
     {
         $class->extends = new FullyQualified(TestCase::class);
-    }
-
-    public function renameNamespace(Class_ $class): void
-    {
-        $namespace = $this->betterNodeFinder->findParentType($class, Namespace_::class);
-        if (! $namespace instanceof Namespace_) {
-            return;
-        }
-
-        $namespaceName = $this->nodeNameResolver->getName($namespace);
-        if ($namespaceName === null) {
-            return;
-        }
-
-        $newNamespaceName = StringUtils::removePrefixes($namespaceName, ['spec\\']);
-
-        $namespace->name = new Name('Tests\\' . $newNamespaceName);
     }
 
     public function renameClass(Class_ $class): void

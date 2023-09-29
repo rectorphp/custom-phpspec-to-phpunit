@@ -12,11 +12,11 @@ use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
-        //        PhpSpecMocksToPHPUnitMocksRector::class,
-        //        PhpSpecPromisesToPHPUnitAssertRector::class,
-        //        PhpSpecMethodToPHPUnitMethodRector::class,
-        //        PhpSpecClassToPHPUnitClassRector::class,
-        //        AddMockPropertiesRector::class,
+        PhpSpecMocksToPHPUnitMocksRector::class,
+        PhpSpecPromisesToPHPUnitAssertRector::class,
+        PhpSpecMethodToPHPUnitMethodRector::class,
+        PhpSpecClassToPHPUnitClassRector::class,
+        AddMockPropertiesRector::class,
         MockVariableToPropertyFetchRector::class,
     ]);
 };

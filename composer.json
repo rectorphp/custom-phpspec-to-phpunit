@@ -35,7 +35,10 @@
     "autoload-dev": {
         "psr-4": {
             "Rector\\PhpSpecToPHPUnit\\Tests\\": ["rules-tests"]
-        }
+        },
+        "classmap": [
+            "stubs"
+        ]
     },
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --ansi --error-format symplify",
