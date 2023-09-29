@@ -17,10 +17,7 @@ final class SetUpMethodFactory
     public function create(Stmt $stmt): ClassMethod
     {
         $parentSetUpStaticCall = new StaticCall(new Name('parent'), new Identifier('setUp'));
-        $stmts = [
-            new Expression($parentSetUpStaticCall),
-            $stmt,
-        ];
+        $stmts = [new Expression($parentSetUpStaticCall), $stmt];
 
         $classMethod = new ClassMethod('setUp', [
             'stmts' => $stmts,
