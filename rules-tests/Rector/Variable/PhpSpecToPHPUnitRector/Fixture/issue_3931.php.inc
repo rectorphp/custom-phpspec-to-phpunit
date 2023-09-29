@@ -73,7 +73,7 @@ class PageLinksGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(PageLinksGenerator::class, $this->pageLinksGenerator);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->createMock(Router::class);
         $this->pageLinksGenerator = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\PageLinksGenerator($this->router);

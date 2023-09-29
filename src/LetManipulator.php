@@ -21,8 +21,10 @@ final class LetManipulator
     public function isLetNeededInClass(Class_ $class): bool
     {
         foreach ($class->getMethods() as $classMethod) {
+            $methodName = $classMethod->name->toString();
+
             // new test
-            if ($this->nodeNameResolver->isName($classMethod, 'test*')) {
+            if (str_starts_with($methodName, 'test')) {
                 continue;
             }
 

@@ -191,7 +191,7 @@ use PhpSpec\ObjectBehavior;
 class CartTest extends \PHPUnit\Framework\TestCase
 {
     private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Cart $cart;
-    protected function setUp()
+    protected function setUp(): void
     {
         DefaultCurrency::setProvider(new DummyDefaultCurrencyProvider());
 

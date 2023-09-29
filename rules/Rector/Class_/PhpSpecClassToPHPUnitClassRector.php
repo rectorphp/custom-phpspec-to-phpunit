@@ -23,6 +23,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\LetManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
+use Rector\PhpSpecToPHPUnit\NodeFactory\SetUpMethodFactory;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -36,6 +37,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         private readonly LetManipulator $letManipulator,
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
+        private readonly SetUpMethodFactory $setUpMethodFactory,
     ) {
     }
 
@@ -58,6 +60,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
         $propertyName = $this->phpSpecRenaming->resolveObjectPropertyName($node);
 
+        // @todo here move? :)
         $this->phpSpecRenaming->renameClass($node);
         $this->phpSpecRenaming->renameExtends($node);
 
@@ -101,11 +104,9 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         $new = new New_($testedObjectType);
         $assign = new Assign($propertyFetch, $new);
 
-        return new ClassMethod('setUp', [
-            'flags' => Class_::MODIFIER_PROTECTED,
-            'returnType' => new Node\Identifier('void'),
-            'stmts' => [new Expression($assign)],
-        ]);
+        $stmts = [new Expression($assign)];
+
+        return $this->setUpMethodFactory->create($stmts);
     }
 
     /**

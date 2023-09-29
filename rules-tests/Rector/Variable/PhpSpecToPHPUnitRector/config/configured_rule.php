@@ -12,6 +12,7 @@ use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
+        \Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector::class,
         PhpSpecMocksToPHPUnitMocksRector::class,
         PhpSpecPromisesToPHPUnitAssertRector::class,
         PhpSpecMethodToPHPUnitMethodRector::class,

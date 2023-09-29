@@ -65,7 +65,7 @@ class RatesTest extends \PHPUnit\Framework\TestCase
 {
     private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Rates $rates;
     private \PHPUnit\Framework\MockObject\MockObject|\spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Provider $provider;
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(Provider::class);
         $this->provider->expects($this->atLeastOnce())->method('get')->willReturn(

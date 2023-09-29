@@ -24,7 +24,7 @@ use PhpSpec\ObjectBehavior;
 class OrderTest extends \PHPUnit\Framework\TestCase
 {
     private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Order $order;
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var OrderFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
         $factory = $this->createMock(OrderFactory::class);

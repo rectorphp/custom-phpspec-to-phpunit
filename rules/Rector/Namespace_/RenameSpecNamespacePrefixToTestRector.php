@@ -12,7 +12,7 @@ use Rector\PhpSpecToPHPUnit\StringUtils;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class RenameSpecPrefixToTestRector extends AbstractRector
+final class RenameSpecNamespacePrefixToTestRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {

@@ -29,7 +29,7 @@ use Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Source\
 class DeliveryTest extends \PHPUnit\Framework\TestCase
 {
     private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Delivery $delivery;
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var DeliveryFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
         $factory = $this->createMock(DeliveryFactory::class);

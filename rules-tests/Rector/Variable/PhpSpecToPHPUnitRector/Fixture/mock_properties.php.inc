@@ -32,7 +32,7 @@ class MockPropertiesTest extends \PHPUnit\Framework\TestCase
 {
     private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\MockProperties $mockProperties;
     private \PHPUnit\Framework\MockObject\MockObject|\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Source\OrderFactory $factory;
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = $this->createMock(OrderFactory::class);
         $this->mockProperties = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\MockProperties($this->factory);

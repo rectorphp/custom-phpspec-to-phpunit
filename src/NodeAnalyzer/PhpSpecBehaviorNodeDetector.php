@@ -46,11 +46,6 @@ final class PhpSpecBehaviorNodeDetector
             return false;
         }
 
-        dump($classReflection->getName());
-        dump($classReflection->isSubclassOf('PhpSpec\ObjectBehavior'));
-
-        die;
-
         return $classReflection->isSubclassOf('PhpSpec\ObjectBehavior');
     }
 }

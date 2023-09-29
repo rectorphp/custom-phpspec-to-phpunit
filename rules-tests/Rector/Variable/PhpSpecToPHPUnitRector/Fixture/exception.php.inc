@@ -25,7 +25,7 @@ use PhpSpec\ObjectBehavior;
 class ExceptionTest extends \PHPUnit\Framework\TestCase
 {
     private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Exception $exception;
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->exception = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Exception();

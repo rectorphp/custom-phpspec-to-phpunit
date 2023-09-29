@@ -34,7 +34,7 @@ class CurrencyTest extends \PHPUnit\Framework\TestCase
 {
     private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Currency $currency;
     private \PHPUnit\Framework\MockObject\MockObject|\spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\CurrencyData $data;
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->data = $this->createMock(CurrencyData::class);
         $this->data->code = 'CZK';
