@@ -16,6 +16,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
+use PHPStan\Node\ClassMethod;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\MatchersManipulator;
@@ -105,11 +106,11 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [MethodCall::class];
+        return [Class_::class];
     }
 
     /**
-     * @param MethodCall $node
+     * @param Class_ $node
      * @return \PhpParser\Node|Node[]|null
      */
     public function refactor(Node $node): Node|array|null
@@ -121,80 +122,90 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
         $this->isPrepared = false;
         $this->matchersKeys = [];
 
-        if ($this->isName($node->name, 'getWrappedObject')) {
-            return $node->var;
-        }
+        $class = $node;
 
-        if ($this->isName($node->name, 'during')) {
-            return $this->duringMethodCallFactory->create($node, $this->getTestedObjectPropertyFetch());
-        }
-
-        if ($this->isName($node->name, 'duringInstantiation')) {
-            return $this->processDuringInstantiation($node);
-        }
-
-        // skip reserved names
-        $methodName = $this->getName($node->name);
-
-        if ($this->isNames($node->name, ['getMatchers', 'expectException']) || str_starts_with($methodName, 'assert')) {
-            return null;
-        }
-
-        $this->prepareMethodCall($node);
-
-        if (str_starts_with($methodName, 'beConstructed')) {
-            return $this->beConstructedWithAssignFactory->create(
-                $node,
-                $this->getTestedClass(),
-                $this->getTestedObjectPropertyFetch()
-            );
-        }
-
-        $nodesToReturn = $this->processMatchersKeys($node);
-
-        $args = $node->args;
-        foreach (self::NEW_METHOD_TO_OLD_METHODS as $newMethod => $oldMethods) {
-            if (! $this->isNames($node->name, $oldMethods)) {
-                continue;
+        $this->traverseNodesWithCallable($node->stmts, function (\PhpParser\Node $node) use ($class) {
+            if (! $node instanceof MethodCall) {
+                return null;
             }
 
-            return $this->assertMethodCallFactory->createAssertMethod(
-                $newMethod,
-                $node->var,
-                $args[0]->value ?? null,
-                $this->getTestedObjectPropertyFetch()
-            );
-        }
+            if ($this->isName($node->name, 'getWrappedObject')) {
+                return $node->var;
+            }
 
-        if ($this->shouldSkip($node)) {
-            return null;
-        }
+            if ($this->isName($node->name, 'during')) {
+                return $this->duringMethodCallFactory->create($node, $this->getTestedObjectPropertyFetch());
+            }
 
-        if ($this->isName($node->name, 'clone')) {
-            return new Clone_($this->getTestedObjectPropertyFetch());
-        }
+            if ($this->isName($node->name, 'duringInstantiation')) {
+                return $this->processDuringInstantiation($node);
+            }
 
-        $methodName = $this->getName($node->name);
-        if ($methodName === null) {
-            return null;
-        }
+            // skip reserved names
+            $methodName = $this->getName($node->name);
 
-        /** @var Class_ $classLike */
-        $classLike = $this->betterNodeFinder->findParentType($node, Class_::class);
-        $classMethod = $classLike->getMethod($methodName);
-        // it's a method call, skip
-        if ($classMethod !== null) {
-            return null;
-        }
+            if ($this->isNames($node->name, ['getMatchers', 'expectException']) || str_starts_with(
+                $methodName,
+                'assert'
+            )) {
+                return null;
+            }
 
-        // direct PHPUnit method calls, no need to call on property
-        if (in_array($methodName, ['atLeastOnce', 'equalTo', 'isInstanceOf', 'isType'], true)) {
+            $this->prepareMethodCall($class);
+
+            if (str_starts_with($methodName, 'beConstructed')) {
+                return $this->beConstructedWithAssignFactory->create(
+                    $node,
+                    $this->getTestedClass(),
+                    $this->getTestedObjectPropertyFetch()
+                );
+            }
+
+            $nodesToReturn = $this->processMatchersKeys($node);
+
+            $args = $node->args;
+            foreach (self::NEW_METHOD_TO_OLD_METHODS as $newMethod => $oldMethods) {
+                if (! $this->isNames($node->name, $oldMethods)) {
+                    continue;
+                }
+
+                return $this->assertMethodCallFactory->createAssertMethod(
+                    $newMethod,
+                    $node->var,
+                    $args[0]->value ?? null,
+                    $this->getTestedObjectPropertyFetch()
+                );
+            }
+
+            if ($this->shouldSkip($node)) {
+                return null;
+            }
+
+            if ($this->isName($node->name, 'clone')) {
+                return new Clone_($this->getTestedObjectPropertyFetch());
+            }
+
+            $methodName = $this->getName($node->name);
+            if ($methodName === null) {
+                return null;
+            }
+
+            $classMethod = $class->getMethod($methodName);
+
+            // it's a local method call, skip
+            if ($classMethod instanceof ClassMethod) {
+                return null;
+            }
+
+            // direct PHPUnit method calls, no need to call on property
+            if (in_array($methodName, ['atLeastOnce', 'equalTo', 'isInstanceOf', 'isType'], true)) {
+                return $node;
+            }
+
+            $node->var = $this->getTestedObjectPropertyFetch();
+
             return $node;
-        }
-
-        $node->var = $this->getTestedObjectPropertyFetch();
-
-        return $node;
+        });
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -211,14 +222,9 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
         return $parentMethodCall;
     }
 
-    private function prepareMethodCall(MethodCall $methodCall): void
+    private function prepareMethodCall(Class_ $class): void
     {
         if ($this->isPrepared) {
-            return;
-        }
-
-        $class = $this->betterNodeFinder->findParentType($methodCall, Class_::class);
-        if (! $class instanceof Class_) {
             return;
         }
 
