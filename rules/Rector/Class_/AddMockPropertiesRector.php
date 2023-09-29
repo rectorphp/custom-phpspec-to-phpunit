@@ -66,7 +66,7 @@ final class AddMockPropertiesRector extends AbstractRector
 
             // add property
             $property = $this->nodeFactory->createPrivatePropertyFromNameAndType($name, $unionType);
-            $node->stmts = array_merge([$property], (array) $node->stmts);
+            $node->stmts = array_merge([$property], $node->stmts);
         }
 
         return null;

@@ -82,7 +82,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
             $newStmts[] = $letClassMethod;
         }
 
-        $node->stmts = array_merge($newStmts, (array) $node->stmts);
+        $node->stmts = array_merge($newStmts, $node->stmts);
 
         return $this->removeSelfTypeMethod($node, $testedObjectType);
     }
