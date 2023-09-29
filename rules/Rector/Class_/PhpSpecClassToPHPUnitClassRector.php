@@ -104,9 +104,8 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         $new = new New_($testedObjectType);
         $assign = new Assign($propertyFetch, $new);
 
-        $stmts = [new Expression($assign)];
-
-        return $this->setUpMethodFactory->create($stmts);
+        $assignExpression = new Expression($assign);
+        return $this->setUpMethodFactory->create($assignExpression);
     }
 
     /**
