@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\AddMockPropertiesRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecClassToPHPUnitClassRector;
-use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\PhpSpecMethodToPHPUnitMethodRector;
+use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\TestClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\PhpSpecMocksToPHPUnitMocksRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\PhpSpecPromisesToPHPUnitAssertRector;
 use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
@@ -23,7 +23,7 @@ return static function (RectorConfig $rectorConfig): void {
         PhpSpecPromisesToPHPUnitAssertRector::class,
 
         // 2. then methods
-        PhpSpecMethodToPHPUnitMethodRector::class,
+        TestClassMethodRector::class,
 
         // 3. then the class itself
         PhpSpecClassToPHPUnitClassRector::class,

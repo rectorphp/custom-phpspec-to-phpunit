@@ -68,7 +68,9 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
         // add property
         $property = $this->nodeFactory->createPrivatePropertyFromNameAndType($propertyName, $testedObjectType);
-        $node->stmts = array_merge([$property], (array) $node->stmts);
+        $newStmts = [
+            $property
+        ];
 
         $classMethod = $node->getMethod('let');
 
@@ -79,9 +81,10 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
             }
 
             $letClassMethod = $this->createLetClassMethod($propertyName, $testedObjectType);
-
-            $node->stmts = array_merge([$letClassMethod], (array) $node->stmts);
+            $newStmts[] = $letClassMethod;
         }
+
+        $node->stmts = array_merge($newStmts, (array) $node->stmts);
 
         return $this->removeSelfTypeMethod($node, $testedObjectType);
     }
