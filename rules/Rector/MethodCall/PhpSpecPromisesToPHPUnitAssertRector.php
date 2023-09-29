@@ -110,7 +110,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
     /**
      * @param MethodCall $node
-     * @return \PhpParser\Node|Node\Stmt[]|null
+     * @return \PhpParser\Node|Node[]|null
      */
     public function refactor(Node $node): Node|array|null
     {
