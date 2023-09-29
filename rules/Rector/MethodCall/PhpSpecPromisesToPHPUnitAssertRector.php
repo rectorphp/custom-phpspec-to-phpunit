@@ -134,13 +134,15 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
         }
 
         // skip reserved names
-        if ($this->isNames($node->name, ['getMatchers', 'expectException', 'assert*'])) {
+        $methodName = $this->getName($node->name);
+
+        if ($this->isNames($node->name, ['getMatchers', 'expectException']) || str_starts_with($methodName, 'assert')) {
             return null;
         }
 
         $this->prepareMethodCall($node);
 
-        if ($this->isName($node->name, 'beConstructed*')) {
+        if (str_starts_with($methodName, 'beConstructed')) {
             return $this->beConstructedWithAssignFactory->create(
                 $node,
                 $this->getTestedClass(),

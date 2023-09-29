@@ -68,9 +68,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
         // add property
         $property = $this->nodeFactory->createPrivatePropertyFromNameAndType($propertyName, $testedObjectType);
-        $newStmts = [
-            $property
-        ];
+        $newStmts = [$property];
 
         $classMethod = $node->getMethod('let');
 

@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
-use _HumbugBoxa23482e0566a\PhpParser\PrettyPrinter\Standard;
 use PhpParser\Node;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PHPUnitTypeDeclarationDecorator;
@@ -70,7 +67,10 @@ final class TestClassMethodRector extends AbstractRector
             // has duringInstantiation() method?
             $printedStmtContent = $this->printerStandard->prettyPrint([$stmt]);
 
-            if (\str_contains((string) $printedStmtContent, 'duringInstantiation') && $previousStmt instanceof Node\Stmt) {
+            if (\str_contains(
+                (string) $printedStmtContent,
+                'duringInstantiation'
+            ) && $previousStmt instanceof Node\Stmt) {
                 $printedPreviousStmt = $this->printerStandard->prettyPrint([$previousStmt]);
                 if (\str_contains((string) $printedPreviousStmt, 'beConstructedThrough')) {
                     $node->stmts[$key - 1] = $stmt;
