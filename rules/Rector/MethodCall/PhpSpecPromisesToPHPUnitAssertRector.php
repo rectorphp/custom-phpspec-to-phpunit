@@ -143,6 +143,9 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
             // skip reserved names
             $methodName = $this->getName($node->name);
+            if (! is_string($methodName)) {
+                return null;
+            }
 
             if ($this->isNames($node->name, ['getMatchers', 'expectException']) || str_starts_with(
                 $methodName,
@@ -193,7 +196,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             $classMethod = $class->getMethod($methodName);
 
             // it's a local method call, skip
-            if ($classMethod instanceof ClassMethod) {
+            if ($classMethod instanceof Node\Stmt\ClassMethod) {
                 return null;
             }
 
@@ -288,7 +291,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             $methodCall->args = [];
             $funcCall->args[] = new Arg($methodCall);
 
-            return [new Node\Stmt\Expression($assign), $funcCall];
+            return [new Node\Stmt\Expression($assign), new Node\Stmt\Expression($funcCall)];
         }
 
         return null;
