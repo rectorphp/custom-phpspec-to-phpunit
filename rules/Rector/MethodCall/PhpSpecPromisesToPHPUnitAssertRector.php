@@ -208,6 +208,8 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
             return $node;
         });
+
+        return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition
