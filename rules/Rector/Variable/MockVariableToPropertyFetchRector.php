@@ -48,7 +48,7 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
         $hasChanged = false;
 
         $class = $node;
-        $this->traverseNodesWithCallable($node->stmts, function (\PhpParser\Node $node) use ($class, &$hasChanged) {
+        $this->traverseNodesWithCallable($node->stmts, function (Node $node) use ($class, &$hasChanged) {
             if (! $node instanceof Variable) {
                 return null;
             }

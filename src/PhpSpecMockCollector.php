@@ -28,14 +28,13 @@ final class PhpSpecMockCollector
     private array $mocksWithsTypes = [];
 
     /**
-     * @var mixed[]
+     * @var array<string, mixed>
      */
     private array $propertyMocksByClass = [];
 
     public function __construct(
         private readonly SimpleCallableNodeTraverser $simpleCallableNodeTraverser,
         private readonly NodeNameResolver $nodeNameResolver,
-        private readonly BetterNodeFinder $betterNodeFinder,
     ) {
     }
 
@@ -60,7 +59,7 @@ final class PhpSpecMockCollector
             }
 
             foreach ($node->params as $param) {
-                $this->addMockFromParam($class, $param);
+                $this->addMockFromParam($class, $node, $param);
             }
 
             return null;
@@ -98,16 +97,11 @@ final class PhpSpecMockCollector
         $this->propertyMocksByClass[$class][] = $property;
     }
 
-    private function addMockFromParam(Class_ $class, Param $param): void
+    private function addMockFromParam(Class_ $class, ClassMethod $classMethod, Param $param): void
     {
         $variable = $this->nodeNameResolver->getName($param->var);
 
         $className = (string) $this->nodeNameResolver->getName($class);
-
-        $classMethod = $this->betterNodeFinder->findParentType($param, ClassMethod::class);
-        if (! $classMethod instanceof ClassMethod) {
-            throw new ShouldNotHappenException();
-        }
 
         $methodName = $this->nodeNameResolver->getName($classMethod);
         $this->mocks[$className][$variable][] = $methodName;
