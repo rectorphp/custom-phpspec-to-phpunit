@@ -21,17 +21,13 @@ final class PhpSpecBehaviorNodeDetector
     ) {
     }
 
-    public function isInPhpSpecBehavior(Class_|ClassMethod|MethodCall|Scope $element): bool
+    public function isInPhpSpecBehavior(Class_|ClassMethod|MethodCall $node): bool
     {
-        if ($element instanceof Scope) {
-            return $this->isScopeInsideObjectBehaviorClass($element);
+        if ($node instanceof ClassLike) {
+            return $this->nodeTypeResolver->isObjectType($node, new ObjectType('PhpSpec\ObjectBehavior'));
         }
 
-        if ($element instanceof ClassLike) {
-            return $this->nodeTypeResolver->isObjectType($element, new ObjectType('PhpSpec\ObjectBehavior'));
-        }
-
-        $scope = $element->getAttribute(AttributeKey::SCOPE);
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
         if (! $scope instanceof Scope) {
             return false;
         }

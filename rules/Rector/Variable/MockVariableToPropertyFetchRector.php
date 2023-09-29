@@ -7,6 +7,7 @@ namespace Rector\PhpSpecToPHPUnit\Rector\Variable;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -34,31 +35,43 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [Variable::class];
+        return [Class_::class];
     }
 
     /**
-     * @param Variable $node
+     * @param Class_ $node
      */
     public function refactor(Node $node): ?Node
     {
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
-        if (! $scope instanceof Scope) {
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
             return null;
         }
 
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($scope)) {
-            return null;
+        $hasChanged = false;
+
+        $class = $node;
+        $this->traverseNodesWithCallable($node->stmts, function (\PhpParser\Node $node) use ($class, &$hasChanged) {
+            if (! $node instanceof Variable) {
+                return null;
+            }
+
+            if (! $this->phpSpecMockCollector->isVariableMockInProperty($class, $node)) {
+                return null;
+            }
+
+            /** @var string $variableName */
+            $variableName = $this->getName($node);
+
+            $hasChanged = true;
+
+            return new PropertyFetch(new Variable('this'), $variableName);
+        });
+
+        if ($hasChanged) {
+            return $node;
         }
 
-        //        if (! $this->phpSpecMockCollector->isVariableMockInProperty($class, $node)) {
-        //            return null;
-        //        }
-
-        /** @var string $variableName */
-        $variableName = $this->getName($node);
-
-        return new PropertyFetch(new Variable('this'), $variableName);
+        return null;
     }
 
     public function getRuleDefinition(): RuleDefinition
