@@ -12,7 +12,6 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\Error;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
@@ -28,6 +27,7 @@ use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
+use Rector\PhpSpecToPHPUnit\NodeFactory\MockVariableAssignFactory;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -39,6 +39,7 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
     public function __construct(
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
+        private readonly MockVariableAssignFactory $mockVariableAssignFactory,
     ) {
     }
 
@@ -47,11 +48,11 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [ClassMethod::class, MethodCall::class];
+        return [Class_::class, MethodCall::class];
     }
 
     /**
-     * @param ClassMethod|MethodCall $node
+     * @param Class_|MethodCall $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -59,14 +60,8 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
             return null;
         }
 
-        if ($node instanceof ClassMethod) {
-            // public = tests, protected = internal, private = own (no framework magic)
-            if ($node->isPrivate()) {
-                return null;
-            }
-
-            $this->processMethodParamsToMocks($node);
-            return $node;
+        if ($node instanceof Class_) {
+            return $this->refactorClass($node);
         }
 
         return $this->processMethodCall($node);
@@ -75,27 +70,6 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('wip', []);
-    }
-
-    private function processMethodParamsToMocks(ClassMethod $classMethod): void
-    {
-        // remove params and turn them to instances
-        $assigns = [];
-        foreach ($classMethod->params as $param) {
-            if (! $param->type instanceof Name) {
-                throw new ShouldNotHappenException();
-            }
-
-            $createMockCall = $this->createCreateMockCall($param, $param->type);
-            if ($createMockCall instanceof Expression) {
-                $assigns[] = $createMockCall;
-            }
-        }
-
-        // remove all params
-        $classMethod->params = [];
-
-        $classMethod->stmts = array_merge($assigns, (array) $classMethod->stmts);
     }
 
     private function processMethodCall(MethodCall $methodCall): ?MethodCall
@@ -166,7 +140,7 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
 
         // first use of many: "$this->mock = $this->createMock()"
         if ($reversedMethodsWithThisMock[$methodName] === 0) {
-            return $this->createPropertyFetchMockVariableAssign($param, $name);
+            return $this->mockVariableAssignFactory->createPropertyFetchMockVariableAssign($param, $name);
         }
 
         return null;
@@ -177,7 +151,9 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
         $withMethodCall = new MethodCall($methodCall, 'with');
 
         if ($expr instanceof StaticCall) {
-            if ($this->isName($expr->class, '*Argument')) {
+            $className = $this->getName($expr->class);
+
+            if (str_ends_with($className, '*Argument')) {
                 if ($this->isName($expr->name, 'any')) {
                     // no added value having this method
                     return $methodCall;
@@ -213,23 +189,6 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
         return $assignExpression;
     }
 
-    private function createPropertyFetchMockVariableAssign(Param $param, Name $name): Expression
-    {
-        $variable = $this->getName($param->var);
-        if ($variable === null) {
-            throw new ShouldNotHappenException();
-        }
-
-        $propertyFetch = new PropertyFetch(new Variable('this'), $variable);
-
-        $methodCall = $this->nodeFactory->createLocalMethodCall('createMock');
-        $methodCall->args[] = new Arg(new ClassConstFetch($name, 'class'));
-
-        $assign = new Assign($propertyFetch, $methodCall);
-
-        return new Expression($assign);
-    }
-
     private function createIsTypeOrIsInstanceOf(StaticCall $staticCall): MethodCall
     {
         $args = $staticCall->getArgs();
@@ -261,5 +220,34 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
         }
 
         return false;
+    }
+
+    private function refactorClass(Class_ $class): ?Class_
+    {
+        foreach ($class->getMethods() as $classMethod) {
+            // public = tests, protected = internal, private = own (no framework magic)
+            if ($classMethod->isPrivate()) {
+                continue;
+            }
+
+            // remove params and turn them to instances
+            $assignExrepssions = [];
+            foreach ($classMethod->params as $param) {
+                if (! $param->type instanceof Name) {
+                    throw new ShouldNotHappenException();
+                }
+
+                $createMockCall = $this->createCreateMockCall($param, $param->type);
+                if ($createMockCall instanceof Expression) {
+                    $assignExrepssions[] = $createMockCall;
+                }
+            }
+
+            // remove all params
+            $classMethod->params = [];
+            $classMethod->stmts = array_merge($assignExrepssions, (array) $classMethod->stmts);
+        }
+
+        return $class;
     }
 }
