@@ -57,20 +57,24 @@ final class TestClassMethodRector extends AbstractRector
         $hasChanged = false;
 
         // reorder instantiation + expected exception
-        $previousStmt = null;
         foreach ((array) $node->stmts as $key => $stmt) {
-            // has duringInstantiation() method?
-            $hasDuringInstantiationMethodCall = $this->hasMethodCall($stmt, 'duringInstantiation');
+            $previousStmt = $node->stmts[$key - 1] ?? null;
 
-            if ($hasDuringInstantiationMethodCall && $previousStmt instanceof Node\Stmt) {
-                if ($this->hasMethodCall($previousStmt, 'beConstructedThrough')) {
-                    $node->stmts[$key - 1] = $stmt;
-                    $node->stmts[$key] = $previousStmt;
-                }
+            // has duringInstantiation() method?
+
+            if (! $this->hasMethodCall($stmt, 'duringInstantiation')) {
+                continue;
             }
 
-            $previousStmt = $stmt;
-            $hasChanged = true;
+            if (! $previousStmt instanceof Node\Stmt) {
+                continue;
+            }
+
+            if ($this->hasMethodCall($previousStmt, 'beConstructedThrough')) {
+                $node->stmts[$key - 1] = $stmt;
+                $node->stmts[$key] = $previousStmt;
+                $hasChanged = true;
+            }
         }
 
         if ($hasChanged) {

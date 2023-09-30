@@ -97,7 +97,6 @@ final class PhpSpecRenaming
     private function removeNamePrefixes(string $name): string
     {
         $originalName = $name;
-
         $name = StringUtils::removePrefixes($name, self::METHOD_PREFIXES);
 
         if ($name === '') {
