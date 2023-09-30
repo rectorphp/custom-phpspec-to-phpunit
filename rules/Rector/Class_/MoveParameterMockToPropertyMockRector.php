@@ -44,7 +44,6 @@ final class MoveParameterMockToPropertyMockRector extends AbstractRector
             return null;
         }
 
-
         $serviceMocks = $this->phpSpecMockCollector->resolveVariableMocksFromClassMethodParams($node);
         if ($serviceMocks === []) {
             return null;

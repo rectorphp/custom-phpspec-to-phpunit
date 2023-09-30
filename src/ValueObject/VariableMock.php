@@ -13,6 +13,14 @@ final class VariableMock implements \Stringable
     ) {
     }
 
+    /**
+     * To enable in array unique
+     */
+    public function __toString(): string
+    {
+        return $this->variableName;
+    }
+
     public function getMethodName(): string
     {
         return $this->methodName;
@@ -26,13 +34,5 @@ final class VariableMock implements \Stringable
     public function getMockClassName(): string
     {
         return $this->mockClassName;
-    }
-
-    /**
-     * To enable in array unique
-     */
-    public function __toString(): string
-    {
-        return $this->variableName;
     }
 }
