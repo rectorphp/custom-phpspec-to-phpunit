@@ -12,6 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -42,41 +43,68 @@ final class AddMockPropertiesRector extends AbstractRector
             return null;
         }
 
-        $classMocks = $this->phpSpecMockCollector->resolveClassMocksFromParam($node);
-
-        dump($classMocks);
-        die;
-
-        $className = $this->getName($node);
-        if (! is_string($className)) {
+        $serviceMocks = $this->phpSpecMockCollector->resolveVariableMocksFromClassMethodParams($node);
+        if ($serviceMocks === []) {
             return null;
         }
 
-        foreach ($classMocks as $name => $methods) {
-            if (count($methods) <= 1) {
-                continue;
-            }
-
+        $newProperties = [];
+        foreach ($serviceMocks as $variableMock) {
             // non-ctor used mocks are probably local only
-            if (! in_array('let', $methods, true)) {
+            if ($variableMock->getMethodName() !== 'let') {
                 continue;
             }
 
-            $this->phpSpecMockCollector->addPropertyMock($className, $name);
+            $mockObjectType = new ObjectType(MockObject::class);
 
-            $variableType = $this->phpSpecMockCollector->getTypeForClassAndVariable($node, $name);
-            $unionType = new UnionType([new ObjectType($variableType), new ObjectType(MockObject::class)]);
+            $unionType = new UnionType([new ObjectType($variableMock->getMockClassName()), $mockObjectType]);
 
-            // add property
-            $property = $this->nodeFactory->createPrivatePropertyFromNameAndType($name, $unionType);
-            $node->stmts = array_merge([$property], $node->stmts);
+            // add mock property
+            $property = $this->nodeFactory->createPrivatePropertyFromNameAndType(
+                $variableMock->getVariableName(),
+                $unionType
+            );
+
+            $newProperties[] = $property;
         }
 
-        return null;
+        if ($newProperties === []) {
+            return null;
+        }
+
+        $node->stmts = array_merge($newProperties, $node->stmts);
+
+        return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('wip', []);
+        return new RuleDefinition('Move public class method parameter mocks to properties mocks', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
+
+final class AddMockProperty extends ObjectBehavior
+{
+    public function let(SomeType $someType)
+    {
+    }
+}
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
+
+final class AddMockProperty extends ObjectBehavior
+{
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\AddMockPropertiesRector\Source\SomeType|\PHPUnit\Framework\MockObject\MockObject $someType;
+
+    public function let(SomeType $someType)
+    {
+    }
+}
+CODE_SAMPLE
+            ),
+        ]);
     }
 }

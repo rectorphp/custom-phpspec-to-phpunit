@@ -4,72 +4,44 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit;
 
-use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
+use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
 
 final class PhpSpecMockCollector
 {
-    /**
-     * @var mixed[]
-     */
-    private array $mocks = [];
-
-    /**
-     * @var mixed[]
-     */
-    private array $mocksWithsTypes = [];
-
     /**
      * @var array<string, mixed>
      */
     private array $propertyMocksByClass = [];
 
     public function __construct(
-        private readonly SimpleCallableNodeTraverser $simpleCallableNodeTraverser,
         private readonly NodeNameResolver $nodeNameResolver,
     ) {
     }
 
     /**
-     * @return array<string, string[]>
+     * @return VariableMock[]
      */
-    public function resolveClassMocksFromParam(Class_ $class): array
+    public function resolveVariableMocksFromClassMethodParams(Class_ $class): array
     {
-        //        $className = (string) $this->nodeNameResolver->getName($class);
-
         $variableMocks = [];
 
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($class, function (Node $node) use ($class) {
-            if (! $node instanceof ClassMethod) {
-                return null;
+        foreach ($class->getMethods() as $classMethod) {
+            if (! $classMethod->isPublic()) {
+                continue;
             }
 
-            if (! $node->isPublic()) {
-                return null;
+            foreach ($classMethod->params as $param) {
+                $variableMocks[] = $this->createVariableMock($classMethod, $param);
             }
-
-            foreach ($node->params as $param) {
-                $variableMocks[] = $this->addMockFromParam($class, $node, $param);
-            }
-
-            return null;
-        });
+        }
 
         return $variableMocks;
-
-        // set default value if none was found
-        //        if (! isset($this->mocks[$className])) {
-        //            $this->mocks[$className] = [];
-        //        }
-
-        //        return $this->mocks[$className];
     }
 
     public function isVariableMockInProperty(Class_ $class, Variable $variable): bool
@@ -80,36 +52,19 @@ final class PhpSpecMockCollector
         return in_array($variableName, $this->propertyMocksByClass[$className] ?? [], true);
     }
 
-    public function getTypeForClassAndVariable(Class_ $class, string $variable): string
+    private function createVariableMock(ClassMethod $classMethod, Param $param): VariableMock
     {
-        $className = (string) $this->nodeNameResolver->getName($class);
-
-        if (! isset($this->mocksWithsTypes[$className][$variable])) {
-            throw new ShouldNotHappenException();
-        }
-
-        return $this->mocksWithsTypes[$className][$variable];
-    }
-
-    public function addPropertyMock(string $class, string $property): void
-    {
-        $this->propertyMocksByClass[$class][] = $property;
-    }
-
-    private function addMockFromParam(Class_ $class, ClassMethod $classMethod, Param $param): void
-    {
+        /** @var string $variable */
         $variable = $this->nodeNameResolver->getName($param->var);
 
-        $className = (string) $this->nodeNameResolver->getName($class);
-
         $methodName = $this->nodeNameResolver->getName($classMethod);
-        $this->mocks[$className][$variable][] = $methodName;
 
-        if ($param->type === null) {
-            throw new ShouldNotHappenException();
+        if ($param->type instanceof Name) {
+            $mockClassName = $param->type->toString();
+        } else {
+            $mockClassName = null;
         }
 
-        $paramType = (string) ($param->type ?? $param->type->getAttribute(AttributeKey::ORIGINAL_NAME));
-        $this->mocksWithsTypes[$className][$variable] = $paramType;
+        return new VariableMock($methodName, $variable, $mockClassName);
     }
 }

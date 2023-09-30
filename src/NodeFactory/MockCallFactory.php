@@ -34,10 +34,11 @@ final class MockCallFactory
 
     /**
      * Variable or property fetch, based on number of present params in whole class
+     * @return Expression<Assign>|null
      */
     public function createCreateMockCall(Class_ $class, ClassMethod $classMethod, Param $param, Name $name): ?Expression
     {
-        $classMocks = $this->phpSpecMockCollector->resolveClassMocksFromParam($class);
+        $classMocks = $this->phpSpecMockCollector->resolveVariableMocksFromClassMethodParams($class);
         $variable = $this->nodeNameResolver->getName($param->var);
 
         $methodName = $classMethod->name->toString();
@@ -52,7 +53,7 @@ final class MockCallFactory
             return $this->createNewMockVariableAssign($param, $name);
         }
 
-        $reversedMethodsWithThisMock = array_flip($methodsWithWThisMock);
+        $reversedMethodsWithThisMock = array_flip($methodsWithThisMock);
 
         // first use of many: "$this->mock = $this->createMock()"
         if ($reversedMethodsWithThisMock[$methodName] === 0) {

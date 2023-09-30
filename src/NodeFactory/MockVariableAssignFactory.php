@@ -24,6 +24,9 @@ final class MockVariableAssignFactory
     ) {
     }
 
+    /**
+     * @return Expression<Assign>
+     */
     public function createPropertyFetchMockVariableAssign(Param $param, Name $name): Expression
     {
         $variable = $this->nodeNameResolver->getName($param->var);
