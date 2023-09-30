@@ -9,7 +9,7 @@ final class VariableMock
     public function __construct(
         private string $methodName,
         private string $variableName,
-        private ?string $mockClassName
+        private string $mockClassName
     ) {
     }
 
@@ -23,7 +23,7 @@ final class VariableMock
         return $this->variableName;
     }
 
-    public function getMockClassName(): ?string
+    public function getMockClassName(): string
     {
         return $this->mockClassName;
     }

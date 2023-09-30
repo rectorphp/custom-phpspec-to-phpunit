@@ -12,6 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
+use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -55,9 +56,7 @@ final class AddMockPropertiesRector extends AbstractRector
                 continue;
             }
 
-            $mockObjectType = new ObjectType(MockObject::class);
-
-            $unionType = new UnionType([new ObjectType($variableMock->getMockClassName()), $mockObjectType]);
+            $unionType = $this->createUnionType($variableMock);
 
             // add mock property
             $property = $this->nodeFactory->createPrivatePropertyFromNameAndType(
@@ -105,6 +104,16 @@ final class AddMockProperty extends ObjectBehavior
 }
 CODE_SAMPLE
             ),
+        ]);
+    }
+
+    private function createUnionType(VariableMock $variableMock): UnionType
+    {
+        $mockObjectType = new ObjectType(MockObject::class);
+        $variableObjectType = new ObjectType($variableMock->getMockClassName());
+
+        return new UnionType([
+            $variableObjectType, $mockObjectType
         ]);
     }
 }
