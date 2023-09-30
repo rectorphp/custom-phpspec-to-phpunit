@@ -5,20 +5,14 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\MethodCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Clone_;
-use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PhpSpecToPHPUnit\MatchersManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
@@ -83,15 +77,9 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
     private bool $isPrepared = false;
 
-    /**
-     * @var string[]
-     */
-    private array $matchersKeys = [];
-
     private ?PropertyFetch $testedObjectPropertyFetch = null;
 
     public function __construct(
-        private readonly MatchersManipulator $matchersManipulator,
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly AssertMethodCallFactory $assertMethodCallFactory,
         private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
@@ -119,7 +107,6 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
         }
 
         $this->isPrepared = false;
-        $this->matchersKeys = [];
 
         $class = $node;
 
@@ -162,8 +149,6 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
                     $this->getTestedObjectPropertyFetch()
                 );
             }
-
-            $nodesToReturn = $this->processMatchersKeys($node);
 
             $args = $node->args;
             foreach (self::NEW_METHOD_TO_OLD_METHODS as $newMethod => $oldMethods) {
@@ -237,7 +222,6 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             return;
         }
 
-        $this->matchersKeys = $this->matchersManipulator->resolveMatcherNamesFromClass($class);
         $this->testedClass = $this->phpSpecRenaming->resolveTestedClass($class);
         $this->testedObjectPropertyFetch = $this->createTestedObjectPropertyFetch($class);
 
@@ -260,42 +244,6 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
         }
 
         return $this->testedClass;
-    }
-
-    /**
-     * @changelog https://johannespichler.com/writing-custom-phpspec-matchers/
-     * @return Node\Stmt[]|null
-     */
-    private function processMatchersKeys(MethodCall $methodCall): ?array
-    {
-        foreach ($this->matchersKeys as $matcherKey) {
-            if (! $this->isName($methodCall->name, 'should' . ucfirst($matcherKey))) {
-                continue;
-            }
-
-            if (! $methodCall->var instanceof MethodCall) {
-                continue;
-            }
-
-            // 1. assign callable to variable
-            $thisGetMatchers = $this->nodeFactory->createMethodCall(self::THIS, 'getMatchers');
-            $arrayDimFetch = new ArrayDimFetch($thisGetMatchers, new String_($matcherKey));
-            $matcherCallableVariable = new Variable('matcherCallable');
-            $assign = new Assign($matcherCallableVariable, $arrayDimFetch);
-
-            // 2. call it on result
-            $funcCall = new FuncCall($matcherCallableVariable);
-            $funcCall->args = $methodCall->args;
-
-            $methodCall->name = $methodCall->var->name;
-            $methodCall->var = $this->getTestedObjectPropertyFetch();
-            $methodCall->args = [];
-            $funcCall->args[] = new Arg($methodCall);
-
-            return [new Node\Stmt\Expression($assign), new Node\Stmt\Expression($funcCall)];
-        }
-
-        return null;
     }
 
     private function shouldSkip(MethodCall $methodCall): bool
