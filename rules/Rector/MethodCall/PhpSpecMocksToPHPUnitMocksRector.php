@@ -30,10 +30,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
 {
     public function __construct(
-        private readonly PhpSpecMockCollector $phpSpecMockCollector,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly MockCallFactory $mockCallFactory,
-        private readonly MockVariableAssignFactory $mockVariableAssignFactory,
     ) {
     }
 
