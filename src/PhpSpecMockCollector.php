@@ -42,7 +42,7 @@ final class PhpSpecMockCollector
      */
     public function resolveClassMocksFromParam(Class_ $class): array
     {
-//        $className = (string) $this->nodeNameResolver->getName($class);
+        //        $className = (string) $this->nodeNameResolver->getName($class);
 
         $variableMocks = [];
 
@@ -65,11 +65,11 @@ final class PhpSpecMockCollector
         return $variableMocks;
 
         // set default value if none was found
-//        if (! isset($this->mocks[$className])) {
-//            $this->mocks[$className] = [];
-//        }
+        //        if (! isset($this->mocks[$className])) {
+        //            $this->mocks[$className] = [];
+        //        }
 
-//        return $this->mocks[$className];
+        //        return $this->mocks[$className];
     }
 
     public function isVariableMockInProperty(Class_ $class, Variable $variable): bool
