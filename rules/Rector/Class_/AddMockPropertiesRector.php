@@ -15,7 +15,7 @@ use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\AddMockPropertiesRector\AddMockPropertiesRectorTest
  */
 final class AddMockPropertiesRector extends AbstractRector
 {
@@ -44,13 +44,16 @@ final class AddMockPropertiesRector extends AbstractRector
 
         $classMocks = $this->phpSpecMockCollector->resolveClassMocksFromParam($node);
 
+        dump($classMocks);
+        die;
+
         $className = $this->getName($node);
         if (! is_string($className)) {
             return null;
         }
 
         foreach ($classMocks as $name => $methods) {
-            if ((is_countable($methods) ? count($methods) : 0) <= 1) {
+            if (count($methods) <= 1) {
                 continue;
             }
 

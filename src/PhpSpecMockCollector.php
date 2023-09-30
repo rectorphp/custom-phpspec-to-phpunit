@@ -38,15 +38,13 @@ final class PhpSpecMockCollector
     }
 
     /**
-     * @return mixed[]
+     * @return array<string, string[]>
      */
     public function resolveClassMocksFromParam(Class_ $class): array
     {
-        $className = (string) $this->nodeNameResolver->getName($class);
+//        $className = (string) $this->nodeNameResolver->getName($class);
 
-        if (isset($this->mocks[$className]) && $this->mocks[$className] !== []) {
-            return $this->mocks[$className];
-        }
+        $variableMocks = [];
 
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable($class, function (Node $node) use ($class) {
             if (! $node instanceof ClassMethod) {
@@ -58,18 +56,20 @@ final class PhpSpecMockCollector
             }
 
             foreach ($node->params as $param) {
-                $this->addMockFromParam($class, $node, $param);
+                $variableMocks[] = $this->addMockFromParam($class, $node, $param);
             }
 
             return null;
         });
 
-        // set default value if none was found
-        if (! isset($this->mocks[$className])) {
-            $this->mocks[$className] = [];
-        }
+        return $variableMocks;
 
-        return $this->mocks[$className];
+        // set default value if none was found
+//        if (! isset($this->mocks[$className])) {
+//            $this->mocks[$className] = [];
+//        }
+
+//        return $this->mocks[$className];
     }
 
     public function isVariableMockInProperty(Class_ $class, Variable $variable): bool

@@ -10,7 +10,6 @@ use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
-use Rector\PhpSpecToPHPUnit\PHPUnitTypeDeclarationDecorator;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -20,7 +19,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class SetUpTearDownClassMethodRector extends AbstractRector
 {
     public function __construct(
-        private readonly PHPUnitTypeDeclarationDecorator $phpUnitTypeDeclarationDecorator,
         private readonly VisibilityManipulator $visibilityManipulator,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
@@ -45,17 +43,16 @@ final class SetUpTearDownClassMethodRector extends AbstractRector
 
         if ($this->isName($node->name, 'letGo')) {
             $node->name = new Identifier('tearDown');
+            $node->returnType = new Identifier('void');
             $this->visibilityManipulator->makeProtected($node);
-
-            $this->phpUnitTypeDeclarationDecorator->decorate($node);
 
             return $node;
         }
 
         if ($this->isName($node->name, 'let')) {
             $node->name = new Identifier(MethodName::SET_UP);
+            $node->returnType = new Identifier('void');
             $this->visibilityManipulator->makeProtected($node);
-            $this->phpUnitTypeDeclarationDecorator->decorate($node);
 
             return $node;
         }
