@@ -67,9 +67,7 @@ final class SetUpTearDownClassMethodRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Change let() and letGo() methods to setUp() and tearDown()', [
-
-        ]);
+        return new RuleDefinition('Change let() and letGo() methods to setUp() and tearDown()', []);
     }
 
     private function renameToSetUpClassMethod(ClassMethod $classMethod): ClassMethod
