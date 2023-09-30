@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
+namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Identifier;

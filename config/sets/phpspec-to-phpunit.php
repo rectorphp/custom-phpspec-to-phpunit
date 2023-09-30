@@ -8,15 +8,16 @@ use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecClassToPHPUnitClassRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\TestClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\PhpSpecMocksToPHPUnitMocksRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\PhpSpecPromisesToPHPUnitAssertRector;
+use Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector;
 use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
 
-// * @changelog https://gnugat.github.io/2015/09/23/phpunit-with-phpspec.html
-// * @changelog http://www.phpspec.net/en/stable/cookbook/construction.html
-
-// see: https://gnugat.github.io/2015/09/23/phpunit-with-phpspec.html
+/**
+ * @see https://gnugat.github.io/2015/09/23/phpunit-with-phpspec.html
+ * @see http://www.phpspec.net/en/stable/cookbook/construction.html
+ */
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
-        \Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector::class,
+        RenameSpecNamespacePrefixToTestRector::class,
 
         // 1. first convert mocks
         PhpSpecMocksToPHPUnitMocksRector::class,
