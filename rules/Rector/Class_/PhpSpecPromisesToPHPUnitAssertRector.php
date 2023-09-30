@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\PhpSpecToPHPUnit\Rector\MethodCall;
+namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Clone_;
@@ -13,6 +13,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Class_;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\Enum\ProphecyPromisesToPHPUnitAssertMap;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
@@ -21,58 +22,10 @@ use Rector\PhpSpecToPHPUnit\NodeFactory\DuringMethodCallFactory;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PhpSpecPromisesToPHPUnitAssertRector\PhpSpecPromisesToPHPUnitAssertRectorTest
  */
 final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 {
-    /**
-     * @changelog https://github.com/phpspec/phpspec/blob/master/src/PhpSpec/Wrapper/Subject.php
-     * ↓
-     * @changelog https://phpunit.readthedocs.io/en/8.0/assertions.html
-     * @var array<string, string[]>
-     */
-    private const NEW_METHOD_TO_OLD_METHODS = [
-        'assertInstanceOf' => ['shouldBeAnInstanceOf', 'shouldHaveType', 'shouldReturnAnInstanceOf'],
-        'assertSame' => ['shouldBe', 'shouldReturn'],
-        'assertNotSame' => ['shouldNotBe', 'shouldNotReturn'],
-        'assertCount' => ['shouldHaveCount'],
-        'assertEquals' => ['shouldBeEqualTo', 'shouldEqual'],
-        'assertNotEquals' => ['shouldNotBeEqualTo'],
-        'assertContains' => ['shouldContain'],
-        'assertNotContains' => ['shouldNotContain'],
-        // types
-        'assertIsIterable' => ['shouldBeArray'],
-        'assertIsNotIterable' => ['shouldNotBeArray'],
-        'assertIsString' => ['shouldBeString'],
-        'assertIsNotString' => ['shouldNotBeString'],
-        'assertIsBool' => ['shouldBeBool', 'shouldBeBoolean'],
-        'assertIsNotBool' => ['shouldNotBeBool', 'shouldNotBeBoolean'],
-        'assertIsCallable' => ['shouldBeCallable'],
-        'assertIsNotCallable' => ['shouldNotBeCallable'],
-        'assertIsFloat' => ['shouldBeDouble', 'shouldBeFloat'],
-        'assertIsNotFloat' => ['shouldNotBeDouble', 'shouldNotBeFloat'],
-        'assertIsInt' => ['shouldBeInt', 'shouldBeInteger'],
-        'assertIsNotInt' => ['shouldNotBeInt', 'shouldNotBeInteger'],
-        'assertIsNull' => ['shouldBeNull'],
-        'assertIsNotNull' => ['shouldNotBeNull'],
-        'assertIsNumeric' => ['shouldBeNumeric'],
-        'assertIsNotNumeric' => ['shouldNotBeNumeric'],
-        'assertIsObject' => ['shouldBeObject'],
-        'assertIsNotObject' => ['shouldNotBeObject'],
-        'assertIsResource' => ['shouldBeResource'],
-        'assertIsNotResource' => ['shouldNotBeResource'],
-        'assertIsScalar' => ['shouldBeScalar'],
-        'assertIsNotScalar' => ['shouldNotBeScalar'],
-        'assertNan' => ['shouldBeNan'],
-        'assertFinite' => ['shouldBeFinite', 'shouldNotBeFinite'],
-        'assertInfinite' => ['shouldBeInfinite', 'shouldNotBeInfinite'],
-    ];
-
-    /**
-     * @var string
-     */
-    private const THIS = 'this';
-
     private ?string $testedClass = null;
 
     private bool $isPrepared = false;
@@ -151,13 +104,13 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             }
 
             $args = $node->args;
-            foreach (self::NEW_METHOD_TO_OLD_METHODS as $newMethod => $oldMethods) {
-                if (! $this->isNames($node->name, $oldMethods)) {
+            foreach (ProphecyPromisesToPHPUnitAssertMap::PROMISES_BY_ASSERT_METHOD as $assertMethod => $pomiseMethods) {
+                if (! $this->isNames($node->name, $pomiseMethods)) {
                     continue;
                 }
 
                 return $this->assertMethodCallFactory->createAssertMethod(
-                    $newMethod,
+                    $assertMethod,
                     $node->var,
                     $args[0]->value ?? null,
                     $this->getTestedObjectPropertyFetch()
@@ -252,7 +205,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             return true;
         }
 
-        if (! $this->nodeNameResolver->isName($methodCall->var, self::THIS)) {
+        if (! $this->nodeNameResolver->isName($methodCall->var, 'this')) {
             return true;
         }
 
@@ -263,6 +216,6 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
     private function createTestedObjectPropertyFetch(Class_ $class): PropertyFetch
     {
         $propertyName = $this->phpSpecRenaming->resolveObjectPropertyName($class);
-        return new PropertyFetch(new Variable(self::THIS), $propertyName);
+        return new PropertyFetch(new Variable('this'), $propertyName);
     }
 }
