@@ -112,8 +112,6 @@ CODE_SAMPLE
         $mockObjectType = new ObjectType(MockObject::class);
         $variableObjectType = new ObjectType($variableMock->getMockClassName());
 
-        return new UnionType([
-            $variableObjectType, $mockObjectType
-        ]);
+        return new UnionType([$variableObjectType, $mockObjectType]);
     }
 }
