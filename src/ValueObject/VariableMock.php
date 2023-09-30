@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\ValueObject;
 
-final class VariableMock
+final class VariableMock implements \Stringable
 {
     public function __construct(
         private string $methodName,
@@ -26,5 +26,13 @@ final class VariableMock
     public function getMockClassName(): string
     {
         return $this->mockClassName;
+    }
+
+    /**
+     * To enable in array unique
+     */
+    public function __toString(): string
+    {
+        return $this->variableName;
     }
 }

@@ -9,6 +9,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
 
@@ -41,7 +42,7 @@ final class PhpSpecMockCollector
             }
         }
 
-        return $variableMocks;
+        return array_unique($variableMocks);
     }
 
     public function isVariableMockInProperty(Class_ $class, Variable $variable): bool
@@ -59,12 +60,12 @@ final class PhpSpecMockCollector
 
         $methodName = $this->nodeNameResolver->getName($classMethod);
 
-        if ($param->type instanceof Name) {
-            $mockClassName = $param->type->toString();
-        } else {
-            $mockClassName = null;
+        // this should be always typed
+        if (! $param->type instanceof Name) {
+            throw new ShouldNotHappenException('Param type must be always typed');
         }
 
+        $mockClassName = $param->type->toString();
         return new VariableMock($methodName, $variable, $mockClassName);
     }
 }

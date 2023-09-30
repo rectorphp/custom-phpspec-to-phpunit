@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\AddMockPropertiesRector;
+namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\MoveParameterMockToPropertyMockRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class AddMockPropertiesRectorTest extends AbstractRectorTestCase
+final class MoveParameterMockToPropertyMockRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('provideData')]
     public function test(string $filePath): void

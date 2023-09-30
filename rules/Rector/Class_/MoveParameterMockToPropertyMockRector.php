@@ -17,9 +17,9 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\AddMockPropertiesRector\AddMockPropertiesRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\MoveParameterMockToPropertyMockRector\MoveParameterMockToPropertyMockRectorTest
  */
-final class AddMockPropertiesRector extends AbstractRector
+final class MoveParameterMockToPropertyMockRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
@@ -44,6 +44,7 @@ final class AddMockPropertiesRector extends AbstractRector
             return null;
         }
 
+
         $serviceMocks = $this->phpSpecMockCollector->resolveVariableMocksFromClassMethodParams($node);
         if ($serviceMocks === []) {
             return null;
@@ -51,11 +52,6 @@ final class AddMockPropertiesRector extends AbstractRector
 
         $newProperties = [];
         foreach ($serviceMocks as $variableMock) {
-            // non-ctor used mocks are probably local only
-            if ($variableMock->getMethodName() !== 'let') {
-                continue;
-            }
-
             $unionType = $this->createUnionType($variableMock);
 
             // add mock property
@@ -69,6 +65,15 @@ final class AddMockPropertiesRector extends AbstractRector
 
         if ($newProperties === []) {
             return null;
+        }
+
+        // cleanup mock parameters
+        foreach ($node->getMethods() as $classMethod) {
+            if (! $classMethod->isPublic() || $classMethod->name->toString() === 'let') {
+                continue;
+            }
+
+            $classMethod->params = [];
         }
 
         $node->stmts = array_merge($newProperties, $node->stmts);
