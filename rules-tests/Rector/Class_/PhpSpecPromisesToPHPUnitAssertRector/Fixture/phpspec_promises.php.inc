@@ -6,6 +6,10 @@ use PhpSpec\ObjectBehavior;
 
 final class PhpSpecPromises extends ObjectBehavior
 {
+    public function it_returns_id()
+    {
+        $this->id()->shouldReturn(5);
+    }
 }
 
 ?>
@@ -18,6 +22,10 @@ use PhpSpec\ObjectBehavior;
 
 final class PhpSpecPromises extends ObjectBehavior
 {
+    public function it_returns_id()
+    {
+        $this->assertSame(5, $this->phpSpecPromises->id());
+    }
 }
 
 ?>
