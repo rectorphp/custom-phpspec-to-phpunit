@@ -27,7 +27,10 @@ use Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\MoveParameterMockToPropertyMockR
 
 final class KeepPropertyOnce extends ObjectBehavior
 {
-    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\MoveParameterMockToPropertyMockRector\Source\SomeType|\PHPUnit\Framework\MockObject\MockObject $someType;
+    /**
+     * @var \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\MoveParameterMockToPropertyMockRector\Source\SomeType|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private \PHPUnit\Framework\MockObject\MockObject $someType;
     public function it_should_have_value()
     {
     }

@@ -7,12 +7,11 @@ namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\UnionType;
 use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\DocFactory;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
-use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -50,25 +49,23 @@ final class MoveParameterMockToPropertyMockRector extends AbstractRector
         }
 
         $newProperties = [];
-        foreach ($serviceMocks as $variableMock) {
-            $unionType = $this->createUnionType($variableMock);
 
-            // add mock property
+        foreach ($serviceMocks as $variableMock) {
             $property = $this->nodeFactory->createPrivatePropertyFromNameAndType(
                 $variableMock->getVariableName(),
-                $unionType
+                new ObjectType(MockObject::class)
             );
+
+            // add docblock to help the IDE
+            $propertyDoc = DocFactory::createForProperty($variableMock);
+            $property->setDocComment($propertyDoc);
 
             $newProperties[] = $property;
         }
 
-        if ($newProperties === []) {
-            return null;
-        }
-
         // cleanup mock parameters
         foreach ($node->getMethods() as $classMethod) {
-            if (! $classMethod->isPublic() || $classMethod->name->toString() === 'let') {
+            if (! $classMethod->isPublic()) {
                 continue;
             }
 
@@ -109,13 +106,5 @@ final class AddMockProperty extends ObjectBehavior
 CODE_SAMPLE
             ),
         ]);
-    }
-
-    private function createUnionType(VariableMock $variableMock): UnionType
-    {
-        $mockObjectType = new ObjectType(MockObject::class);
-        $variableObjectType = new ObjectType($variableMock->getMockClassName());
-
-        return new UnionType([$variableObjectType, $mockObjectType]);
     }
 }

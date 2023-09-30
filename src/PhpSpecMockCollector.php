@@ -38,7 +38,7 @@ final class PhpSpecMockCollector
             }
 
             foreach ($classMethod->params as $param) {
-                $variableMocks[] = $this->createVariableMock($classMethod, $param);
+                $variableMocks[] = $this->createVariableMock($param);
             }
         }
 
@@ -53,12 +53,10 @@ final class PhpSpecMockCollector
         return in_array($variableName, $this->propertyMocksByClass[$className] ?? [], true);
     }
 
-    private function createVariableMock(ClassMethod $classMethod, Param $param): VariableMock
+    private function createVariableMock(Param $param): VariableMock
     {
         /** @var string $variable */
         $variable = $this->nodeNameResolver->getName($param->var);
-
-        $methodName = $this->nodeNameResolver->getName($classMethod);
 
         // this should be always typed
         if (! $param->type instanceof Name) {
@@ -66,6 +64,7 @@ final class PhpSpecMockCollector
         }
 
         $mockClassName = $param->type->toString();
-        return new VariableMock($methodName, $variable, $mockClassName);
+
+        return new VariableMock($variable, $mockClassName);
     }
 }

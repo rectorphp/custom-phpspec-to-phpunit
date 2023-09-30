@@ -27,8 +27,11 @@ use Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\MoveParameterMockToPropertyMockR
 
 final class AddMockProperty extends ObjectBehavior
 {
-    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\MoveParameterMockToPropertyMockRector\Source\SomeType|\PHPUnit\Framework\MockObject\MockObject $someType;
-    public function let(SomeType $someType)
+    /**
+     * @var \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\MoveParameterMockToPropertyMockRector\Source\SomeType|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private \PHPUnit\Framework\MockObject\MockObject $someType;
+    public function let()
     {
     }
 

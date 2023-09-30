@@ -7,7 +7,6 @@ namespace Rector\PhpSpecToPHPUnit\ValueObject;
 final class VariableMock implements \Stringable
 {
     public function __construct(
-        private string $methodName,
         private string $variableName,
         private string $mockClassName
     ) {
@@ -19,11 +18,6 @@ final class VariableMock implements \Stringable
     public function __toString(): string
     {
         return $this->variableName;
-    }
-
-    public function getMethodName(): string
-    {
-        return $this->methodName;
     }
 
     public function getVariableName(): string
