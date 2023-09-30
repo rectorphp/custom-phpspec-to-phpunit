@@ -6,6 +6,7 @@ namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
@@ -14,7 +15,7 @@ use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\SetUpTearDownClassMethodRector\SetUpTearDownClassMethodRectorTest
  */
 final class SetUpTearDownClassMethodRector extends AbstractRector
 {
@@ -29,11 +30,11 @@ final class SetUpTearDownClassMethodRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [ClassMethod::class];
+        return [Class_::class];
     }
 
     /**
-     * @param ClassMethod $node
+     * @param Class_ $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -41,27 +42,51 @@ final class SetUpTearDownClassMethodRector extends AbstractRector
             return null;
         }
 
-        if ($this->isName($node->name, 'letGo')) {
-            $node->name = new Identifier('tearDown');
-            $node->returnType = new Identifier('void');
-            $this->visibilityManipulator->makeProtected($node);
+        $hasChanged = false;
 
-            return $node;
+        $letClassMethod = $node->getMethod('let');
+        if ($letClassMethod instanceof ClassMethod) {
+            $this->renameToSetUpClassMethod($letClassMethod);
+
+            $hasChanged = true;
         }
 
-        if ($this->isName($node->name, 'let')) {
-            $node->name = new Identifier(MethodName::SET_UP);
-            $node->returnType = new Identifier('void');
-            $this->visibilityManipulator->makeProtected($node);
+        $letGoClassMethod = $node->getMethod('letGo');
+        if ($letGoClassMethod instanceof ClassMethod) {
+            $this->renameLetGoToTearDown($letGoClassMethod);
 
-            return $node;
+            $hasChanged = true;
         }
 
-        return null;
+        if (! $hasChanged) {
+            return null;
+        }
+
+        return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('wip', []);
+        return new RuleDefinition('Change let() and letGo() methods to setUp() and tearDown()', [
+
+        ]);
+    }
+
+    private function renameToSetUpClassMethod(ClassMethod $classMethod): ClassMethod
+    {
+        $classMethod->name = new Identifier(MethodName::SET_UP);
+        $classMethod->returnType = new Identifier('void');
+        $this->visibilityManipulator->makeProtected($classMethod);
+
+        return $classMethod;
+    }
+
+    private function renameLetGoToTearDown(ClassMethod $classMethod): ClassMethod
+    {
+        $classMethod->name = new Identifier('tearDown');
+        $classMethod->returnType = new Identifier('void');
+        $this->visibilityManipulator->makeProtected($classMethod);
+
+        return $classMethod;
     }
 }
