@@ -12,6 +12,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -67,7 +68,39 @@ final class SetUpTearDownClassMethodRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Change let() and letGo() methods to setUp() and tearDown()', []);
+        return new RuleDefinition('Change let() and letGo() methods to setUp() and tearDown()', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
+
+final class LetGoLetMethods extends ObjectBehavior
+{
+    public function let()
+    {
+    }
+
+    public function letGo()
+    {
+    }
+}
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
+
+final class LetGoLetMethods extends ObjectBehavior
+{
+    protected function setUp(): void
+    {
+    }
+
+    protected function tearDown(): void
+    {
+    }
+}
+CODE_SAMPLE
+            ),
+        ]);
     }
 
     private function renameToSetUpClassMethod(ClassMethod $classMethod): ClassMethod
