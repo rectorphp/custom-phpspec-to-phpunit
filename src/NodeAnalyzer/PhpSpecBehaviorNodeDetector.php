@@ -13,6 +13,11 @@ final class PhpSpecBehaviorNodeDetector
 {
     public function isInPhpSpecBehavior(Node $node): bool
     {
+        if ($node instanceof Node\Stmt\Class_ && $node->extends instanceof Node\Name) {
+            // class type is safer, as scope is not always refreshed
+            return $node->extends->toString() === 'PhpSpec\ObjectBehavior';
+        }
+
         $scope = $node->getAttribute(AttributeKey::SCOPE);
         if (! $scope instanceof Scope) {
             return false;

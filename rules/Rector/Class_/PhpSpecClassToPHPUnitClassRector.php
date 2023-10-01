@@ -20,6 +20,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\LetManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
@@ -40,6 +41,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly SetUpMethodFactory $setUpMethodFactory,
         private readonly StaticTypeMapper $staticTypeMapper,
+        private readonly ValueResolver $valueResolver,
     ) {
     }
 
