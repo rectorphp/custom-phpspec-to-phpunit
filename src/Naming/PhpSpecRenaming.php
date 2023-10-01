@@ -8,7 +8,6 @@ use PhpParser\Node\Stmt\Class_;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpSpecToPHPUnit\StringUtils;
-use Webmozart\Assert\Assert;
 
 final class PhpSpecRenaming
 {
