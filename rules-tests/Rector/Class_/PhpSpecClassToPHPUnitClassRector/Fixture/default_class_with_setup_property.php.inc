@@ -4,7 +4,7 @@ namespace spec\Rector\PhpSpecToPHPUnit;
 
 use PhpSpec\ObjectBehavior;
 
-class TestClassMethod extends ObjectBehavior
+class DefaultClassWithSetupProperty extends ObjectBehavior
 {
     public function let()
     {
@@ -20,11 +20,12 @@ namespace spec\Rector\PhpSpecToPHPUnit;
 
 use PhpSpec\ObjectBehavior;
 
-class TestClassMethod extends ObjectBehavior
+class DefaultClassWithSetupPropertyTest extends \PHPUnit\Framework\TestCase
 {
+    private \Rector\PhpSpecToPHPUnit\DefaultClassWithSetupProperty $defaultClassWithSetupProperty;
     public function let()
     {
-        $this->testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
+        $this->beConstructedWith(5);
     }
 }
 

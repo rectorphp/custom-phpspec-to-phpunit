@@ -25,6 +25,7 @@ use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\SetUpMethodFactory;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
+use Rector\StaticTypeMapper\StaticTypeMapper;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -37,6 +38,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly SetUpMethodFactory $setUpMethodFactory,
+        private readonly StaticTypeMapper $staticTypeMapper,
     ) {
     }
 
