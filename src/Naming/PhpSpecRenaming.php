@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpSpecToPHPUnit\StringUtils;
+use Webmozart\Assert\Assert;
 
 final class PhpSpecRenaming
 {
@@ -31,10 +32,10 @@ final class PhpSpecRenaming
 
     public function resolvePHPUnitTestMethodName(string $methodName): string
     {
-        $unperfixedMethodName = $this->removeNamePrefixes($methodName);
+        $unPrefixedMethodName = $this->removeNamePrefixes($methodName);
 
         // from PhpSpec to PHPUnit method naming convention
-        $camelCaseMethodName = StringUtils::underscoreAndHyphenToCamelCase($unperfixedMethodName);
+        $camelCaseMethodName = StringUtils::underscoreAndHyphenToCamelCase($unPrefixedMethodName);
 
         // add "test", so PHPUnit runs the method
         if (! \str_starts_with($camelCaseMethodName, 'test')) {
@@ -44,19 +45,10 @@ final class PhpSpecRenaming
         return $camelCaseMethodName;
     }
 
-    public function renameExtends(Class_ $class): void
-    {
-        $class->extends = new FullyQualified(TestCase::class);
-    }
-
-    public function renameClass(Class_ $class): void
+    public function resolvePHPUnitTestClassName(Class_ $class): void
     {
         $classShortName = $this->nodeNameResolver->getShortName($class);
-
-        // anonymous class?
-        if ($classShortName === '') {
-            throw new ShouldNotHappenException();
-        }
+        Assert::string($classShortName);
 
         // 2. change class name
         $newClassName = StringUtils::removeSuffixes($classShortName, [self::SPEC]);
@@ -78,7 +70,7 @@ final class PhpSpecRenaming
         return lcfirst($bareClassName);
     }
 
-    public function resolveTestedClass(Class_ $class): string
+    public function resolveTestedClassName(Class_ $class): string
     {
         $className = (string) $this->nodeNameResolver->getName($class);
 

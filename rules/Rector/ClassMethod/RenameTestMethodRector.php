@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
@@ -58,8 +59,7 @@ final class RenameTestMethodRector extends AbstractRector
 
         // change name to phpunit test case format
         $phpUnitTestMethodName = $this->phpSpecRenaming->resolvePHPUnitTestMethodName($methodName);
-
-        $node->name = new Node\Identifier($phpUnitTestMethodName);
+        $node->name = new Identifier($phpUnitTestMethodName);
 
         // @todo decouple
         //        // reorder instantiation + expected exception

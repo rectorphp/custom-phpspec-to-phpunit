@@ -72,6 +72,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
                 return null;
             }
 
+            // unwrap getWrappedObject()
             if ($this->isName($node->name, 'getWrappedObject')) {
                 return $node->var;
             }
@@ -206,7 +207,7 @@ CODE_SAMPLE
             return;
         }
 
-        $this->testedClass = $this->phpSpecRenaming->resolveTestedClass($class);
+        $this->testedClass = $this->phpSpecRenaming->resolveTestedClassName($class);
         $this->testedObjectPropertyFetch = $this->createTestedObjectPropertyFetch($class);
 
         $this->isPrepared = true;

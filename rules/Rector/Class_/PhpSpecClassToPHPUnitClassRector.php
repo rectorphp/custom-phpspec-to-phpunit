@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -59,11 +60,10 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         $propertyName = $this->phpSpecRenaming->resolveObjectPropertyName($node);
 
         // @todo here move? :)
-        $this->phpSpecRenaming->renameClass($node);
-        $this->phpSpecRenaming->renameExtends($node);
+        $this->phpSpecRenaming->resolvePHPUnitTestClassName($node);
+        $node->extends = new FullyQualified('PHPUnit\Framework\TestCase');
 
-        $testedClass = $this->phpSpecRenaming->resolveTestedClass($node);
-
+        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);
         $testedObjectType = new ObjectType($testedClass);
 
         // add property
