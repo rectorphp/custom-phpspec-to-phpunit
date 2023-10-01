@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Naming;
 
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Class_;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
