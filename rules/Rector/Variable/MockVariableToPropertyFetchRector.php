@@ -11,14 +11,11 @@ use PhpParser\Node\Stmt\Class_;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * $mock->call()
- * ↓
- * $this->mock->call()
- *
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\MockVariableToPropertyFetchRector\MockVariableToPropertyFetchRectorTest
  */
 final class MockVariableToPropertyFetchRector extends AbstractRector
 {
@@ -74,6 +71,19 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('wip', []);
+        return new RuleDefinition('Change local mock call to a property fetch mock call', [
+new CodeSample(
+<<<'CODE_SAMPLE'
+
+ * $mock->call()
+ * ↓
+ * $this->mock->call()
+CODE_SAMPLE
+,
+<<<'CODE_SAMPLE'
+
+CODE_SAMPLE
+)
+        ]);
     }
 }
