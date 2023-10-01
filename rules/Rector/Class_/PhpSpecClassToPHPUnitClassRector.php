@@ -61,8 +61,8 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
         $propertyName = $this->phpSpecRenaming->resolveObjectPropertyName($node);
 
-        // @todo here move? :)
-        $this->phpSpecRenaming->resolvePHPUnitTestClassName($node);
+        $phpunitTestClassName = $this->phpSpecRenaming->resolvePHPUnitTestClassName($node);
+        $node->name = new Name($phpunitTestClassName);
         $node->extends = new FullyQualified('PHPUnit\Framework\TestCase');
 
         $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);

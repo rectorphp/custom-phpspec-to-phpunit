@@ -43,16 +43,14 @@ final class PhpSpecRenaming
         return $camelCaseMethodName;
     }
 
-    public function resolvePHPUnitTestClassName(Class_ $class): void
+    public function resolvePHPUnitTestClassName(Class_ $class): string
     {
         $classShortName = $this->nodeNameResolver->getShortName($class);
         Assert::string($classShortName);
 
         // 2. change class name
         $newClassName = StringUtils::removeSuffixes($classShortName, [self::SPEC]);
-        $newTestClassName = $newClassName . 'Test';
-
-        $class->name = new Identifier($newTestClassName);
+        return $newClassName . 'Test';
     }
 
     public function resolveObjectPropertyName(Class_ $class): string
