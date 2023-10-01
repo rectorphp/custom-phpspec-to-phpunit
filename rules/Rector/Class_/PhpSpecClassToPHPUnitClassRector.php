@@ -61,7 +61,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         }
 
         // skip already renamed
-        $className =  $this->getName($node);
+        $className = $this->getName($node);
         if (str_ends_with($className, 'Test')) {
             return null;
         }
