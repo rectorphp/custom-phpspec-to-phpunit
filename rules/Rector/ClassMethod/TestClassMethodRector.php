@@ -63,25 +63,25 @@ final class TestClassMethodRector extends AbstractRector
         $this->phpSpecRenaming->renameMethod($node);
 
         // @todo decouple
-//        // reorder instantiation + expected exception
-//        foreach ((array) $node->stmts as $key => $stmt) {
-//            $previousStmt = $node->stmts[$key - 1] ?? null;
-//
-//            // has duringInstantiation() method?
-//
-//            if (! $this->hasMethodCall($stmt, 'duringInstantiation')) {
-//                continue;
-//            }
-//
-//            if (! $previousStmt instanceof Stmt) {
-//                continue;
-//            }
-//
-//            if ($this->hasMethodCall($previousStmt, 'beConstructedThrough')) {
-//                $node->stmts[$key - 1] = $stmt;
-//                $node->stmts[$key] = $previousStmt;
-//            }
-//        }
+        //        // reorder instantiation + expected exception
+        //        foreach ((array) $node->stmts as $key => $stmt) {
+        //            $previousStmt = $node->stmts[$key - 1] ?? null;
+        //
+        //            // has duringInstantiation() method?
+        //
+        //            if (! $this->hasMethodCall($stmt, 'duringInstantiation')) {
+        //                continue;
+        //            }
+        //
+        //            if (! $previousStmt instanceof Stmt) {
+        //                continue;
+        //            }
+        //
+        //            if ($this->hasMethodCall($previousStmt, 'beConstructedThrough')) {
+        //                $node->stmts[$key - 1] = $stmt;
+        //                $node->stmts[$key] = $previousStmt;
+        //            }
+        //        }
 
         return $node;
     }
