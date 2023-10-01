@@ -5,24 +5,21 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\TestClassMethodRector\TestClassMethodRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\RenameTestMethodRector\RenameTestMethodRectorTest
  */
-final class TestClassMethodRector extends AbstractRector
+final class RenameTestMethodRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-        private readonly BetterNodeFinder $betterNodeFinder,
     ) {
     }
 
@@ -60,7 +57,9 @@ final class TestClassMethodRector extends AbstractRector
         }
 
         // change name to phpunit test case format
-        $this->phpSpecRenaming->renameMethod($node);
+        $phpUnitTestMethodName = $this->phpSpecRenaming->resolvePHPUnitTestMethodName($methodName);
+
+        $node->name = new Node\Identifier($phpUnitTestMethodName);
 
         // @todo decouple
         //        // reorder instantiation + expected exception
@@ -88,17 +87,42 @@ final class TestClassMethodRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('wip', []);
-    }
+        return new RuleDefinition('Rename test method from underscore PhpSpec syntax to test* PHPUnit syntax', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
 
-    private function hasMethodCall(Stmt $stmt, string $methodName): bool
+class RenameMethodTest extends ObjectBehavior
+{
+    public function is_shoud_be_valid()
     {
-        return (bool) $this->betterNodeFinder->findFirst($stmt, function (Node $node) use ($methodName): bool {
-            if (! $node instanceof MethodCall) {
-                return false;
-            }
-
-            return $this->isName($node->name, $methodName);
-        });
     }
+}
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
+
+class RenameMethodTest extends ObjectBehavior
+{
+    public function testShoudBeValid()
+    {
+    }
+}
+CODE_SAMPLE
+            ),
+
+        ]);
+    }
+
+    //    private function hasMethodCall(Stmt $stmt, string $methodName): bool
+    //    {
+    //        return (bool) $this->betterNodeFinder->findFirst($stmt, function (Node $node) use ($methodName): bool {
+    //            if (! $node instanceof MethodCall) {
+    //                return false;
+    //            }
+    //
+    //            return $this->isName($node->name, $methodName);
+    //        });
+    //    }
 }

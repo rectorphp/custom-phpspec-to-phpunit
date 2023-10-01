@@ -7,7 +7,6 @@ namespace Rector\PhpSpecToPHPUnit\Naming;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
 use PHPUnit\Framework\TestCase;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -30,10 +29,9 @@ final class PhpSpecRenaming
     ) {
     }
 
-    public function renameMethod(ClassMethod $classMethod): void
+    public function resolvePHPUnitTestMethodName(string $methodName): string
     {
-        $classMethodName = $this->nodeNameResolver->getName($classMethod);
-        $unperfixedMethodName = $this->removeNamePrefixes($classMethodName);
+        $unperfixedMethodName = $this->removeNamePrefixes($methodName);
 
         // from PhpSpec to PHPUnit method naming convention
         $camelCaseMethodName = StringUtils::underscoreAndHyphenToCamelCase($unperfixedMethodName);
@@ -43,7 +41,7 @@ final class PhpSpecRenaming
             $camelCaseMethodName = 'test' . ucfirst($camelCaseMethodName);
         }
 
-        $classMethod->name = new Identifier($camelCaseMethodName);
+        return $camelCaseMethodName;
     }
 
     public function renameExtends(Class_ $class): void

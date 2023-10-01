@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\TestClassMethodRector;
+namespace Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\RenameTestMethodRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class TestClassMethodRectorTest extends AbstractRectorTestCase
+final class RenameTestMethodRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('provideData')]
     public function test(string $filePath): void
