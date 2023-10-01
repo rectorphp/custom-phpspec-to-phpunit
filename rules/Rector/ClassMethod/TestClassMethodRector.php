@@ -52,38 +52,38 @@ final class TestClassMethodRector extends AbstractRector
             return null;
         }
 
-        // @todo move here
+        $methodName = $this->getName($node);
+
+        // is already renamed
+        if (str_starts_with($methodName, 'test')) {
+            return null;
+        }
+
         // change name to phpunit test case format
         $this->phpSpecRenaming->renameMethod($node);
 
-        $hasChanged = false;
+        // @todo decouple
+//        // reorder instantiation + expected exception
+//        foreach ((array) $node->stmts as $key => $stmt) {
+//            $previousStmt = $node->stmts[$key - 1] ?? null;
+//
+//            // has duringInstantiation() method?
+//
+//            if (! $this->hasMethodCall($stmt, 'duringInstantiation')) {
+//                continue;
+//            }
+//
+//            if (! $previousStmt instanceof Stmt) {
+//                continue;
+//            }
+//
+//            if ($this->hasMethodCall($previousStmt, 'beConstructedThrough')) {
+//                $node->stmts[$key - 1] = $stmt;
+//                $node->stmts[$key] = $previousStmt;
+//            }
+//        }
 
-        // reorder instantiation + expected exception
-        foreach ((array) $node->stmts as $key => $stmt) {
-            $previousStmt = $node->stmts[$key - 1] ?? null;
-
-            // has duringInstantiation() method?
-
-            if (! $this->hasMethodCall($stmt, 'duringInstantiation')) {
-                continue;
-            }
-
-            if (! $previousStmt instanceof Stmt) {
-                continue;
-            }
-
-            if ($this->hasMethodCall($previousStmt, 'beConstructedThrough')) {
-                $node->stmts[$key - 1] = $stmt;
-                $node->stmts[$key] = $previousStmt;
-                $hasChanged = true;
-            }
-        }
-
-        if ($hasChanged) {
-            return $node;
-        }
-
-        return null;
+        return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Naming;
 
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -33,22 +32,18 @@ final class PhpSpecRenaming
 
     public function renameMethod(ClassMethod $classMethod): void
     {
-        if ($classMethod->isPrivate()) {
-            return;
-        }
-
         $classMethodName = $this->nodeNameResolver->getName($classMethod);
-        $classMethodName = $this->removeNamePrefixes($classMethodName);
+        $unperfixedMethodName = $this->removeNamePrefixes($classMethodName);
 
         // from PhpSpec to PHPUnit method naming convention
-        $classMethodName = StringUtils::underscoreAndHyphenToCamelCase($classMethodName);
+        $camelCaseMethodName = StringUtils::underscoreAndHyphenToCamelCase($unperfixedMethodName);
 
         // add "test", so PHPUnit runs the method
-        if (! \str_starts_with($classMethodName, 'test')) {
-            $classMethodName = 'test' . ucfirst($classMethodName);
+        if (! \str_starts_with($camelCaseMethodName, 'test')) {
+            $camelCaseMethodName = 'test' . ucfirst($camelCaseMethodName);
         }
 
-        $classMethod->name = new Identifier($classMethodName);
+        $classMethod->name = new Identifier($camelCaseMethodName);
     }
 
     public function renameExtends(Class_ $class): void
@@ -90,7 +85,6 @@ final class PhpSpecRenaming
         $className = (string) $this->nodeNameResolver->getName($class);
 
         $newClassName = StringUtils::removePrefixes($className, ['spec\\']);
-
         return StringUtils::removeSuffixes($newClassName, [self::SPEC]);
     }
 
