@@ -24,15 +24,19 @@ final class RenameSpecNamespacePrefixToTestRector extends AbstractRector
                 <<<'CODE_SAMPLE'
 namespace spec\SomeNamespace;
 
-class SomeTest
+use PhpSpec\ObjectBehavior;
+
+class SomeTest extends ObjectBehavior
 {
 }
 CODE_SAMPLE
                 ,
                 <<<'CODE_SAMPLE'
-namespace spec\SomeNamespace;
+namespace Tests\SomeNamespace;
 
-class SomeTest
+use PhpSpec\ObjectBehavior;
+
+class SomeTest extends ObjectBehavior
 {
 }
 CODE_SAMPLE
@@ -42,7 +46,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @return array<class-string<\PhpParser\Node>>
+     * @return array<class-string<Node>>
      */
     public function getNodeTypes(): array
     {

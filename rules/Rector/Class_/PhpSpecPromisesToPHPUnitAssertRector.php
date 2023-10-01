@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\ProphecyPromisesToPHPUnitAssertMap;
@@ -19,6 +20,7 @@ use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\DuringMethodCallFactory;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -133,7 +135,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             $classMethod = $class->getMethod($methodName);
 
             // it's a local method call, skip
-            if ($classMethod instanceof Node\Stmt\ClassMethod) {
+            if ($classMethod instanceof ClassMethod) {
                 return null;
             }
 
@@ -152,7 +154,34 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('wip', []);
+        return new RuleDefinition('Convert promises and object construction into objects', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
+
+class TestClassMethod extends ObjectBehavior
+{
+    public function let()
+    {
+        $this->beConstructedWith(5);
+    }
+}
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
+
+class TestClassMethod extends ObjectBehavior
+{
+    public function let()
+    {
+        $this->testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
+    }
+}
+CODE_SAMPLE
+            ),
+
+        ]);
     }
 
     private function processDuringInstantiation(MethodCall $methodCall): MethodCall

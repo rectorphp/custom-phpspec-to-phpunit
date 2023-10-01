@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
@@ -13,7 +15,7 @@ use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\TestClassMethodRector\TestClassMethodRectorTest
  */
 final class TestClassMethodRector extends AbstractRector
 {
@@ -66,7 +68,7 @@ final class TestClassMethodRector extends AbstractRector
                 continue;
             }
 
-            if (! $previousStmt instanceof Node\Stmt) {
+            if (! $previousStmt instanceof Stmt) {
                 continue;
             }
 
@@ -89,10 +91,10 @@ final class TestClassMethodRector extends AbstractRector
         return new RuleDefinition('wip', []);
     }
 
-    private function hasMethodCall(Node\Stmt $stmt, string $methodName): bool
+    private function hasMethodCall(Stmt $stmt, string $methodName): bool
     {
         return (bool) $this->betterNodeFinder->findFirst($stmt, function (Node $node) use ($methodName): bool {
-            if (! $node instanceof Node\Expr\MethodCall) {
+            if (! $node instanceof MethodCall) {
                 return false;
             }
 

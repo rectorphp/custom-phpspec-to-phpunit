@@ -15,7 +15,6 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
-use PHPStan\Type\Type;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
@@ -131,18 +130,9 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
 
         $argType = $this->valueResolver->getValue($firstArg->value);
 
-        $methodName = $this->isPhpReservedType($argType) ? 'isType' : 'isInstanceOf';
-
+        $methodName = $argType->isScalar()
+            ->yes() ? 'isType' : 'isInstanceOf';
         return $this->nodeFactory->createLocalMethodCall($methodName, $args);
-    }
-
-    private function isPhpReservedType(Type $type): bool
-    {
-        if ($type->isScalar()->yes()) {
-            return true;
-        }
-
-        return false;
     }
 
     private function refactorClass(Class_ $class): Class_
