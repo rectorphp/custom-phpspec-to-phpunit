@@ -45,7 +45,6 @@ final class PhpSpecRenaming
     public function resolvePHPUnitTestClassName(Class_ $class): string
     {
         $classShortName = $this->nodeNameResolver->getShortName($class);
-        Assert::string($classShortName);
 
         // 2. change class name
         $newClassName = StringUtils::removeSuffixes($classShortName, [self::SPEC]);
