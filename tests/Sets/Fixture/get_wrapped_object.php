@@ -1,283 +1,279 @@
 <?php
 
-namespace Sets\Fixture;
+namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture;
 
-use Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\SomeType;
+use PhpSpec\ObjectBehavior;
 
-class BlablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest extends \PHPUnit\Framework\TestCase
+class BlablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTestTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTestTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTestTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blablaTest;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTestTest = new \Sets\Fixture\Blabla();
+        $this->blablaTest = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blablaTest;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blabla;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blablaTest = new \Sets\Fixture\Blabla();
+        $this->blabla = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blabla;
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla $blabla;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blabla = new \Sets\Fixture\Blabla();
+        $this->blabla = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Blabla();
     }
-    private \Sets\Fixture\Blabla $blabla;
-    protected function setUp(): void
+    public function testMe()
     {
-        parent::setUp();
-        $this->blabla = new \Sets\Fixture\Blabla();
-    }
-    public function testMe(SomeType $someType)
-    {
+        /** @var SomeType|\PHPUnit\Framework\MockObject\MockObject $someType */
+        $someType = $this->createMock(SomeType::class);
         $assignMe = $someType;
     }
 }

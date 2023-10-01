@@ -6,6 +6,6 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
-        __DIR__ . '/../config/sets/phpspec-to-phpunit.php',
+        __DIR__ . '/../../../config/sets/phpspec-to-phpunit.php',
     ]);
 };

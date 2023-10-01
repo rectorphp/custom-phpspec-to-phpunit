@@ -30,7 +30,7 @@ use Rector\StaticTypeMapper\StaticTypeMapper;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\PhpSpecToPHPUnitRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PhpSpecClassToPHPUnitClassRector\PhpSpecClassToPHPUnitClassRectorTest
  */
 final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 {
@@ -57,6 +57,12 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
+            return null;
+        }
+
+        // skip already renamed
+        $className =  $this->getName($node);
+        if (str_ends_with($className, 'Test')) {
             return null;
         }
 
