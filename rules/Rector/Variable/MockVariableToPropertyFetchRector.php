@@ -72,18 +72,18 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Change local mock call to a property fetch mock call', [
-new CodeSample(
-<<<'CODE_SAMPLE'
+            new CodeSample(
+                <<<'CODE_SAMPLE'
 
  * $mock->call()
  * ↓
  * $this->mock->call()
 CODE_SAMPLE
-,
-<<<'CODE_SAMPLE'
+                ,
+                <<<'CODE_SAMPLE'
 
 CODE_SAMPLE
-)
+            ),
         ]);
     }
 }
