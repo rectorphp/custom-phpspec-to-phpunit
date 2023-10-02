@@ -16,17 +16,17 @@ class BlablaSpec extends ObjectBehavior
 -----
 <?php
 
-namespace Sets\Fixture;
+namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
 
-use Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\SomeType;
+use PhpSpec\ObjectBehavior;
 
 class BlablaTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\Blabla $blabla;
+    private \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Blabla $blabla;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->blabla = new \Sets\Fixture\Blabla();
+        $this->blabla = new \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Blabla();
     }
     public function testMe()
     {
