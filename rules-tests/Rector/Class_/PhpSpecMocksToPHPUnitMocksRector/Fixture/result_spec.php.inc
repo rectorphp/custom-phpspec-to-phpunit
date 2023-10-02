@@ -8,8 +8,7 @@ class ResultSpec extends ObjectBehavior
 {
     public function it_is_initializable()
     {
-        $this->beConstructedThrough('success');
-        $this->shouldHaveType(Result::class);
+        $this->run()->shouldBeCalled();
     }
 }
 
@@ -21,18 +20,11 @@ namespace spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PhpSpecMocksToPHPUnit
 
 use PhpSpec\ObjectBehavior;
 
-class ResultTest extends \PHPUnit\Framework\TestCase
+class ResultSpec extends ObjectBehavior
 {
     public function it_is_initializable()
     {
-        $this->beConstructedThrough('success');
-        $this->shouldHaveType(Result::class);
-    }
-
-    public function it_should_succeed()
-    {
-        $this->beConstructedThrough('fail');
-        $this->hasFailed()->shouldReturn(false);
+        $this->expects($this->atLeastOnce())->method('run');
     }
 }
 

@@ -64,11 +64,27 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
         return new RuleDefinition('From PhpSpec mock expectations to PHPUnit mock expectations', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
 
+class ResultSpec extends ObjectBehavior
+{
+    public function it_is_initializable()
+    {
+        $this->run()->shouldBeCalled();
+    }
+}
 CODE_SAMPLE
                 ,
                 <<<'CODE_SAMPLE'
+use PhpSpec\ObjectBehavior;
 
+class ResultSpec extends ObjectBehavior
+{
+    public function it_is_initializable()
+    {
+        $this->expects($this->atLeastOnce())->method('run');
+    }
+}
 CODE_SAMPLE
             ),
 
