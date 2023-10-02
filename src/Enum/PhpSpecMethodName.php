@@ -32,7 +32,7 @@ final class PhpSpecMethodName
     public const SHOULD_HAVE_TYPE = 'shouldHaveType';
 
     /**
-     * @var string
+     * @var string[]
      */
     public const RESERVED_CLASS_METHOD_NAMES = [self::GET_MATCHERS, self::LET, self::LET_GO];
 }
