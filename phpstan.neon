@@ -25,3 +25,6 @@ parameters:
         - '#Class "Rector\\PhpSpecToPHPUnit\\Rector\\Namespace_\\RenameSpecNamespacePrefixToTestRector" is missing @see annotation   with test case class reference#'
 
         - '#PHPDoc tag @return contains generic type PhpParser\\Node\\Stmt\\Expression<(.*?)> but class PhpParser\\Node\\Stmt\\Expression is not generic#'
+
+        # known types
+        - '#Parameter \#2 \$variable of method Rector\\PhpSpecToPHPUnit\\PhpSpecMockCollector\:\:isVariableMockInProperty\(\) expects PhpParser\\Node\\Expr\\Variable, PhpParser\\Node\\Expr\\Error\|PhpParser\\Node\\Expr\\Variable given#'

@@ -74,7 +74,6 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
             // unwrap getWrappedObject()
             if ($this->isName($node->name, 'getWrappedObject')) {
-                return null;
                 return $node->var;
             }
 
