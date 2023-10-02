@@ -15,4 +15,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const LET_GO = 'letGo';
+
+    /**
+     * @var string
+     */
+    public const BE_CONSTRUCTED_THROUGH = 'beConstructedThrough';
 }

@@ -19,6 +19,7 @@ use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\LetManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\SetUpMethodFactory;
@@ -37,6 +38,7 @@ final class LetToSetUpClassMethodRector extends AbstractRector
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly SetUpMethodFactory $setUpMethodFactory,
+        private readonly LetManipulator $letManipulator,
     ) {
     }
 
