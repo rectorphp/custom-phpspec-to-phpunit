@@ -38,6 +38,8 @@ final class MockCallFactory
     public function createCreateMockCall(Class_ $class, Param $param, Name $name): ?Expression
     {
         $variableMocks = $this->phpSpecMockCollector->resolveVariableMocksFromClassMethodParams($class);
+
+        /** @var string $variableName */
         $variableName = $this->nodeNameResolver->getName($param->var);
 
         $variableMock = $this->resolveVariableMock($variableMocks, $variableName);
