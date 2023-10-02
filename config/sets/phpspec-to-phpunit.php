@@ -20,15 +20,15 @@ return static function (RectorConfig $rectorConfig): void {
         //        RenameSpecNamespacePrefixToTestRector::class,
 
         // 1. first convert mocks
-        //        PhpSpecMocksToPHPUnitMocksRector::class,
-        //        PhpSpecPromisesToPHPUnitAssertRector::class,
+        PhpSpecMocksToPHPUnitMocksRector::class,
+        PhpSpecPromisesToPHPUnitAssertRector::class,
 
         // 2. then methods
-        //        RenameTestMethodRector::class,
+        RenameTestMethodRector::class,
 
         // 3. then the class itself
         PhpSpecClassToPHPUnitClassRector::class,
-        //        MoveParameterMockToPropertyMockRector::class,
-        //        MockVariableToPropertyFetchRector::class,
+        MoveParameterMockToPropertyMockRector::class,
+        MockVariableToPropertyFetchRector::class,
     ]);
 };

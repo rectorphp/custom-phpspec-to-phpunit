@@ -150,12 +150,7 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
                     throw new ShouldNotHappenException();
                 }
 
-                $createMockCall = $this->mockCallFactory->createCreateMockCall(
-                    $class,
-                    $classMethod,
-                    $param,
-                    $param->type
-                );
+                $createMockCall = $this->mockCallFactory->createCreateMockCall($class, $param, $param->type);
                 if ($createMockCall instanceof Expression) {
                     $assignExrepssions[] = $createMockCall;
                 }

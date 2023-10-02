@@ -8,20 +8,19 @@ use PhpParser\Comment\Doc;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
-use PhpParser\Node\Expr\Error;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
+use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
 
 final class MockCallFactory
 {
@@ -36,15 +35,13 @@ final class MockCallFactory
      * Variable or property fetch, based on number of present params in whole class
      * @return Expression<Assign>|null
      */
-    public function createCreateMockCall(Class_ $class, ClassMethod $classMethod, Param $param, Name $name): ?Expression
+    public function createCreateMockCall(Class_ $class, Param $param, Name $name): ?Expression
     {
-        $classMocks = $this->phpSpecMockCollector->resolveVariableMocksFromClassMethodParams($class);
-        $variable = $this->nodeNameResolver->getName($param->var);
+        $variableMocks = $this->phpSpecMockCollector->resolveVariableMocksFromClassMethodParams($class);
+        $variableName = $this->nodeNameResolver->getName($param->var);
 
-        $methodName = $classMethod->name->toString();
-        $methodsWithWThisMock = $classMocks[$variable];
-
-        if ($param->var instanceof Error) {
+        $variableMock = $this->resolveVariableMock($variableMocks, $variableName);
+        if (! $variableMock instanceof VariableMock) {
             return null;
         }
 
@@ -53,12 +50,12 @@ final class MockCallFactory
             return $this->createNewMockVariableAssign($param, $name);
         }
 
-        $reversedMethodsWithThisMock = array_flip($methodsWithThisMock);
+        // $reversedMethodsWithThisMock = array_flip($methodsWithThisMock);
 
         // first use of many: "$this->mock = $this->createMock()"
-        if ($reversedMethodsWithThisMock[$methodName] === 0) {
-            return $this->mockVariableAssignFactory->createPropertyFetchMockVariableAssign($param, $name);
-        }
+        //        if ($reversedMethodsWithThisMock[$methodName] === 0) {
+        //            return $this->mockVariableAssignFactory->createPropertyFetchMockVariableAssign($param, $name);
+        //        }
 
         return null;
     }
@@ -88,5 +85,19 @@ final class MockCallFactory
         }
 
         return sprintf('/** @var %s|\%s $%s */', $paramType, MockObject::class, $variableName);
+    }
+
+    /**
+     * @param VariableMock[] $variableMocks
+     */
+    private function resolveVariableMock(array $variableMocks, string $variableName): ?VariableMock
+    {
+        foreach ($variableMocks as $variableMock) {
+            if ($variableMock->getVariableName() === $variableName) {
+                return $variableMock;
+            }
+        }
+
+        return null;
     }
 }
