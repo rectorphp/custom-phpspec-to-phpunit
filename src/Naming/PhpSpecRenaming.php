@@ -41,7 +41,7 @@ final class PhpSpecRenaming
         return null;
     }
 
-    public function resolvePHPUnitTestClassName(Class_ $class): string
+    public function createPHPUnitTestClassName(Class_ $class): string
     {
         $classShortName = $this->nodeNameResolver->getShortName($class);
 

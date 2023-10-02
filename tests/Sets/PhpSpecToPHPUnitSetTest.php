@@ -23,6 +23,6 @@ final class PhpSpecToPHPUnitSetTest extends AbstractRectorTestCase
 
     public function provideConfigFilePath(): string
     {
-        return __DIR__ . '/config/configured_rule.php';
+        return __DIR__ . '/../../config/sets/phpspec-to-phpunit.php';
     }
 }

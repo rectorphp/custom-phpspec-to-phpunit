@@ -28,6 +28,7 @@ return static function (RectorConfig $rectorConfig): void {
         // 2. then methods
         LetToSetUpClassMethodRector::class,
         LetGoToTearDownClassMethodRector::class,
+        \Rector\PhpSpecToPHPUnit\Rector\ClassMethod\ShouldThrowAndInstantiationOrderRector::class,
         RenameTestMethodRector::class,
 
         // 3. then the class itself

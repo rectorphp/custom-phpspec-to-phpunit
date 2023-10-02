@@ -38,6 +38,9 @@
         },
         "classmap": [
             "stubs"
+        ],
+        "files": [
+            "tests/functions.php"
         ]
     },
     "scripts": {

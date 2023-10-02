@@ -18,6 +18,10 @@ final class PhpSpecBehaviorNodeDetector
      */
     public function isInPhpSpecBehavior(Class_|ClassMethod|Node\Expr\MethodCall $node): bool
     {
+        if ($node instanceof Class_ && $node->name === null) {
+            return false;
+        }
+
         if ($node instanceof Class_ && $node->extends instanceof Node\Name) {
             // class type is safer, as scope is not always refreshed
             if ($node->extends->toString() === 'PhpSpec\ObjectBehavior') {

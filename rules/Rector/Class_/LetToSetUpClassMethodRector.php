@@ -100,8 +100,8 @@ final class LetToSetUpClassMethodRector extends AbstractRector
         return new RuleDefinition(
             'Change let() method to setUp() PHPUnit method, including property mock initialization',
             [
-            new CodeSample(
-                <<<'CODE_SAMPLE'
+                new CodeSample(
+                    <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
 
 final class SomeTypeSpec extends ObjectBehavior
@@ -111,8 +111,8 @@ final class SomeTypeSpec extends ObjectBehavior
     }
 }
 CODE_SAMPLE
-                ,
-                <<<'CODE_SAMPLE'
+                    ,
+                    <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
 
 final class SomeTypeSpec extends ObjectBehavior
@@ -125,9 +125,10 @@ final class SomeTypeSpec extends ObjectBehavior
     }
 }
 CODE_SAMPLE
-            ),
-        
-        ]);
+                ),
+
+            ]
+        );
     }
 
     private function createSetUpClassMethod(string $propertyName, ObjectType $testedObjectType): ClassMethod

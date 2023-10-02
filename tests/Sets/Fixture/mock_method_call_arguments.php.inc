@@ -20,14 +20,15 @@ class DeliverySpec extends ObjectBehavior
 -----
 <?php
 
-namespace Sets\Fixture;
+namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
 
+use PhpSpec\ObjectBehavior;
 use Sets\Source\DeliveryFactory;
 use Sets\Source\ShippingMethod;
 
 class DeliveryTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\Delivery $delivery;
+    private \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Delivery $delivery;
     protected function setUp(): void
     {
         /** @var DeliveryFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
