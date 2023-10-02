@@ -22,7 +22,7 @@ Change `letGo()` method to `tearDown()` PHPUnit method
 
 ## LetToSetUpClassMethodRector
 
-Change `let()` method to `setUp()` PHPUnit method
+Change `let()` method to `setUp()` PHPUnit method, including property mock initialization
 
 - class: [`Rector\PhpSpecToPHPUnit\Rector\Class_\LetToSetUpClassMethodRector`](../rules/Rector/Class_/LetToSetUpClassMethodRector.php)
 
@@ -36,6 +36,7 @@ Change `let()` method to `setUp()` PHPUnit method
 +
 +    protected function setUp(): void
      {
++        $this->someType = new SomeType();
      }
  }
 ```
