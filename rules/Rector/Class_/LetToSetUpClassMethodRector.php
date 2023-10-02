@@ -97,7 +97,7 @@ final class LetToSetUpClassMethodRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Change let() method to setUp() PHPUnit method', [
+        return new RuleDefinition('Change let() method to setUp() PHPUnit method, including property mock initialization', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
@@ -119,6 +119,7 @@ final class SomeTypeSpec extends ObjectBehavior
 
     protected function setUp(): void
     {
+        $this->someType = new SomeType();
     }
 }
 CODE_SAMPLE
