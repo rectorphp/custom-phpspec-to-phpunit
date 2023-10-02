@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -46,7 +47,7 @@ final class RenameTestMethodRector extends AbstractRector
         }
 
         // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
-        if ($this->isNames($node, ['getMatchers', 'let', 'letGo'])) {
+        if ($this->isNames($node, PhpSpecMethodName::RESERVED_CLASS_METHOD_NAMES)) {
             return null;
         }
 
