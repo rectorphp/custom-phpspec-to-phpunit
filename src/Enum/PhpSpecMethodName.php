@@ -29,6 +29,11 @@ final class PhpSpecMethodName
     /**
      * @var string
      */
+    public const EXPECT_EXCEPTION = 'expectException';
+
+    /**
+     * @var string
+     */
     public const SHOULD_HAVE_TYPE = 'shouldHaveType';
 
     /**

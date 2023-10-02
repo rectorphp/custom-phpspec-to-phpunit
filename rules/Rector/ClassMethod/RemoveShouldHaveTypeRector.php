@@ -46,12 +46,8 @@ final class RemoveShouldHaveTypeRector extends AbstractRector
             return null;
         }
 
-        // @todo extract to shared data :)
         // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
-        if ($this->isNames(
-            $node,
-            [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::LET, PhpSpecMethodName::LET_GO]
-        )) {
+        if ($this->isNames($node, PhpSpecMethodName::RESERVED_CLASS_METHOD_NAMES)) {
             return null;
         }
 

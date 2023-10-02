@@ -14,6 +14,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\ProphecyPromisesToPHPUnitAssertMap;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
@@ -92,7 +93,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             }
 
             // handled elsewhere
-            if ($this->isNames($node->name, ['getMatchers', 'expectException']) || str_starts_with(
+            if ($this->isNames($node->name, [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::EXPECT_EXCEPTION]) || str_starts_with(
                 $methodName,
                 'assert'
             )) {
