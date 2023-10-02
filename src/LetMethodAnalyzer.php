@@ -9,7 +9,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 
-final class LetManipulator
+final class LetMethodAnalyzer
 {
     public function isSetUpClassMethodLetNeeded(Class_ $class): bool
     {

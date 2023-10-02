@@ -19,12 +19,13 @@ use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
-use Rector\PhpSpecToPHPUnit\LetManipulator;
+use Rector\PhpSpecToPHPUnit\LetMethodAnalyzer;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\SetUpMethodFactory;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
+use Rector\StaticTypeMapper\StaticTypeMapper;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -38,7 +39,8 @@ final class LetToSetUpClassMethodRector extends AbstractRector
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly SetUpMethodFactory $setUpMethodFactory,
-        private readonly LetManipulator $letManipulator,
+        private readonly LetMethodAnalyzer $letManipulator,
+        private readonly StaticTypeMapper $staticTypeMapper,
     ) {
     }
 
