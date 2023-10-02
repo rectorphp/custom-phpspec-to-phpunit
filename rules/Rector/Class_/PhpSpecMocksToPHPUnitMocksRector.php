@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rector\PhpSpecToPHPUnit\Rector\MethodCall;
+namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -17,10 +17,15 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\MockCallFactory;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PhpSpecMocksToPHPUnitMocksRector\PhpSpecMocksToPHPUnitMocksRectorTest
+ */
 final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
 {
     public function __construct(
@@ -56,12 +61,23 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('wip', []);
+        return new RuleDefinition('From PhpSpec mock expectations to PHPUnit mock expectations', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+
+CODE_SAMPLE
+            ),
+
+        ]);
     }
 
     private function processMethodCall(MethodCall $methodCall): ?MethodCall
     {
-        if (! $this->isName($methodCall->name, 'shouldBeCalled')) {
+        if (! $this->isName($methodCall->name, PhpSpecMethodName::SHOULD_BE_CALLED)) {
             return null;
         }
 

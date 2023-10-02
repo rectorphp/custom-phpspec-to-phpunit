@@ -22,8 +22,6 @@ parameters:
              message: '#Negated boolean expression is always true#'
              path: src/NodeFactory/AssertMethodCallFactory.php
 
-        - '#Class "Rector\\PhpSpecToPHPUnit\\Rector\\Namespace_\\RenameSpecNamespacePrefixToTestRector" is missing @see annotation   with test case class reference#'
-
         - '#PHPDoc tag @return contains generic type PhpParser\\Node\\Stmt\\Expression<(.*?)> but class PhpParser\\Node\\Stmt\\Expression is not generic#'
 
         # known types
@@ -34,8 +32,3 @@ parameters:
         # false positive
         - '#Parameter \#2 \$callable of method Rector\\Core\\Rector\\AbstractRector\:\:traverseNodesWithCallable\(\) expects callable\(PhpParser\\Node\)\: \(int\|PhpParser\\Node\|null\), Closure\(PhpParser\\Node\)\: \(array<PhpParser\\Node>\|PhpParser\\Node\\Expr\|null\) given#'
         - '#Return type \(int\|null\) of method Rector\\PhpSpecToPHPUnit\\Rector\\ClassMethod\\RemoveShouldHaveTypeRector\:\:refactor\(\) should be covariant with return type \(1\|2\|3\|4\|array<PhpParser\\Node>\|PhpParser\\Node\|null\) of method Rector\\Core\\Contract\\Rector\\RectorInterface\:\:refactor\(\)#'
-
-
-        # @todo resolve later
-        - '#Class "Rector\\PhpSpecToPHPUnit\\Rector\\MethodCall\\PhpSpecMocksToPHPUnitMocksRector" is missing @see annotation with test case class reference#'
-

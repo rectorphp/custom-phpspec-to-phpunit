@@ -40,4 +40,9 @@ final class PhpSpecMethodName
      * @var string[]
      */
     public const RESERVED_CLASS_METHOD_NAMES = [self::GET_MATCHERS, self::LET, self::LET_GO];
+
+    /**
+     * @var string
+     */
+    public const SHOULD_BE_CALLED = 'shouldBeCalled';
 }

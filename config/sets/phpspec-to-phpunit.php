@@ -7,9 +7,9 @@ use Rector\PhpSpecToPHPUnit\Rector\Class_\LetGoToTearDownClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\LetToSetUpClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\MoveParameterMockToPropertyMockRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecClassToPHPUnitClassRector;
+use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecMocksToPHPUnitMocksRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecPromisesToPHPUnitAssertRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestMethodRector;
-use Rector\PhpSpecToPHPUnit\Rector\MethodCall\PhpSpecMocksToPHPUnitMocksRector;
 use Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector;
 use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
 
