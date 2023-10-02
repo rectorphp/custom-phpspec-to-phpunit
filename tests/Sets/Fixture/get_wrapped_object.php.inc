@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture;
+namespace spec\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
 
