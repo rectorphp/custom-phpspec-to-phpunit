@@ -30,9 +30,11 @@ class MockPropertiesNonLocalSpec extends ObjectBehavior
 -----
 <?php
 
-namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture;
+namespace Sets\Fixture;
 
+use PhpSpec\ObjectBehavior;
 use Sets\Source\AnotherMock;
+use spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\OrderFactory;
 
 class MockPropertiesNonLocalTest extends \PHPUnit\Framework\TestCase
 {

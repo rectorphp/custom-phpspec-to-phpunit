@@ -23,14 +23,16 @@ class KeepMethodSpec extends ObjectBehavior
 -----
 <?php
 
-namespace Sets\Fixture;
+namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
+
+use PhpSpec\ObjectBehavior;
 
 class KeepMethodTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\KeepMethod $keepMethod;
+    private \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\KeepMethod $keepMethod;
     protected function setUp(): void
     {
-        $this->keepMethod = new \Sets\Fixture\KeepMethod(5);
+        $this->keepMethod = new \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\KeepMethod(5);
 
         $result = $this->getSomeNumbers();
     }
