@@ -7,7 +7,6 @@ namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
@@ -22,7 +21,6 @@ final class RenameTestMethodRector extends AbstractRector
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-        private readonly BetterNodeFinder $betterNodeFinder,
     ) {
     }
 

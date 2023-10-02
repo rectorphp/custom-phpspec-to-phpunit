@@ -12,7 +12,6 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
@@ -59,6 +58,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         }
 
         // skip already renamed
+        /** @var string $className */
         $className = $this->getName($node);
         if (str_ends_with($className, 'Test')) {
             return null;
@@ -110,22 +110,5 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
         $assignExpression = new Expression($assign);
         return $this->setUpMethodFactory->create($assignExpression);
-    }
-
-    /**
-     * @param Stmt[] $stmts
-     */
-    private function resolveFirstNonExpressionStmt(array $stmts): ?Node
-    {
-        if (! isset($stmts[0])) {
-            return null;
-        }
-
-        $firstStmt = $stmts[0];
-        if ($firstStmt instanceof Expression) {
-            return $firstStmt->expr;
-        }
-
-        return $firstStmt;
     }
 }

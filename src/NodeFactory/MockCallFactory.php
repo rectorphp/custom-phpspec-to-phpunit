@@ -25,7 +25,6 @@ use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
 final class MockCallFactory
 {
     public function __construct(
-        private readonly MockVariableAssignFactory $mockVariableAssignFactory,
         private readonly NodeNameResolver $nodeNameResolver,
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
     ) {

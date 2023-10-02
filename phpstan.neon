@@ -28,3 +28,5 @@ parameters:
 
         # known types
         - '#Parameter \#2 \$variable of method Rector\\PhpSpecToPHPUnit\\PhpSpecMockCollector\:\:isVariableMockInProperty\(\) expects PhpParser\\Node\\Expr\\Variable, PhpParser\\Node\\Expr\\Error\|PhpParser\\Node\\Expr\\Variable given#'
+
+        - '#Cognitive complexity for "Rector\\PhpSpecToPHPUnit\\Rector\\Class_\\PhpSpecPromisesToPHPUnitAssertRector\:\:refactor\(\)" is 18, keep it under 9#'
