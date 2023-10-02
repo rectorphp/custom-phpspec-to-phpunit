@@ -7,7 +7,7 @@ namespace Rector\PhpSpecToPHPUnit;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\Class_;
-use PHPStan\Node\ClassMethod;
+use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\ValueObject\MethodName;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -28,7 +28,8 @@ final class LetManipulator
         }
 
         // already has setUp()
-        if ($class->getMethod(MethodName::SET_UP)) {
+        $setUpClassMethod = $class->getMethod(MethodName::SET_UP);
+        if ($setUpClassMethod instanceof ClassMethod) {
             return false;
         }
 
