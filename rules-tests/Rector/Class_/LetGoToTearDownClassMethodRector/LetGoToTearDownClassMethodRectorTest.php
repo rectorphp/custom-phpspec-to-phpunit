@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\SetUpTearDownClassMethodRector;
+namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetGoToTearDownClassMethodRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class SetUpTearDownClassMethodRectorTest extends AbstractRectorTestCase
+final class LetGoToTearDownClassMethodRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('provideData')]
     public function test(string $filePath): void

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\SetUpTearDownClassMethodRector\Fixture;
+namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture;
 
 use PhpSpec\ObjectBehavior;
 
@@ -15,7 +15,7 @@ final class JustOnce extends ObjectBehavior
 -----
 <?php
 
-namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\SetUpTearDownClassMethodRector\Fixture;
+namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture;
 
 use PhpSpec\ObjectBehavior;
 

@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\PhpSpecToPHPUnit\Rector\Class_\LetGoToTearDownClassMethodRector;
+use Rector\PhpSpecToPHPUnit\Rector\Class_\LetToSetUpClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\MoveParameterMockToPropertyMockRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecClassToPHPUnitClassRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecPromisesToPHPUnitAssertRector;
-use Rector\PhpSpecToPHPUnit\Rector\Class_\SetUpTearDownClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\PhpSpecMocksToPHPUnitMocksRector;
 use Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector;
@@ -25,12 +26,15 @@ return static function (RectorConfig $rectorConfig): void {
         PhpSpecPromisesToPHPUnitAssertRector::class,
 
         // 2. then methods
+        LetToSetUpClassMethodRector::class,
+        LetGoToTearDownClassMethodRector::class,
         RenameTestMethodRector::class,
-        SetUpTearDownClassMethodRector::class,
 
         // 3. then the class itself
-        PhpSpecClassToPHPUnitClassRector::class,
         MoveParameterMockToPropertyMockRector::class,
         MockVariableToPropertyFetchRector::class,
+
+        // 4. this one must be last, as it rename parent class and changes spec type that is used to detect this class
+        PhpSpecClassToPHPUnitClassRector::class,
     ]);
 };
