@@ -93,7 +93,10 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             }
 
             // handled elsewhere
-            if ($this->isNames($node->name, [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::EXPECT_EXCEPTION]) || str_starts_with(
+            if ($this->isNames(
+                $node->name,
+                [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::EXPECT_EXCEPTION]
+            ) || str_starts_with(
                 $methodName,
                 'assert'
             )) {
