@@ -6,11 +6,12 @@ namespace Rector\PhpSpecToPHPUnit;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
 use PhpParser\NodeFinder;
 
 final class NodeFinderHelper
 {
-    public static function hasMethodCallNamed(\PhpParser\Node $node, string $methodName): bool
+    public static function hasMethodCallNamed(Node $node, string $methodName): bool
     {
         $nodeFinder = new NodeFinder();
         $foundNode = $nodeFinder->findFirst(
@@ -20,7 +21,7 @@ final class NodeFinderHelper
                     return false;
                 }
 
-                if (! $node->name instanceof Node\Name) {
+                if (! $node->name instanceof Identifier) {
                     return false;
                 }
 
@@ -28,6 +29,6 @@ final class NodeFinderHelper
             }
         );
 
-        return $foundNode instanceof \PhpParser\Node;
+        return $foundNode instanceof Node;
     }
 }

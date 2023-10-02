@@ -10,6 +10,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeTraverser;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -47,7 +48,10 @@ final class RemoveShouldHaveTypeRector extends AbstractRector
 
         // @todo extract to shared data :)
         // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
-        if ($this->isNames($node, ['getMatchers', 'let', 'letGo'])) {
+        if ($this->isNames(
+            $node,
+            [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::LET, PhpSpecMethodName::LET_GO]
+        )) {
             return null;
         }
 
@@ -65,7 +69,7 @@ final class RemoveShouldHaveTypeRector extends AbstractRector
         }
 
         $methodCall = $onlyStmt->expr;
-        if (! $this->isName($methodCall->name, 'shouldHaveType')) {
+        if (! $this->isName($methodCall->name, PhpSpecMethodName::SHOULD_HAVE_TYPE)) {
             return null;
         }
 

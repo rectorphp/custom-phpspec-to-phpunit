@@ -9,6 +9,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -42,7 +43,7 @@ final class LetGoToTearDownClassMethodRector extends AbstractRector
             return null;
         }
 
-        $letGoClassMethod = $node->getMethod('letGo');
+        $letGoClassMethod = $node->getMethod(PhpSpecMethodName::LET_GO);
         if (! $letGoClassMethod instanceof ClassMethod) {
             return null;
         }

@@ -6,6 +6,9 @@ use PhpSpec\ObjectBehavior;
 
 final class NoLetButNeeded extends ObjectBehavior
 {
+    public function it_does()
+    {
+    }
 }
 
 ?>
@@ -18,7 +21,14 @@ use PhpSpec\ObjectBehavior;
 
 final class NoLetButNeeded extends ObjectBehavior
 {
-    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture\JustOnce $justOnce;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->noLetButNeeded = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture\NoLetButNeeded();
+    }
+    public function it_does()
+    {
+    }
 }
 
 ?>
