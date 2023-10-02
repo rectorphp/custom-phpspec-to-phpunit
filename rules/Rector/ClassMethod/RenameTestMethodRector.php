@@ -46,7 +46,7 @@ final class RenameTestMethodRector extends AbstractRector
         }
 
         // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
-        if ($this->isName($node, 'getMatchers')) {
+        if ($this->isNames($node, ['getMatchers', 'let', 'letGo'])) {
             return null;
         }
 

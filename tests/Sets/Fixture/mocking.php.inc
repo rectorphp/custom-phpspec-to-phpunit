@@ -3,6 +3,8 @@
 namespace spec\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
+use Sets\Source\OrderFactory;
+use Sets\Source\ShippingMethod;
 
 class OrderSpec extends ObjectBehavior
 {
@@ -24,7 +26,7 @@ use Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\F
 
 class OrderTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\Order $order;
+    private \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Order $order;
     protected function setUp(): void
     {
         /** @var OrderFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
