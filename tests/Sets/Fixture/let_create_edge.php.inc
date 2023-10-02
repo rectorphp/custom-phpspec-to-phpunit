@@ -28,24 +28,30 @@ class CurrencySpec extends ObjectBehavior
 -----
 <?php
 
-namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture;
+namespace Sets\Fixture;
+
+use PhpSpec\ObjectBehavior;
+use spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\CurrencyData;
+use spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\ValidationException;
 
 class CurrencyTest extends \PHPUnit\Framework\TestCase
 {
     private \Sets\Fixture\Currency $currency;
-    private \PHPUnit\Framework\MockObject\MockObject|\spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\CurrencyData $data;
     protected function setUp(): void
     {
-        $this->data = $this->createMock(CurrencyData::class);
-        $this->data->code = 'CZK';
-        $this->currency = \Sets\Fixture\Currency::create($this->data);
+        /** @var CurrencyData|\PHPUnit\Framework\MockObject\MockObject $data */
+        $data = $this->createMock(CurrencyData::class);
+        $data->code = 'CZK';
+        $this->currency = \Sets\Fixture\Currency::create($data);
     }
 
     public function testNotBeConstructedWithoutCode()
     {
-        $this->data->code = '';
+        /** @var CurrencyData|\PHPUnit\Framework\MockObject\MockObject $data */
+        $data = $this->createMock(CurrencyData::class);
+        $data->code = '';
         $this->expectException(ValidationException::class);
-        $this->currency = \Sets\Fixture\Currency::create($this->data);
+        $this->currency = \Sets\Fixture\Currency::create($data);
     }
 }
 

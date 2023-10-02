@@ -7,6 +7,7 @@ namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
@@ -21,6 +22,7 @@ final class RenameTestMethodRector extends AbstractRector
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
+        private readonly BetterNodeFinder $betterNodeFinder,
     ) {
     }
 
@@ -61,27 +63,6 @@ final class RenameTestMethodRector extends AbstractRector
         $phpUnitTestMethodName = $this->phpSpecRenaming->resolvePHPUnitTestMethodName($methodName);
         $node->name = new Identifier($phpUnitTestMethodName);
 
-        // @todo decouple
-        //        // reorder instantiation + expected exception
-        //        foreach ((array) $node->stmts as $key => $stmt) {
-        //            $previousStmt = $node->stmts[$key - 1] ?? null;
-        //
-        //            // has duringInstantiation() method?
-        //
-        //            if (! $this->hasMethodCall($stmt, 'duringInstantiation')) {
-        //                continue;
-        //            }
-        //
-        //            if (! $previousStmt instanceof Stmt) {
-        //                continue;
-        //            }
-        //
-        //            if ($this->hasMethodCall($previousStmt, 'beConstructedThrough')) {
-        //                $node->stmts[$key - 1] = $stmt;
-        //                $node->stmts[$key] = $previousStmt;
-        //            }
-        //        }
-
         return $node;
     }
 
@@ -114,15 +95,4 @@ CODE_SAMPLE
 
         ]);
     }
-
-    //    private function hasMethodCall(Stmt $stmt, string $methodName): bool
-    //    {
-    //        return (bool) $this->betterNodeFinder->findFirst($stmt, function (Node $node) use ($methodName): bool {
-    //            if (! $node instanceof MethodCall) {
-    //                return false;
-    //            }
-    //
-    //            return $this->isName($node->name, $methodName);
-    //        });
-    //    }
 }
