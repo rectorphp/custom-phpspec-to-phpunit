@@ -33,6 +33,8 @@ parameters:
 
         # false positive
         - '#Parameter \#2 \$callable of method Rector\\Core\\Rector\\AbstractRector\:\:traverseNodesWithCallable\(\) expects callable\(PhpParser\\Node\)\: \(int\|PhpParser\\Node\|null\), Closure\(PhpParser\\Node\)\: \(array<PhpParser\\Node>\|PhpParser\\Node\\Expr\|null\) given#'
+        - '#Return type \(int\|null\) of method Rector\\PhpSpecToPHPUnit\\Rector\\ClassMethod\\RemoveShouldHaveTypeRector\:\:refactor\(\) should be covariant with return type \(1\|2\|3\|4\|array<PhpParser\\Node>\|PhpParser\\Node\|null\) of method Rector\\Core\\Contract\\Rector\\RectorInterface\:\:refactor\(\)#'
+
 
         # @todo resolve later
         - '#Class "Rector\\PhpSpecToPHPUnit\\Rector\\MethodCall\\PhpSpecMocksToPHPUnitMocksRector" is missing @see annotation with test case class reference#'

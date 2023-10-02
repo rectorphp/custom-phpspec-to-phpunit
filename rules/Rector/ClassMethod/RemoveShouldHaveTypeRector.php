@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeTraverser;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
@@ -53,12 +55,12 @@ final class RemoveShouldHaveTypeRector extends AbstractRector
             return null;
         }
 
-        $onlyStmt = $node->stmts[0];
-        if (! $onlyStmt instanceof Node\Stmt\Expression) {
+        $onlyStmt = $node->stmts[0] ?? null;
+        if (! $onlyStmt instanceof Expression) {
             return null;
         }
 
-        if (! $onlyStmt->expr instanceof Node\Expr\MethodCall) {
+        if (! $onlyStmt->expr instanceof MethodCall) {
             return null;
         }
 
