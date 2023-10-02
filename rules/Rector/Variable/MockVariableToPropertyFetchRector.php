@@ -81,7 +81,7 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
 CODE_SAMPLE
                 ,
                 <<<'CODE_SAMPLE'
-
+// to be done
 CODE_SAMPLE
             ),
         ]);
