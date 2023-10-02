@@ -22,6 +22,7 @@ final class LetManipulator
 
     public function isSetUpClassMethodLetNeeded(Class_ $class): bool
     {
+        // this will be renamed later to setUp() by another rule
         $letClassMethod = $class->getMethod('let');
         if ($letClassMethod instanceof ClassMethod) {
             return false;
