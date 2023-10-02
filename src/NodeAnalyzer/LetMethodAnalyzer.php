@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Rector\PhpSpecToPHPUnit;
+namespace Rector\PhpSpecToPHPUnit\NodeAnalyzer;
 
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\NodeFinderHelper;
 
 final class LetMethodAnalyzer
 {

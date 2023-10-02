@@ -26,7 +26,7 @@ final class PhpSpecRenaming
     ) {
     }
 
-    public function resolvePHPUnitTestMethodName(string $methodName): string
+    public function resolvePHPUnitTestMethodName(string $methodName): ?string
     {
         $unPrefixedMethodName = $this->removeNamePrefixes($methodName);
 
@@ -35,10 +35,10 @@ final class PhpSpecRenaming
 
         // add "test", so PHPUnit runs the method
         if (! \str_starts_with($camelCaseMethodName, 'test')) {
-            $camelCaseMethodName = 'test' . ucfirst($camelCaseMethodName);
+            return 'test' . ucfirst($camelCaseMethodName);
         }
 
-        return $camelCaseMethodName;
+        return null;
     }
 
     public function resolvePHPUnitTestClassName(Class_ $class): string

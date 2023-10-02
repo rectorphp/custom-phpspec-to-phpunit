@@ -14,9 +14,10 @@ final class NodeFinderHelper
     public static function hasMethodCallNamed(Node $node, string $methodName): bool
     {
         $nodeFinder = new NodeFinder();
+
         $foundNode = $nodeFinder->findFirst(
             $node,
-            function (Node $node) use ($methodName): bool {
+            static function (Node $node) use ($methodName): bool {
                 if (! $node instanceof MethodCall) {
                     return false;
                 }

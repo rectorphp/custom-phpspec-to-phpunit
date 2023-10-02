@@ -59,6 +59,10 @@ final class RenameTestMethodRector extends AbstractRector
 
         // change name to phpunit test case format
         $phpUnitTestMethodName = $this->phpSpecRenaming->resolvePHPUnitTestMethodName($methodName);
+        if (! is_string($phpUnitTestMethodName)) {
+            return null;
+        }
+
         $node->name = new Identifier($phpUnitTestMethodName);
 
         return $node;

@@ -17,7 +17,10 @@ return static function (RectorConfig $rectorConfig): void {
         '*/Source/*',
     ]);
 
-    $rectorConfig->ruleWithConfiguration(StringClassNameToClassConstantRector::class, ['PhpSpec\ObjectBehavior']);
+    $rectorConfig->ruleWithConfiguration(StringClassNameToClassConstantRector::class, [
+        'PhpSpec\ObjectBehavior',
+        'PHPUnit\Framework\TestCase',
+    ]);
 
     $rectorConfig->sets([
         LevelSetList::UP_TO_PHP_81,
