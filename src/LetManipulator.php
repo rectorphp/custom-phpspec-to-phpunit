@@ -7,7 +7,9 @@ namespace Rector\PhpSpecToPHPUnit;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\Class_;
+use PHPStan\Node\ClassMethod;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use Rector\Core\ValueObject\MethodName;
 use Rector\NodeNameResolver\NodeNameResolver;
 
 final class LetManipulator
@@ -18,16 +20,19 @@ final class LetManipulator
     ) {
     }
 
-    public function isLetNeededInClass(Class_ $class): bool
+    public function isSetUpClassMethodLetNeeded(Class_ $class): bool
     {
+        $letClassMethod = $class->getMethod('let');
+        if ($letClassMethod instanceof ClassMethod) {
+            return false;
+        }
+
+        // already has setUp()
+        if ($class->getMethod(MethodName::SET_UP)) {
+            return false;
+        }
+
         foreach ($class->getMethods() as $classMethod) {
-            $methodName = $classMethod->name->toString();
-
-            // new test
-            if (str_starts_with($methodName, 'test')) {
-                continue;
-            }
-
             $hasBeConstructedThrough = (bool) $this->betterNodeFinder->find(
                 (array) $classMethod->stmts,
                 function (Node $node): bool {

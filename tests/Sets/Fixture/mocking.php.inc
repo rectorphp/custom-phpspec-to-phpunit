@@ -19,10 +19,11 @@ class OrderSpec extends ObjectBehavior
 -----
 <?php
 
-namespace Sets\Fixture;
+namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
 
-use Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\OrderFactory;
-use Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\ShippingMethod;
+use PhpSpec\ObjectBehavior;
+use Sets\Source\OrderFactory;
+use Sets\Source\ShippingMethod;
 
 class OrderTest extends \PHPUnit\Framework\TestCase
 {

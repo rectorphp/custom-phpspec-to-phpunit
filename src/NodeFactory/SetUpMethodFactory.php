@@ -11,15 +11,16 @@ use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use Rector\Core\ValueObject\MethodName;
 
 final class SetUpMethodFactory
 {
     public function create(Stmt $stmt): ClassMethod
     {
-        $parentSetUpStaticCall = new StaticCall(new Name('parent'), new Identifier('setUp'));
+        $parentSetUpStaticCall = new StaticCall(new Name('parent'), new Identifier(MethodName::SET_UP));
         $stmts = [new Expression($parentSetUpStaticCall), $stmt];
 
-        $classMethod = new ClassMethod('setUp', [
+        $classMethod = new ClassMethod(MethodName::SET_UP, [
             'stmts' => $stmts,
         ]);
 

@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
@@ -20,7 +18,6 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\LetManipulator;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
@@ -41,7 +38,6 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly SetUpMethodFactory $setUpMethodFactory,
         private readonly StaticTypeMapper $staticTypeMapper,
-        private readonly ValueResolver $valueResolver,
     ) {
     }
 
@@ -82,21 +78,14 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         $property = $this->nodeFactory->createPrivatePropertyFromNameAndType($propertyName, $testedObjectType);
         $newStmts = [$property];
 
-        $classMethod = $node->getMethod('let');
-
         // add let if missing
-        if (! $classMethod instanceof ClassMethod) {
-            if (! $this->letManipulator->isLetNeededInClass($node)) {
-                return null;
-            }
-
-            $letClassMethod = $this->createLetClassMethod($propertyName, $testedObjectType);
-            $newStmts[] = $letClassMethod;
+        if ($this->letManipulator->isSetUpClassMethodLetNeeded($node)) {
+            $newStmts[] = $this->createSetUpClassMethod($propertyName, $testedObjectType);
         }
 
         $node->stmts = array_merge($newStmts, $node->stmts);
 
-        return $this->removeSelfTypeMethod($node, $testedObjectType);
+        return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -104,7 +93,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         return new RuleDefinition('wip', []);
     }
 
-    private function createLetClassMethod(string $propertyName, ObjectType $testedObjectType): ClassMethod
+    private function createSetUpClassMethod(string $propertyName, ObjectType $testedObjectType): ClassMethod
     {
         $propertyFetch = new PropertyFetch(new Variable('this'), $propertyName);
 
@@ -121,53 +110,6 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
         $assignExpression = new Expression($assign);
         return $this->setUpMethodFactory->create($assignExpression);
-    }
-
-    /**
-     * This is already checked on construction of object
-     */
-    private function removeSelfTypeMethod(Class_ $class, ObjectType $testedObjectType): Class_
-    {
-        foreach ($class->stmts as $key => $classStmt) {
-            if (! $classStmt instanceof ClassMethod) {
-                continue;
-            }
-
-            $classMethodStmts = (array) $classStmt->stmts;
-            if (count($classMethodStmts) !== 1) {
-                continue;
-            }
-
-            $innerClassMethodStmt = $this->resolveFirstNonExpressionStmt($classMethodStmts);
-            if (! $innerClassMethodStmt instanceof MethodCall) {
-                continue;
-            }
-
-            if (! $this->isName($innerClassMethodStmt->name, 'shouldHaveType')) {
-                continue;
-            }
-
-            if (! isset($innerClassMethodStmt->args[0])) {
-                continue;
-            }
-
-            if (! $innerClassMethodStmt->args[0] instanceof Arg) {
-                continue;
-            }
-
-            // not the tested type
-            if (! $this->valueResolver->isValue(
-                $innerClassMethodStmt->args[0]->value,
-                $testedObjectType->getClassName()
-            )) {
-                continue;
-            }
-
-            // remove class method
-            unset($class->stmts[$key]);
-        }
-
-        return $class;
     }
 
     /**
