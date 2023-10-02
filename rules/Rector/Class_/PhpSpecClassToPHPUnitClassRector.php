@@ -68,17 +68,22 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 
         $phpunitTestClassName = $this->phpSpecRenaming->resolvePHPUnitTestClassName($node);
 
+        // rename class and parent class
         $node->name = new Identifier($phpunitTestClassName);
         $node->extends = new FullyQualified('PHPUnit\Framework\TestCase');
 
         $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);
         $testedObjectType = new ObjectType($testedClass);
 
-        // add property
-        $property = $this->nodeFactory->createPrivatePropertyFromNameAndType($propertyName, $testedObjectType);
-        $newStmts = [$property];
+        $newStmts = [];
 
-        // add let if missing
+        // add default property, if let() method is here
+        $letClassMethod = $node->getMethod('let');
+        if ($letClassMethod instanceof ClassMethod) {
+            $newStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType($propertyName, $testedObjectType);
+        }
+
+        // add setUp() if completely missing and need
         if ($this->letManipulator->isSetUpClassMethodLetNeeded($node)) {
             $newStmts[] = $this->createSetUpClassMethod($propertyName, $testedObjectType);
         }
