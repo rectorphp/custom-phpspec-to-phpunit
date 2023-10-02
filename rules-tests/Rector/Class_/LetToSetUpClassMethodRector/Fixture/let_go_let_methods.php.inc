@@ -21,6 +21,7 @@ use PhpSpec\ObjectBehavior;
 
 final class LetGoLetMethods extends ObjectBehavior
 {
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture\LetGoLetMethods $letGoLetMethods;
     protected function setUp(): void
     {
     }

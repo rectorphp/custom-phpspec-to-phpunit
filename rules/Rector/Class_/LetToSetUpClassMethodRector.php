@@ -18,6 +18,7 @@ use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\SetUpMethodFactory;
@@ -56,30 +57,36 @@ final class LetToSetUpClassMethodRector extends AbstractRector
             return null;
         }
 
-        $letClassMethod = $node->getMethod('let');
-        if (! $letClassMethod instanceof ClassMethod) {
-            return null;
-        }
-
-        $letClassMethod->name = new Identifier(MethodName::SET_UP);
-        $letClassMethod->returnType = new Identifier('void');
-        $this->visibilityManipulator->makeProtected($letClassMethod);
-
         $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
 
+        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);
+        $testedObjectType = new ObjectType($testedClass);
+
+        $newClasStmts = [];
+
         // add default property, if let() method is here
-        $letClassMethod = $node->getMethod('let');
+        $letClassMethod = $node->getMethod(PhpSpecMethodName::LET);
         if ($letClassMethod instanceof ClassMethod) {
-            $newStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
+            $newClasStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
                 $testedObjectPropertyName,
                 $testedObjectType
             );
+
+            // rename and add void return type
+            $letClassMethod->name = new Identifier(MethodName::SET_UP);
+            $letClassMethod->returnType = new Identifier('void');
+
+            // no params
+            $letClassMethod->params = [];
+            $this->visibilityManipulator->makeProtected($letClassMethod);
         }
 
         // add setUp() if completely missing and need
-        if ($this->letManipulator->isSetUpClassMethodLetNeeded($node)) {
-            $newStmts[] = $this->createSetUpClassMethod($testedObjectPropertyName, $testedObjectType);
+        elseif ($this->letManipulator->isSetUpClassMethodLetNeeded($node)) {
+            $newClasStmts[] = $this->createSetUpClassMethod($testedObjectPropertyName, $testedObjectType);
         }
+
+        $node->stmts = array_merge($newClasStmts, $node->stmts);
 
         return $node;
     }
@@ -91,7 +98,7 @@ final class LetToSetUpClassMethodRector extends AbstractRector
                 <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
 
-final class LetGoLetMethods extends ObjectBehavior
+final class SomeTypeSpec extends ObjectBehavior
 {
     public function let()
     {
@@ -102,9 +109,9 @@ CODE_SAMPLE
                 <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
 
-final class LetGoLetMethods extends ObjectBehavior
+final class SomeTypeSpec extends ObjectBehavior
 {
-    private TestedType $testedType;
+    private SomeType $someType;
 
     protected function setUp(): void
     {
@@ -115,9 +122,6 @@ CODE_SAMPLE
         ]);
     }
 
-    /**
-     * @todo move to setUp() method
-     */
     private function createSetUpClassMethod(string $propertyName, ObjectType $testedObjectType): ClassMethod
     {
         $propertyFetch = new PropertyFetch(new Variable('this'), $propertyName);
@@ -126,6 +130,7 @@ CODE_SAMPLE
             $testedObjectType,
             TypeKind::RETURN
         );
+
         if (! $testedObjectType instanceof Name) {
             throw new ShouldNotHappenException();
         }

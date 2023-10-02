@@ -21,9 +21,9 @@ use PhpSpec\ObjectBehavior;
 
 final class JustOnce extends ObjectBehavior
 {
+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture\JustOnce $justOnce;
     protected function setUp(): void
     {
-        // FirstItem $firstItem, SecondItem $secondItem
     }
 }
 
