@@ -53,26 +53,13 @@ final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
 
         $hasChanged = false;
 
-        foreach ($node->stmts as $key => $stmt) {
+        foreach ((array) $node->stmts as $key => $stmt) {
             if (! $stmt instanceof Expression) {
                 continue;
             }
 
-            if (! $stmt->expr instanceof MethodCall) {
-                continue;
-            }
-
-            $methodCall = $stmt->expr;
-            if (! $this->isName($methodCall->name, 'duringInstantiation')) {
-                continue;
-            }
-
-            $nestedMethodCall = $methodCall->var;
-            if (! $nestedMethodCall instanceof MethodCall) {
-                continue;
-            }
-
-            if (! $this->isName($nestedMethodCall->name, 'shouldThrow')) {
+            $shouldThrowMethodCall = $this->matchShouldThrowMethodCall($stmt);
+            if (! $shouldThrowMethodCall instanceof MethodCall) {
                 continue;
             }
 
@@ -81,9 +68,9 @@ final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
                 continue;
             }
 
-            // move previous stmt here
+            // move previous expression here
             $node->stmts[$key] = $previousStmt;
-            $node->stmts[$key - 1] = $this->createExpectExceptionStmt($nestedMethodCall);
+            $node->stmts[$key - 1] = $this->createExpectExceptionStmt($shouldThrowMethodCall);
 
             $hasChanged = true;
         }
@@ -134,5 +121,37 @@ CODE_SAMPLE
         $thisExpectExceptionMethodCall->args[] = new Arg($nestedMethodCall->getArgs()[0]->value);
 
         return new Expression($thisExpectExceptionMethodCall);
+    }
+
+    /**
+     * Looks for:
+     *
+     * $this->shouldThrow(ValidationException::class)->duringInstantiation();
+     *
+     * Returns MethodCall:
+     *
+     * $this->shouldThrow(ValidationException::class)
+     */
+    private function matchShouldThrowMethodCall(Expression $expression): ?MethodCall
+    {
+        if (! $expression->expr instanceof MethodCall) {
+            return null;
+        }
+
+        $methodCall = $expression->expr;
+        if (! $this->isName($methodCall->name, 'duringInstantiation')) {
+            return null;
+        }
+
+        $nestedMethodCall = $methodCall->var;
+        if (! $nestedMethodCall instanceof MethodCall) {
+            return null;
+        }
+
+        if (! $this->isName($nestedMethodCall->name, 'shouldThrow')) {
+            return null;
+        }
+
+        return $nestedMethodCall;
     }
 }
