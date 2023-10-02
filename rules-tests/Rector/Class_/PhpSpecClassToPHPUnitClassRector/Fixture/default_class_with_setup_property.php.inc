@@ -6,10 +6,6 @@ use PhpSpec\ObjectBehavior;
 
 class DefaultClassWithSetupProperty extends ObjectBehavior
 {
-    public function let()
-    {
-        $this->beConstructedWith(5);
-    }
 }
 
 ?>
@@ -22,11 +18,6 @@ use PhpSpec\ObjectBehavior;
 
 class DefaultClassWithSetupPropertyTest extends \PHPUnit\Framework\TestCase
 {
-    private \Rector\PhpSpecToPHPUnit\DefaultClassWithSetupProperty $defaultClassWithSetupProperty;
-    public function let()
-    {
-        $this->beConstructedWith(5);
-    }
 }
 
 ?>

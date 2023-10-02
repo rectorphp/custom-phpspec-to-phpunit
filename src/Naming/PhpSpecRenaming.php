@@ -50,7 +50,7 @@ final class PhpSpecRenaming
         return $newClassName . 'Test';
     }
 
-    public function resolveObjectPropertyName(Class_ $class): string
+    public function resolveTestedObjectPropertyName(Class_ $class): string
     {
         // anonymous class?
         if ($class->name === null) {

@@ -46,6 +46,7 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
             return null;
         }
 
+        // @todo separate
         if ($node instanceof Class_) {
             return $this->refactorClass($node);
         }

@@ -21,8 +21,9 @@ use PhpSpec\ObjectBehavior;
 
 final class JustOnce extends ObjectBehavior
 {
-    protected function setUp(FirstItem $firstItem, SecondItem $secondItem): void
+    protected function setUp(): void
     {
+        // FirstItem $firstItem, SecondItem $secondItem
     }
 }
 

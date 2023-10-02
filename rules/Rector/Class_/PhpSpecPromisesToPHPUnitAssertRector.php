@@ -248,7 +248,7 @@ CODE_SAMPLE
 
     private function createTestedObjectPropertyFetch(Class_ $class): PropertyFetch
     {
-        $propertyName = $this->phpSpecRenaming->resolveObjectPropertyName($class);
+        $propertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($class);
         return new PropertyFetch(new Variable('this'), $propertyName);
     }
 }
