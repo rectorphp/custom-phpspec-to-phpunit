@@ -22,12 +22,6 @@ use PhpSpec\ObjectBehavior;
 
 class ItIsMeTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\ItIsMe $itIsMe;
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->itIsMe = new \Sets\Fixture\ItIsMe();
-    }
 }
 
 ?>
