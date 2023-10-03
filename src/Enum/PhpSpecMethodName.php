@@ -45,4 +45,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const SHOULD_BE_CALLED = 'shouldBeCalled';
+
+    /**
+     * @var string
+     */
+    public const GET_WRAPPED_OBJECT = 'getWrappedObject';
 }

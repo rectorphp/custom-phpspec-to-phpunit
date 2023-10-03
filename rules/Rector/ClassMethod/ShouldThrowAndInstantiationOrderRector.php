@@ -70,10 +70,11 @@ final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
             }
 
             // move previous expression here
-            $node->stmts[$key] = $previousStmt;
             $node->stmts[$key - 1] = $this->createExpectExceptionStmt($shouldThrowMethodCall);
+            $node->stmts[$key] = $previousStmt;
 
             $hasChanged = true;
+            break;
         }
 
         if (! $hasChanged) {

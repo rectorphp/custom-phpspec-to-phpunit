@@ -9,7 +9,6 @@ use PhpParser\Node\Expr\Clone_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Exception\ShouldNotHappenException;
@@ -74,7 +73,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             }
 
             // unwrap getWrappedObject()
-            if ($this->isName($node->name, 'getWrappedObject')) {
+            if ($this->isName($node->name, PhpSpecMethodName::GET_WRAPPED_OBJECT)) {
                 return $node->var;
             }
 
@@ -83,7 +82,9 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             }
 
             if ($this->isName($node->name, 'duringInstantiation')) {
-                return $this->processDuringInstantiation($node);
+                // handled in another rule
+                return null;
+                // return $this->processDuringInstantiation($node);
             }
 
             // skip reserved names
@@ -187,15 +188,6 @@ CODE_SAMPLE
             ),
 
         ]);
-    }
-
-    private function processDuringInstantiation(MethodCall $methodCall): MethodCall
-    {
-        /** @var MethodCall $parentMethodCall */
-        $parentMethodCall = $methodCall->var;
-        $parentMethodCall->name = new Identifier('expectException');
-
-        return $parentMethodCall;
     }
 
     private function prepareMethodCall(Class_ $class): void
