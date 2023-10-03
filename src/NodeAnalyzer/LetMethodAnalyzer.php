@@ -30,6 +30,9 @@ final class LetMethodAnalyzer
         foreach ($class->getMethods() as $classMethod) {
             // get original class method, in case it was already refactored
             $originalClassMethod = $classMethod->getAttribute(AttributeKey::ORIGINAL_NODE);
+            if (! $originalClassMethod instanceof ClassMethod) {
+                continue;
+            }
 
             if (! $originalClassMethod->isPublic()) {
                 continue;
