@@ -19,6 +19,7 @@ use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
  */
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
+        // detect be constructed through first
         RenameSpecNamespacePrefixToTestRector::class,
 
         // 1. first convert mocks

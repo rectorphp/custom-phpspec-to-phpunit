@@ -6,9 +6,9 @@ namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\NodeTraverser;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
@@ -30,47 +30,48 @@ final class RemoveShouldHaveTypeRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [ClassMethod::class];
+        return [Class_::class];
     }
 
     /**
-     * @param ClassMethod $node
+     * @param Class_ $node
      */
-    public function refactor(Node $node): ?int
+    public function refactor(Node $node): ?Class_
     {
         if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
             return null;
         }
 
-        if (! $node->isPublic()) {
-            return null;
+        $hasChanged = false;
+
+        foreach ($node->stmts as $key => $classStmt) {
+            if (! $classStmt instanceof ClassMethod) {
+                continue;
+            }
+
+            if (! $classStmt->isPublic()) {
+                continue;
+            }
+
+            // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
+            if ($this->isNames($classStmt, PhpSpecMethodName::RESERVED_CLASS_METHOD_NAMES)) {
+                continue;
+            }
+
+            if (! $this->hasOnlyStmtWithShouldHaveTypeMethodCall($classStmt)) {
+                continue;
+            }
+
+            // remove method as no point
+            unset($node->stmts[$key]);
+            $hasChanged = true;
         }
 
-        // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
-        if ($this->isNames($node, PhpSpecMethodName::RESERVED_CLASS_METHOD_NAMES)) {
-            return null;
+        if ($hasChanged) {
+            return $node;
         }
 
-        if (count((array) $node->stmts) !== 1) {
-            return null;
-        }
-
-        $onlyStmt = $node->stmts[0] ?? null;
-        if (! $onlyStmt instanceof Expression) {
-            return null;
-        }
-
-        if (! $onlyStmt->expr instanceof MethodCall) {
-            return null;
-        }
-
-        $methodCall = $onlyStmt->expr;
-        if (! $this->isName($methodCall->name, PhpSpecMethodName::SHOULD_HAVE_TYPE)) {
-            return null;
-        }
-
-        // remove method as no point
-        return NodeTraverser::REMOVE_NODE;
+        return null;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -99,5 +100,24 @@ CODE_SAMPLE
             ),
 
         ]);
+    }
+
+    private function hasOnlyStmtWithShouldHaveTypeMethodCall(ClassMethod $classMethod): bool
+    {
+        if (count((array) $classMethod->stmts) !== 1) {
+            return false;
+        }
+
+        $onlyStmt = $classMethod->stmts[0] ?? null;
+        if (! $onlyStmt instanceof Expression) {
+            return false;
+        }
+
+        if (! $onlyStmt->expr instanceof MethodCall) {
+            return false;
+        }
+
+        $methodCall = $onlyStmt->expr;
+        return $this->isName($methodCall->name, PhpSpecMethodName::SHOULD_HAVE_TYPE);
     }
 }

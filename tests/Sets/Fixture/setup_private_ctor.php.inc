@@ -23,22 +23,21 @@ class ResultSpec extends ObjectBehavior
 -----
 <?php
 
-namespace Sets\Fixture;
+namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
 
-use Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Result;
+use PhpSpec\ObjectBehavior;
 
 class ResultTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\Result $result;
     public function testInitializable()
     {
-        $this->result = \Sets\Fixture\Result::success();
+        $this->result = \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Result::success();
         $this->assertInstanceOf(Result::class, $this->result);
     }
 
     public function testSucceed()
     {
-        $this->result = \Sets\Fixture\Result::fail();
+        $this->result = \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Result::fail();
         $this->assertFalse($this->result->hasFailed());
     }
 }

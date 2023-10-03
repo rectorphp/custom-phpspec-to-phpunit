@@ -7,6 +7,7 @@ namespace Rector\PhpSpecToPHPUnit\NodeAnalyzer;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\ValueObject\MethodName;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeFinderHelper;
 
@@ -27,7 +28,14 @@ final class LetMethodAnalyzer
         }
 
         foreach ($class->getMethods() as $classMethod) {
-            if (NodeFinderHelper::hasMethodCallNamed($classMethod, PhpSpecMethodName::BE_CONSTRUCTED_THROUGH)) {
+            // get original class method, in case it was already refactored
+            $originalClassMethod = $classMethod->getAttribute(AttributeKey::ORIGINAL_NODE);
+
+            if (! $originalClassMethod->isPublic()) {
+                continue;
+            }
+
+            if (NodeFinderHelper::hasMethodCallNamed($originalClassMethod, PhpSpecMethodName::BE_CONSTRUCTED_THROUGH)) {
                 continue;
             }
 

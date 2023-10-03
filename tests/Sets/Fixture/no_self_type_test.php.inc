@@ -28,10 +28,6 @@ class ItIsMeTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
         $this->itIsMe = new \Sets\Fixture\ItIsMe();
     }
-    public function testMe()
-    {
-        $this->assertInstanceOf(ItIsMe::class, $this->itIsMe);
-    }
 }
 
 ?>
