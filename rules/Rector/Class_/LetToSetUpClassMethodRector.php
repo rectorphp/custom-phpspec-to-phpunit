@@ -34,16 +34,45 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LetToSetUpClassMethodRector extends AbstractRector
 {
-    public function __construct(
-        private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly SetUpMethodFactory $setUpMethodFactory,
-        private readonly LetMethodAnalyzer $letManipulator,
-        private readonly StaticTypeMapper $staticTypeMapper,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
+     */
+    private $visibilityManipulator;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\SetUpMethodFactory
+     */
+    private $setUpMethodFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetMethodAnalyzer
+     */
+    private $letManipulator;
+    /**
+     * @readonly
+     * @var \Rector\StaticTypeMapper\StaticTypeMapper
+     */
+    private $staticTypeMapper;
+    public function __construct(VisibilityManipulator $visibilityManipulator, PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector, PhpSpecRenaming $phpSpecRenaming, SetUpMethodFactory $setUpMethodFactory, LetMethodAnalyzer $letManipulator, StaticTypeMapper $staticTypeMapper)
+    {
+        $this->visibilityManipulator = $visibilityManipulator;
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
+        $this->phpSpecRenaming = $phpSpecRenaming;
+        $this->setUpMethodFactory = $setUpMethodFactory;
+        $this->letManipulator = $letManipulator;
+        $this->staticTypeMapper = $staticTypeMapper;
     }
-
     /**
      * @return array<class-string<Node>>
      */
