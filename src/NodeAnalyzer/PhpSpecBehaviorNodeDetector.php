@@ -15,8 +15,9 @@ final class PhpSpecBehaviorNodeDetector
 {
     /**
      * @todo remove method call here, ideally the ClassMethod as well
+     * @param \PhpParser\Node\Stmt\Class_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Expr\MethodCall $node
      */
-    public function isInPhpSpecBehavior(Class_|ClassMethod|Node\Expr\MethodCall $node): bool
+    public function isInPhpSpecBehavior($node): bool
     {
         if ($node instanceof Class_ && $node->name === null) {
             return false;
