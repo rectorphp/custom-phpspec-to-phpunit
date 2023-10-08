@@ -6,7 +6,7 @@ use PhpSpec\ObjectBehavior;
 
 class ExceptionSpec extends ObjectBehavior
 {
-    public function it_should_throw_exceptions_where_rates_are_not_loaded()
+    public function it_should_throw_exceptions()
     {
         $this->beConstructedWith('random-string');
 
@@ -24,16 +24,11 @@ use PhpSpec\ObjectBehavior;
 
 class ExceptionTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp(): void
+    public function testThrowExceptions(): void
     {
-        parent::setUp();
-        $this->exception = new \Rector\PhpSpecToPHPUnit\Fixture\Exception();
-    }
-    public function testThrowExceptionsWhereRatesAreNotLoaded(): void
-    {
-        $this->exception = new \Rector\PhpSpecToPHPUnit\Fixture\Exception('random-string');
+        $exception = new \Rector\PhpSpecToPHPUnit\Fixture\Exception('random-string');
         $this->expectException(RatesNotLoadedException::class);
-        $this->exception->get();
+        $exception->get();
     }
 }
 

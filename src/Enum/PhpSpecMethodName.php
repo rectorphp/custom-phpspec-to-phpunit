@@ -70,4 +70,14 @@ final class PhpSpecMethodName
      * @var string
      */
     public const SHOULD_NOT_BE_CALLED = 'shouldNotBeCalled';
+
+    /**
+     * @var string
+     */
+    public const BE_CONSTRUCTED_WITH = 'beConstructedWith';
+
+    /**
+     * @var string
+     */
+    public const BE_CONSTRUCTED = 'beConstructed';
 }

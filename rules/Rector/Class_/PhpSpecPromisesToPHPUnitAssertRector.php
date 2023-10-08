@@ -61,6 +61,8 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
         $this->isPrepared = false;
 
+        $propertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
+
         $class = $node;
 
         $this->traverseNodesWithCallable($node, function (\PhpParser\Node $node) use (
@@ -99,7 +101,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
             $this->prepareMethodCall($class);
 
-            if (str_starts_with($methodName, 'beConstructed')) {
+            if (str_starts_with($methodName, PhpSpecMethodName::BE_CONSTRUCTED)) {
                 return $this->beConstructedWithAssignFactory->create(
                     $node,
                     $this->getTestedClass(),
@@ -108,8 +110,8 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             }
 
             $args = $node->args;
-            foreach (ProphecyPromisesToPHPUnitAssertMap::PROMISES_BY_ASSERT_METHOD as $assertMethod => $pomiseMethods) {
-                if (! $this->isNames($node->name, $pomiseMethods)) {
+            foreach (ProphecyPromisesToPHPUnitAssertMap::PROMISES_BY_ASSERT_METHOD as $assertMethod => $promiseMethods) {
+                if (! $this->isNames($node->name, $promiseMethods)) {
                     continue;
                 }
 
@@ -134,10 +136,8 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
                 return null;
             }
 
-            $classMethod = $class->getMethod($methodName);
-
             // it's a local method call, skip
-            if ($classMethod instanceof ClassMethod) {
+            if ($class->getMethod($methodName) instanceof ClassMethod) {
                 return null;
             }
 
@@ -156,7 +156,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Convert promises and object construction into objects', [
+        return new RuleDefinition('Convert promises and object construction to new instances', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
@@ -177,7 +177,7 @@ class TestClassMethod extends ObjectBehavior
 {
     public function let()
     {
-        $this->testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
+        $testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
     }
 }
 CODE_SAMPLE

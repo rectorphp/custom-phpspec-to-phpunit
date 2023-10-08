@@ -26,15 +26,11 @@ use Sets\Source\Cart;
 
 class ExceptionDuringTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->exceptionDuring = new \PhpSpecToPHPUnit\Fixture\ExceptionDuring();
-    }
     public function testBlows(): void
     {
         $this->expectException('SomeException');
-        $this->exceptionDuring->item(5);
+        $exceptionDuring = new ExceptionDuring();
+        $exceptionDuring->item(5);
     }
 }
 

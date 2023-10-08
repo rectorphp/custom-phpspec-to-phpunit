@@ -12,10 +12,12 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name\FullyQualified;
 use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 
 final class BeConstructedWithAssignFactory
 {
@@ -28,14 +30,15 @@ final class BeConstructedWithAssignFactory
 
     public function create(MethodCall $methodCall, string $testedClass, PropertyFetch $propertyFetch): ?Assign
     {
-        if ($this->nodeNameResolver->isName($methodCall->name, 'beConstructedWith')) {
+        if ($this->nodeNameResolver->isName($methodCall->name, PhpSpecMethodName::BE_CONSTRUCTED_WITH)) {
             $new = new New_(new FullyQualified($testedClass));
             $new->args = $methodCall->args;
 
-            return new Assign($propertyFetch, $new);
+            $mockVariable = new Variable($propertyFetch->name->toString());
+            return new Assign($mockVariable, $new);
         }
 
-        if ($this->nodeNameResolver->isName($methodCall->name, 'beConstructedThrough')) {
+        if ($this->nodeNameResolver->isName($methodCall->name, PhpSpecMethodName::BE_CONSTRUCTED_THROUGH)) {
             if (! isset($methodCall->args[0])) {
                 return null;
             }

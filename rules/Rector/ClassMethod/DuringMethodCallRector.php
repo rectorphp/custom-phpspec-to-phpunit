@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
+use PhpParser\Builder\Method;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
@@ -49,7 +50,7 @@ final class DuringMethodCallRector extends AbstractRector
             return null;
         }
 
-        if (! $node->isPublic()) {
+        if (! $node->isPublic() || $node->stmts === null) {
             return null;
         }
 
@@ -58,7 +59,7 @@ final class DuringMethodCallRector extends AbstractRector
             return null;
         }
 
-        foreach ((array) $node->stmts as $key => $stmt) {
+        foreach ($node->stmts as $key => $stmt) {
             if (! $stmt instanceof Expression) {
                 continue;
             }
@@ -75,7 +76,8 @@ final class DuringMethodCallRector extends AbstractRector
                 $duringAndRelatedMethodCall->getExceptionMethodCall()
             );
             $objectMethodCallExpression = $this->createObjectMethodCallStmt(
-                $duringAndRelatedMethodCall->getDuringMethodCall()
+                $duringAndRelatedMethodCall->getDuringMethodCall(),
+                $duringAndRelatedMethodCall->getExceptionMethodCall()
             );
 
             /** @var Node\Stmt[] $currentStmts */
@@ -137,16 +139,23 @@ CODE_SAMPLE
     /**
      * @return Expression<MethodCall>
      */
-    private function createObjectMethodCallStmt(MethodCall $duringMethodCall): Expression
+    private function createObjectMethodCallStmt(MethodCall $duringMethodCall, MethodCall $exceptionMethodCall): Expression
     {
         $args = $duringMethodCall->getArgs();
         $firstArg = $args[0];
+
+        if ($exceptionMethodCall->var instanceof Node\Expr\PropertyFetch) {
+            $callerExpr = new Variable($exceptionMethodCall->var->name->toString());
+        } else {
+            // fallback just in case
+            $callerExpr = $exceptionMethodCall->var;
+        }
 
         // include arguments too
         $methodName = $this->valueResolver->getValue($firstArg->value);
         $newArgs = $this->resolveMethodCallArgs($args);
 
-        $objectMethodCall = new MethodCall(new Variable('this'), $methodName, $newArgs);
+        $objectMethodCall = new MethodCall($callerExpr, $methodName, $newArgs);
 
         return new Expression($objectMethodCall);
     }

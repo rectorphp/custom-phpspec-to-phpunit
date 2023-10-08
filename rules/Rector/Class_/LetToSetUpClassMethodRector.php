@@ -20,7 +20,6 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetMethodAnalyzer;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\SetUpMethodFactory;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
@@ -39,7 +38,6 @@ final class LetToSetUpClassMethodRector extends AbstractRector
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly SetUpMethodFactory $setUpMethodFactory,
-        private readonly LetMethodAnalyzer $letManipulator,
         private readonly StaticTypeMapper $staticTypeMapper,
     ) {
     }
@@ -83,11 +81,6 @@ final class LetToSetUpClassMethodRector extends AbstractRector
             // no params
             $letClassMethod->params = [];
             $this->visibilityManipulator->makeProtected($letClassMethod);
-        }
-
-        // add setUp() if completely missing and need
-        elseif ($this->letManipulator->isSetUpClassMethodLetNeeded($node)) {
-            $newClasStmts[] = $this->createSetUpClassMethod($testedObjectPropertyName, $testedObjectType);
         }
 
         $node->stmts = array_merge($newClasStmts, $node->stmts);
