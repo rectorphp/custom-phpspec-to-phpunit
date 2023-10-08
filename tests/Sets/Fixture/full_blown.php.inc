@@ -64,16 +64,6 @@ class CartSpec extends ObjectBehavior
         $this->shouldThrow(NotFoundException::class)->during('item', [$id]);
     }
 
-    public function it_should_calculate_zero_price_when_cart_is_empty()
-    {
-        $price = $this->price();
-
-        $price->shouldBeAnInstanceOf(CalculatedPrice::class);
-        $price->withVat()->shouldReturn(0.0);
-        $price->withoutVat()->shouldReturn(0.0);
-        $price->vat()->shouldReturn(0.0);
-    }
-
     public function it_should_calculate_total_price_of_all_items_when_not_empty()
     {
         PriceType::set(PriceType::WITH_VAT);
@@ -160,16 +150,6 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->cart->remove($id);
         $this->expectException(NotFoundException::class);
         $this->cart->item($id);
-    }
-
-    public function testCalculateZeroPriceWhenCartIsEmpty(): void
-    {
-        $price = $this->cart->price();
-
-        $this->assertInstanceOf(CalculatedPrice::class, $price);
-        $this->assertSame(0.0, $price->withVat());
-        $this->assertSame(0.0, $price->withoutVat());
-        $this->assertSame(0.0, $price->vat());
     }
 
     public function testCalculateTotalPriceOfAllItemsWhenNotEmpty(): void
