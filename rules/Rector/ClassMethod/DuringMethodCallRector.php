@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
-use PhpParser\Builder\Method;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
@@ -139,8 +138,10 @@ CODE_SAMPLE
     /**
      * @return Expression<MethodCall>
      */
-    private function createObjectMethodCallStmt(MethodCall $duringMethodCall, MethodCall $exceptionMethodCall): Expression
-    {
+    private function createObjectMethodCallStmt(
+        MethodCall $duringMethodCall,
+        MethodCall $exceptionMethodCall
+    ): Expression {
         $args = $duringMethodCall->getArgs();
         $firstArg = $args[0];
 
