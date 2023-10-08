@@ -23,6 +23,7 @@ use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\MockCallFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PhpSpecMocksToPHPUnitMocksRector\PhpSpecMocksToPHPUnitMocksRectorTest
@@ -213,6 +214,7 @@ CODE_SAMPLE
         if ($methodCall->var instanceof MethodCall) {
             $methodMethodCall = $methodCall->var;
             $mockedMethodName = $this->getName($methodMethodCall->name);
+            Assert::string($mockedMethodName);
 
             $methodMethodCall->args = [new Arg(new String_($mockedMethodName))];
             $methodMethodCall->name = new Identifier('method');
