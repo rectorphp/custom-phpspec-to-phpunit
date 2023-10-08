@@ -45,7 +45,7 @@ class CurrencyTest extends \PHPUnit\Framework\TestCase
         $this->currency = \Sets\Fixture\Currency::create($data);
     }
 
-    public function testNotBeConstructedWithoutCode()
+    public function testNotBeConstructedWithoutCode(): void
     {
         /** @var CurrencyData|\PHPUnit\Framework\MockObject\MockObject $data */
         $data = $this->createMock(CurrencyData::class);

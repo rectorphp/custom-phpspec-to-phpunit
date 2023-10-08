@@ -38,7 +38,7 @@ class MockPropertiesTest extends \PHPUnit\Framework\TestCase
         $this->mockProperties = new \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\MockProperties($factory);
     }
 
-    public function testLetItGo()
+    public function testLetItGo(): void
     {
         /** @var OrderFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
         $factory = $this->createMock(OrderFactory::class);

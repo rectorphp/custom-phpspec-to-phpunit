@@ -29,13 +29,13 @@ use PhpSpec\ObjectBehavior;
 
 class ResultTest extends \PHPUnit\Framework\TestCase
 {
-    public function testInitializable()
+    public function testInitializable(): void
     {
         $this->result = \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Result::success();
         $this->assertInstanceOf(Result::class, $this->result);
     }
 
-    public function testSucceed()
+    public function testSucceed(): void
     {
         $this->result = \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Result::fail();
         $this->assertFalse($this->result->hasFailed());

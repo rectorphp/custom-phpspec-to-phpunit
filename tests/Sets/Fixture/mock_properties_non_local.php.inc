@@ -46,7 +46,7 @@ class MockPropertiesNonLocalTest extends \PHPUnit\Framework\TestCase
         $this->mockPropertiesNonLocal = new \Sets\Fixture\MockPropertiesNonLocal($factory);
     }
 
-    public function testLetItGo()
+    public function testLetItGo(): void
     {
         /** @var AnotherMock|\PHPUnit\Framework\MockObject\MockObject $anotherMock */
         $anotherMock = $this->createMock(AnotherMock::class);
@@ -54,7 +54,7 @@ class MockPropertiesNonLocalTest extends \PHPUnit\Framework\TestCase
         $this->mockPropertiesNonLocal->addAnotherMock($anotherMock);
     }
 
-    public function testLetItGoAgain()
+    public function testLetItGoAgain(): void
     {
         /** @var AnotherMock|\PHPUnit\Framework\MockObject\MockObject $anotherMock */
         $anotherMock = $this->createMock(AnotherMock::class);

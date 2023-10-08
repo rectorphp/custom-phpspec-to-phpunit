@@ -50,21 +50,8 @@ class CartSpec extends ObjectBehavior
         $this->add(new \Ecommerce\Cart\Item($id, 'Lorem ipsum', 3, new Price(671, $taxRate, $currency)));
 
         $this->item($id)->shouldBeAnInstanceOf(\Ecommerce\Cart\Contract\Item::class);
-    }
-
-    public function it_should_summ_up_quantities_when_adding_same_item_multiple_times()
-    {
-        PriceType::set(PriceType::WITH_VAT);
-
-        $id       = Uuid::uuid1();
-        $taxRate  = EntityFactory::make('tax_rate_21');
-        $currency = EntityFactory::make('currency_czk');
-
-        $this->add(new \Ecommerce\Cart\Item($id, 'Lorem ipsum', 3, new Price(671, $taxRate, $currency)));
-        $this->add(new \Ecommerce\Cart\Item($id, 'Dolor sit amet', 7, new Price(671, $taxRate, $currency)));
 
         $item = $this->item($id);
-
         $item->quantity()->shouldReturn(10);
     }
 
@@ -124,35 +111,6 @@ class CartSpec extends ObjectBehavior
 
         $this->add($item1);
         $this->add($item2);
-
-        $this->merge($cart);
-
-        $items = $this->items();
-        $items->shouldHaveCount(2);
-
-        $this->item($item1->key())->quantity()->shouldBe(2);
-        $this->item($item2->key())->quantity()->shouldBe(3);
-    }
-
-    public function it_should_contain_only_items_from_second_cart_when_merged_with_not_empty_cart()
-    {
-        PriceType::set(PriceType::WITH_VAT);
-
-        $taxRate  = EntityFactory::make('tax_rate_21');
-        $currency = EntityFactory::make('currency_czk');
-
-        $cart = new Cart(Uuid::uuid1());
-
-        $item1 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f49c-af76-11e8-8981-529269fb1459'), 'Lorem ipsum', 2, new Price(671, $taxRate, $currency));
-        $item2 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f80c-af76-11e8-8981-529269fb1459'), 'Dolor sit amet', 3, new Price(475, $taxRate, $currency));
-        $item3 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f49c-af76-11e8-8981-529269fb1459'), 'Lorem ipsum', 4, new Price(671, $taxRate, $currency));
-        $item4 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9fa0a-af76-11e8-8981-529269fb1459'), 'Lorem ipsum', 5, new Price(671, $taxRate, $currency));
-
-        $cart->add($item1);
-        $cart->add($item2);
-
-        $this->add($item3);
-        $this->add($item4);
 
         $this->merge($cart);
 
@@ -301,35 +259,6 @@ class CartTest extends \PHPUnit\Framework\TestCase
 
         $this->cart->add($item1);
         $this->cart->add($item2);
-
-        $this->cart->merge($cart);
-
-        $items = $this->cart->items();
-        $this->assertCount(2, $items);
-
-        $this->assertSame(2, $this->cart->item($item1->key())->quantity());
-        $this->assertSame(3, $this->cart->item($item2->key())->quantity());
-    }
-
-    public function testContainOnlyItemsFromSecondCartWhenMergedWithNotEmptyCart()
-    {
-        PriceType::set(PriceType::WITH_VAT);
-
-        $taxRate  = EntityFactory::make('tax_rate_21');
-        $currency = EntityFactory::make('currency_czk');
-
-        $cart = new Cart(Uuid::uuid1());
-
-        $item1 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f49c-af76-11e8-8981-529269fb1459'), 'Lorem ipsum', 2, new Price(671, $taxRate, $currency));
-        $item2 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f80c-af76-11e8-8981-529269fb1459'), 'Dolor sit amet', 3, new Price(475, $taxRate, $currency));
-        $item3 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f49c-af76-11e8-8981-529269fb1459'), 'Lorem ipsum', 4, new Price(671, $taxRate, $currency));
-        $item4 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9fa0a-af76-11e8-8981-529269fb1459'), 'Lorem ipsum', 5, new Price(671, $taxRate, $currency));
-
-        $cart->add($item1);
-        $cart->add($item2);
-
-        $this->cart->add($item3);
-        $this->cart->add($item4);
 
         $this->cart->merge($cart);
 
