@@ -32,7 +32,7 @@ return static function (RectorConfig $rectorConfig): void {
         PhpSpecMocksToPHPUnitMocksRector::class,
         PhpSpecPromisesToPHPUnitAssertRector::class,
 
-        // 2. then methods
+        // 2. then class methods
         LetToSetUpClassMethodRector::class,
         LetGoToTearDownClassMethodRector::class,
         RenameTestMethodRector::class,

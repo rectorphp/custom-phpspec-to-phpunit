@@ -22,11 +22,6 @@ class CartSpec extends ObjectBehavior
         $this->beConstructedWith(Uuid::uuid1());
     }
 
-    public function it_is_initializable()
-    {
-        $this->shouldHaveType(Cart::class);
-    }
-
     public function it_should_add_new_item()
     {
         $id       = Uuid::uuid1();
