@@ -19,5 +19,8 @@ jobs:
             # add some packages that could create confligs
             -   run: composer require rector/rector --ansi
 
+            # wait for downgraded package to be deployed to avoid installing PHP 8.1 version
+            -   run: sleep 30
+
             # install this package
             -   run: composer require rector/custom-phpspec-to-phpunit --ansi
