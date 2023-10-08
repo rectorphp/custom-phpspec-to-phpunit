@@ -63,9 +63,9 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
         $class = $node;
 
-        $this->traverseNodesWithCallable($node->stmts, function (\PhpParser\Node $node) use (
+        $this->traverseNodesWithCallable($node, function (\PhpParser\Node $node) use (
             $class
-        ): \PhpParser\Node|null|array {
+        ): \PhpParser\Node|null {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -78,7 +78,8 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             if ($this->isNames(
                 $node->name,
                 [PhpSpecMethodName::DURING_INSTANTIATION, PhpSpecMethodName::DURING]
-            )) {                // handled in another rule
+            )) {
+                // handled in another rule
                 return null;
             }
 
