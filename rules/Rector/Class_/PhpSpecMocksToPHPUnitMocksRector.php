@@ -98,7 +98,6 @@ CODE_SAMPLE
             return $this->refactorShouldNotBeCalled($methodCall);
         }
 
-
         if (! $this->isName($methodCall->name, PhpSpecMethodName::SHOULD_BE_CALLED)) {
             return null;
         }
@@ -209,7 +208,6 @@ CODE_SAMPLE
         $methodCall->name = new Identifier('expects');
         $thisOnceMethodCall = $this->nodeFactory->createLocalMethodCall('never');
         $methodCall->args = [new Arg($thisOnceMethodCall)];
-
 
         // make use of method("name") convention
         if ($methodCall->var instanceof MethodCall) {
