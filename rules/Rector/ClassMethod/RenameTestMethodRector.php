@@ -19,12 +19,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RenameTestMethodRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    public function __construct(PhpSpecRenaming $phpSpecRenaming, PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector)
+    {
+        $this->phpSpecRenaming = $phpSpecRenaming;
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
     }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -55,7 +64,7 @@ final class RenameTestMethodRector extends AbstractRector
         $methodName = $this->getName($node);
 
         // is already renamed
-        if (str_starts_with($methodName, 'test')) {
+        if (strncmp($methodName, 'test', strlen('test')) === 0) {
             return null;
         }
 

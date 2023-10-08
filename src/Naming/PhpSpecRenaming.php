@@ -12,6 +12,11 @@ use Rector\PhpSpecToPHPUnit\StringUtils;
 final class PhpSpecRenaming
 {
     /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    /**
      * @var string
      */
     private const SPEC = 'Spec';
@@ -21,9 +26,9 @@ final class PhpSpecRenaming
      */
     private const METHOD_PREFIXES = ['it_should_have_', 'it_should_be', 'it_should_', 'it_is_', 'it_', 'is_'];
 
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-    ) {
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     public function resolvePHPUnitTestMethodName(string $methodName): ?string
@@ -34,7 +39,7 @@ final class PhpSpecRenaming
         $camelCaseMethodName = StringUtils::underscoreAndHyphenToCamelCase($unPrefixedMethodName);
 
         // add "test", so PHPUnit runs the method
-        if (! \str_starts_with($camelCaseMethodName, 'test')) {
+        if (strncmp($camelCaseMethodName, 'test', strlen('test')) !== 0) {
             return 'test' . ucfirst($camelCaseMethodName);
         }
 

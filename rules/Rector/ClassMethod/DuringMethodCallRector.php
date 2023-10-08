@@ -25,13 +25,27 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DuringMethodCallRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-        private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
-        private readonly ValueResolver $valueResolver,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher
+     */
+    private $duringAndRelatedMethodCallMatcher;
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector, DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher, ValueResolver $valueResolver)
+    {
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
+        $this->duringAndRelatedMethodCallMatcher = $duringAndRelatedMethodCallMatcher;
+        $this->valueResolver = $valueResolver;
     }
-
     /**
      * @return array<class-string<Node>>
      */

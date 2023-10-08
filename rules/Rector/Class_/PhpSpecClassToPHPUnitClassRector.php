@@ -19,12 +19,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    public function __construct(PhpSpecRenaming $phpSpecRenaming, PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector)
+    {
+        $this->phpSpecRenaming = $phpSpecRenaming;
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
     }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -45,7 +54,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         // skip already renamed
         /** @var string $className */
         $className = $node->name->toString();
-        if (str_ends_with($className, 'Test')) {
+        if (substr_compare($className, 'Test', -strlen('Test')) === 0) {
             return null;
         }
 
