@@ -31,7 +31,8 @@
             "Rector\\PhpSpecToPHPUnit\\Tests\\": ["rules-tests"]
         },
         "classmap": [
-            "stubs"
+            "stubs",
+            "tests/Sets/Source"
         ],
         "files": [
             "tests/functions.php"

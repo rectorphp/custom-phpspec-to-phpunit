@@ -15,6 +15,7 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
+use PHPStan\Type\Generic\GenericClassStringType;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
@@ -160,8 +161,12 @@ CODE_SAMPLE
 
         $argType = $this->nodeTypeResolver->getType($firstArg->value);
 
-        $methodName = $argType->isScalar()
-            ->yes() ? 'isType' : 'isInstanceOf';
+        if ($argType instanceof GenericClassStringType) {
+            $methodName = 'isInstanceOf';
+        } else {
+            $methodName = 'isType';
+        }
+
         return $this->nodeFactory->createLocalMethodCall($methodName, $args);
     }
 
