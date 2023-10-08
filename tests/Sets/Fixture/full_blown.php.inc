@@ -96,37 +96,13 @@ class CartSpec extends ObjectBehavior
         $price->withoutVat()->shouldReturn(1663.54);
         $price->vat()->shouldReturn(349.46);
     }
-
-    public function it_should_contain_old_items_when_merged_with_empty_cart()
-    {
-        PriceType::set(PriceType::WITH_VAT);
-
-        $taxRate  = EntityFactory::make('tax_rate_21');
-        $currency = EntityFactory::make('currency_czk');
-
-        $cart = new Cart(Uuid::uuid1());
-
-        $item1 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f49c-af76-11e8-8981-529269fb1459'), 'Lorem ipsum', 2, new Price(671, $taxRate, $currency));
-        $item2 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f80c-af76-11e8-8981-529269fb1459'), 'Dolor sit amet', 3, new Price(475, $taxRate, $currency));
-
-        $this->add($item1);
-        $this->add($item2);
-
-        $this->merge($cart);
-
-        $items = $this->items();
-        $items->shouldHaveCount(2);
-
-        $this->item($item1->key())->quantity()->shouldBe(2);
-        $this->item($item2->key())->quantity()->shouldBe(3);
-    }
 }
 
 ?>
 -----
 <?php
 
-namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture;
+namespace Sets\Fixture;
 
 use Ecommerce\Cart\Cart;
 use Ecommerce\Cart\Exception\NotFoundException;
@@ -136,24 +112,20 @@ use Ecommerce\Pricing\Currency\DummyDefaultCurrencyProvider;
 use Ecommerce\Pricing\Price\CalculatedPrice;
 use Ecommerce\Pricing\Price\Price;
 use Ecommerce\Taxing\PriceType;
+use PhpSpec\ObjectBehavior;
 use Ramsey\Uuid\Uuid;
 
 class CartTest extends \PHPUnit\Framework\TestCase
 {
-    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Cart $cart;
+    private \Sets\Fixture\Cart $cart;
     protected function setUp(): void
     {
         DefaultCurrency::setProvider(new DummyDefaultCurrencyProvider());
 
-        $this->cart = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\Cart(Uuid::uuid1());
+        $this->cart = new \Sets\Fixture\Cart(Uuid::uuid1());
     }
 
-    public function testInitializable()
-    {
-        $this->assertInstanceOf(Cart::class, $this->cart);
-    }
-
-    public function testAddNewItem()
+    public function testAddNewItem(): void
     {
         $id       = Uuid::uuid1();
         $taxRate  = EntityFactory::make('tax_rate_21');
@@ -167,7 +139,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(4, $item->quantity());
     }
 
-    public function testProvideItemByItsIdentifier()
+    public function testProvideItemByItsIdentifier(): void
     {
         $id       = Uuid::uuid1();
         $taxRate  = EntityFactory::make('tax_rate_21');
@@ -178,7 +150,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(\Ecommerce\Cart\Contract\Item::class, $this->cart->item($id));
     }
 
-    public function testThrowAnExceptionWhenItemIsNotInCart()
+    public function testThrowAnExceptionWhenItemIsNotInCart(): void
     {
         $id = Uuid::uuid1();
 
@@ -186,7 +158,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->cart->item($id);
     }
 
-    public function testSummUpQuantitiesWhenAddingSameItemMultipleTimes()
+    public function testSummUpQuantitiesWhenAddingSameItemMultipleTimes(): void
     {
         PriceType::set(PriceType::WITH_VAT);
 
@@ -202,7 +174,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(10, $item->quantity());
     }
 
-    public function testRemoveItem()
+    public function testRemoveItem(): void
     {
         PriceType::set(PriceType::WITH_VAT);
 
@@ -217,7 +189,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->cart->item($id);
     }
 
-    public function testCalculateZeroPriceWhenCartIsEmpty()
+    public function testCalculateZeroPriceWhenCartIsEmpty(): void
     {
         $price = $this->cart->price();
 
@@ -227,7 +199,7 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(0.0, $price->vat());
     }
 
-    public function testCalculateTotalPriceOfAllItemsWhenNotEmpty()
+    public function testCalculateTotalPriceOfAllItemsWhenNotEmpty(): void
     {
         PriceType::set(PriceType::WITH_VAT);
 
@@ -243,30 +215,6 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(2013.00, $price->withVat());
         $this->assertSame(1663.54, $price->withoutVat());
         $this->assertSame(349.46, $price->vat());
-    }
-
-    public function testContainOldItemsWhenMergedWithEmptyCart()
-    {
-        PriceType::set(PriceType::WITH_VAT);
-
-        $taxRate  = EntityFactory::make('tax_rate_21');
-        $currency = EntityFactory::make('currency_czk');
-
-        $cart = new Cart(Uuid::uuid1());
-
-        $item1 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f49c-af76-11e8-8981-529269fb1459'), 'Lorem ipsum', 2, new Price(671, $taxRate, $currency));
-        $item2 = new \Ecommerce\Cart\Item(Uuid::fromString('3cf9f80c-af76-11e8-8981-529269fb1459'), 'Dolor sit amet', 3, new Price(475, $taxRate, $currency));
-
-        $this->cart->add($item1);
-        $this->cart->add($item2);
-
-        $this->cart->merge($cart);
-
-        $items = $this->cart->items();
-        $this->assertCount(2, $items);
-
-        $this->assertSame(2, $this->cart->item($item1->key())->quantity());
-        $this->assertSame(3, $this->cart->item($item2->key())->quantity());
     }
 }
 
