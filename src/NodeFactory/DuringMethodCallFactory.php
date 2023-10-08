@@ -14,11 +14,15 @@ use Rector\Core\PhpParser\Node\Value\ValueResolver;
 
 final class DuringMethodCallFactory
 {
-    public function __construct(
-        private readonly ValueResolver $valueResolver,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
     }
-
     /**
      * @return \PhpParser\Node[]
      */
