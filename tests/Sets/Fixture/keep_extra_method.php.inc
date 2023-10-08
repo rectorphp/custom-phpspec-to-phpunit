@@ -4,7 +4,7 @@ namespace spec\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
 
-class KeepMethodSpec extends ObjectBehavior
+class KeepExtraMethodSpec extends ObjectBehavior
 {
     public function let()
     {
@@ -27,12 +27,12 @@ namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
 
-class KeepMethodTest extends \PHPUnit\Framework\TestCase
+class KeepExtraMethodTest extends \PHPUnit\Framework\TestCase
 {
-    private \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\KeepMethod $keepMethod;
+    private \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\KeepExtraMethod $keepExtraMethod;
     protected function setUp(): void
     {
-        $this->keepMethod = new \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\KeepMethod(5);
+        $this->keepExtraMethod = new \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\KeepExtraMethod(5);
 
         $result = $this->getSomeNumbers();
     }

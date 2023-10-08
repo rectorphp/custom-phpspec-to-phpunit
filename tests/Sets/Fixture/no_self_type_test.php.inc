@@ -8,7 +8,7 @@ class ItIsMeSpec extends ObjectBehavior
 {
     public function it_is_me()
     {
-        $this->shouldHaveType(ItIsMe::class);
+        $this->shouldHaveType('anything');
     }
 }
 
