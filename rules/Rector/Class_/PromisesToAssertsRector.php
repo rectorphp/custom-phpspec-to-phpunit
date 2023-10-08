@@ -66,9 +66,7 @@ final class PromisesToAssertsRector extends AbstractRector
 
         $class = $node;
 
-        $this->traverseNodesWithCallable($node, function (\PhpParser\Node $node) use (
-            $class
-        ) {
+        $this->traverseNodesWithCallable($node, function (\PhpParser\Node $node) use ($class) {
             if ($node instanceof ClassMethod && $this->isName($node->name, PhpSpecMethodName::LET)) {
                 // skip let method
                 return NodeTraverser::DONT_TRAVERSE_CHILDREN;
