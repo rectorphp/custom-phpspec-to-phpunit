@@ -29,7 +29,6 @@ class ExceptionDuringTest extends \PHPUnit\Framework\TestCase
     public function testBlows(): void
     {
         $this->expectException('SomeException');
-        $exceptionDuring = new ExceptionDuring();
         $exceptionDuring->item(5);
     }
 }
