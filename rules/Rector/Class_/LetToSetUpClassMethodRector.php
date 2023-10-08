@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
@@ -14,6 +18,7 @@ use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
+use Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -27,6 +32,7 @@ final class LetToSetUpClassMethodRector extends AbstractRector
         private readonly VisibilityManipulator $visibilityManipulator,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly PhpSpecRenaming $phpSpecRenaming,
+        private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
     ) {
     }
 
@@ -101,6 +107,28 @@ CODE_SAMPLE
             // rename and add void return type
             $letClassMethod->name = new Identifier(MethodName::SET_UP);
             $letClassMethod->returnType = new Identifier('void');
+
+            // change be constructed with to an assign
+            $this->traverseNodesWithCallable($letClassMethod, function (Node $node) use (
+                $testedObjectType,
+                $testedObjectPropertyName
+            ) {
+                if (! $node instanceof Node\Expr\MethodCall) {
+                    return null;
+                }
+
+                if (! $this->isName($node->name, PhpSpecMethodName::BE_CONSTRUCTED_WITH)) {
+                    return null;
+                }
+
+                $new = new New_(new FullyQualified($testedObjectType->getClassName()));
+                $new->args = $node->getArgs();
+
+                $mockVariable = new Node\Expr\PropertyFetch(new Variable('this'), new Identifier(
+                    $testedObjectPropertyName
+                ));
+                return new Assign($mockVariable, $new);
+            });
 
             // no params
             $letClassMethod->params = [];
