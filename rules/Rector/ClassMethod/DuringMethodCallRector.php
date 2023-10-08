@@ -10,9 +10,12 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
+use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -23,6 +26,8 @@ final class DuringMethodCallRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
+        private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
+        private readonly ValueResolver $valueResolver,
     ) {
     }
 
@@ -57,16 +62,24 @@ final class DuringMethodCallRector extends AbstractRector
                 continue;
             }
 
-            $shouldThrowMethodCall = $this->matchShouldThrowMethodCall($stmt);
-            if (! $shouldThrowMethodCall instanceof MethodCall) {
+            $duringAndRelatedMethodCall = $this->duringAndRelatedMethodCallMatcher->match(
+                $stmt,
+                PhpSpecMethodName::DURING
+            );
+            if (! $duringAndRelatedMethodCall instanceof DuringAndRelatedMethodCall) {
                 continue;
             }
 
-            $expectExceptionExpression = $this->createExpectExceptionStmt($shouldThrowMethodCall);
+            $expectExceptionExpression = $this->createExpectExceptionStmt(
+                $duringAndRelatedMethodCall->getExceptionMethodCall()
+            );
+            $objectMethodCallExpression = $this->createObjectMethodCallStmt(
+                $duringAndRelatedMethodCall->getDuringMethodCall()
+            );
 
             /** @var Node\Stmt[] $currentStmts */
             $currentStmts = $node->stmts;
-            array_splice($currentStmts, $key, 0, [$expectExceptionExpression]);
+            array_splice($currentStmts, $key, 1, [$expectExceptionExpression, $objectMethodCallExpression]);
 
             // update stmts
             $node->stmts = $currentStmts;
@@ -110,6 +123,9 @@ CODE_SAMPLE
         ]);
     }
 
+    /**
+     * @return Expression<MethodCall>
+     */
     private function createExpectExceptionStmt(MethodCall $nestedMethodCall): Expression
     {
         $thisExpectExceptionMethodCall = new MethodCall(new Variable('this'), 'expectException');
@@ -119,34 +135,16 @@ CODE_SAMPLE
     }
 
     /**
-     * Looks for:
-     *
-     * $this->shouldThrow(ValidationException::class)->during('someMethod');
-     *
-     * Returns MethodCall:
-     *
-     * $this->shouldThrow(ValidationException::class)
+     * @return Expression<MethodCall>
      */
-    private function matchShouldThrowMethodCall(Expression $expression): ?MethodCall
+    private function createObjectMethodCallStmt(MethodCall $duringMethodCall): Expression
     {
-        if (! $expression->expr instanceof MethodCall) {
-            return null;
-        }
+        $args = $duringMethodCall->getArgs();
+        $firstArg = $args[0];
 
-        $methodCall = $expression->expr;
-        if (! $this->isName($methodCall->name, PhpSpecMethodName::DURING)) {
-            return null;
-        }
+        $methodName = $this->valueResolver->getValue($firstArg->value);
 
-        $nestedMethodCall = $methodCall->var;
-        if (! $nestedMethodCall instanceof MethodCall) {
-            return null;
-        }
-
-        if (! $this->isName($nestedMethodCall->name, PhpSpecMethodName::SHOULD_THROW)) {
-            return null;
-        }
-
-        return $nestedMethodCall;
+        $objectMethodCall = new MethodCall(new Variable('this'), $methodName);
+        return new Expression($objectMethodCall);
     }
 }

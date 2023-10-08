@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
@@ -71,7 +72,7 @@ final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
             }
 
             $previousStmt = $node->stmts[$key - 1] ?? null;
-            if (! $previousStmt instanceof Node\Stmt) {
+            if (! $previousStmt instanceof Stmt) {
                 continue;
             }
 
@@ -79,6 +80,7 @@ final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
             $node->stmts[$key - 1] = $this->createExpectExceptionStmt(
                 $duringAndRelatedMethodCall->getExceptionMethodCall()
             );
+
             $node->stmts[$key] = $previousStmt;
 
             $hasChanged = true;
