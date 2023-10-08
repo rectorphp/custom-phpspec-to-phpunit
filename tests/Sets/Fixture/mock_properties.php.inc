@@ -1,9 +1,10 @@
 <?php
 
-namespace spec\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
+namespace Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
-use Sets\Source\OrderFactory;
+use Sets\Source\AnotherMock;
+use spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\OrderFactory;
 
 class MockPropertiesSpec extends ObjectBehavior
 {
@@ -12,10 +13,16 @@ class MockPropertiesSpec extends ObjectBehavior
         $this->beConstructedWith($factory);
     }
 
-    public function let_it_go(OrderFactory $factory)
+    public function let_it_go(AnotherMock $anotherMock)
     {
-        $factory->someMethod()->shouldBeCalled();
-        $this->run();
+        $anotherMock->setName('Nummy');
+        $this->addAnotherMock($anotherMock);
+    }
+
+    public function let_it_go_again(AnotherMock $anotherMock)
+    {
+        $anotherMock->setName('Nummy2');
+        $this->addAnotherMock($anotherMock);
     }
 }
 
@@ -23,27 +30,36 @@ class MockPropertiesSpec extends ObjectBehavior
 -----
 <?php
 
-namespace Tests\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
+namespace Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
-use Sets\Source\OrderFactory;
+use Sets\Source\AnotherMock;
+use spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\OrderFactory;
 
 class MockPropertiesTest extends \PHPUnit\Framework\TestCase
 {
-    private \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\MockProperties $mockProperties;
+    private \Sets\Fixture\MockProperties $mockProperties;
     protected function setUp(): void
     {
         /** @var OrderFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
         $factory = $this->createMock(OrderFactory::class);
-        $this->mockProperties = new \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\MockProperties($factory);
+        $this->mockProperties = new \Sets\Fixture\MockProperties($factory);
     }
 
     public function testLetItGo(): void
     {
-        /** @var OrderFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
-        $factory = $this->createMock(OrderFactory::class);
-        $factory->expects($this->atLeastOnce())->method('someMethod');
-        $this->mockProperties->run();
+        /** @var AnotherMock|\PHPUnit\Framework\MockObject\MockObject $anotherMock */
+        $anotherMock = $this->createMock(AnotherMock::class);
+        $anotherMock->setName('Nummy');
+        $this->mockProperties->addAnotherMock($anotherMock);
+    }
+
+    public function testLetItGoAgain(): void
+    {
+        /** @var AnotherMock|\PHPUnit\Framework\MockObject\MockObject $anotherMock */
+        $anotherMock = $this->createMock(AnotherMock::class);
+        $anotherMock->setName('Nummy2');
+        $this->mockProperties->addAnotherMock($anotherMock);
     }
 }
 
