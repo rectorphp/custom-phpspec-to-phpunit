@@ -140,11 +140,11 @@ From PhpSpec mock expectations to PHPUnit mock expectations
 
 <br>
 
-## PhpSpecPromisesToPHPUnitAssertRector
+## PromisesToAssertsRector
 
-Convert promises and object construction into objects
+Convert promises and object construction to new instances
 
-- class: [`Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecPromisesToPHPUnitAssertRector`](../rules/Rector/Class_/PhpSpecPromisesToPHPUnitAssertRector.php)
+- class: [`Rector\PhpSpecToPHPUnit\Rector\Class_\PromisesToAssertsRector`](../rules/Rector/Class_/PromisesToAssertsRector.php)
 
 ```diff
  use PhpSpec\ObjectBehavior;
@@ -154,7 +154,7 @@ Convert promises and object construction into objects
      public function let()
      {
 -        $this->beConstructedWith(5);
-+        $this->testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
++        $testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
      }
  }
 ```
