@@ -20,12 +20,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LetGoToTearDownClassMethodRector extends AbstractRector
 {
-    public function __construct(
-        private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
+     */
+    private $visibilityManipulator;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    public function __construct(VisibilityManipulator $visibilityManipulator, PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector)
+    {
+        $this->visibilityManipulator = $visibilityManipulator;
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
     }
-
     /**
      * @return array<class-string<Node>>
      */

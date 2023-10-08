@@ -24,12 +24,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-        private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher
+     */
+    private $duringAndRelatedMethodCallMatcher;
+    public function __construct(PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector, DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher)
+    {
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
+        $this->duringAndRelatedMethodCallMatcher = $duringAndRelatedMethodCallMatcher;
     }
-
     /**
      * @return array<class-string<Node>>
      */
