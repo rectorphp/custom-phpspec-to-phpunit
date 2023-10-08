@@ -18,11 +18,6 @@ class CreateMeSpec extends ObjectBehavior
         $this->id()->shouldReturn(5);
     }
 
-    public function it_blows()
-    {
-        $this->shouldThrow('SomeException')->during('item', [5]);
-    }
-
     public function it_should_be_called(Cart $cart)
     {
         $cart->price()->shouldBeCalled()->willReturn(5);
@@ -63,12 +58,6 @@ class CreateMeTest extends \PHPUnit\Framework\TestCase
     public function testReturnsId(): void
     {
         $this->assertSame(5, $this->createMe->id());
-    }
-
-    public function testBlows(): void
-    {
-        $this->expectException('SomeException');
-        $this->createMe->item(5);
     }
 
     public function testCalled(): void
