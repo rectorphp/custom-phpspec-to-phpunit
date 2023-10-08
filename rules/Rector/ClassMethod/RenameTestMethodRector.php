@@ -51,6 +51,7 @@ final class RenameTestMethodRector extends AbstractRector
             return null;
         }
 
+        /** @var string $methodName */
         $methodName = $this->getName($node);
 
         // is already renamed

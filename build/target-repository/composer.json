@@ -5,6 +5,6 @@
     "description": "Rector migration rules for PHPSpec to PHPUnit",
     "require": {
         "php": ">=7.4",
-        "rector/rector": "^0.18"
+        "rector/rector": "^0.18.5"
     }
 }
