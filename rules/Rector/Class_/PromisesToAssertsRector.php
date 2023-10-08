@@ -11,8 +11,6 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\NodeTraverser;
-use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\ProphecyPromisesToPHPUnitAssertMap;
@@ -28,12 +26,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class PromisesToAssertsRector extends AbstractRector
 {
-    private ?string $testedClass = null;
-
-    private bool $isPrepared = false;
-
-    private ?PropertyFetch $testedObjectPropertyFetch = null;
-
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly AssertMethodCallFactory $assertMethodCallFactory,
@@ -60,100 +52,109 @@ final class PromisesToAssertsRector extends AbstractRector
             return null;
         }
 
-        $this->isPrepared = false;
-
-        // $propertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
-
         $class = $node;
+        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($class);
 
-        $this->traverseNodesWithCallable($node, function (\PhpParser\Node $node) use ($class) {
-            if ($node instanceof ClassMethod && $this->isName($node->name, PhpSpecMethodName::LET)) {
-                // skip let method
-                return NodeTraverser::DONT_TRAVERSE_CHILDREN;
-            }
+        $testedObjectPropertyFetch = $this->createTestedObjectPropertyFetch($class);
 
-            if (! $node instanceof MethodCall) {
-                return null;
-            }
-
-            // unwrap getWrappedObject()
-            if ($this->isName($node->name, PhpSpecMethodName::GET_WRAPPED_OBJECT)) {
-                return $node->var;
+        foreach ($node->getMethods() as $classMethod) {
+            if (! $classMethod->isPublic()) {
+                continue;
             }
 
             if ($this->isNames(
-                $node->name,
-                [PhpSpecMethodName::DURING_INSTANTIATION, PhpSpecMethodName::DURING]
+                $classMethod,
+                [PhpSpecMethodName::LET, PhpSpecMethodName::LET_GO, PhpSpecMethodName::GET_MATCHERS]
             )) {
-                // handled in another rule
-                return null;
+                continue;
             }
 
-            // skip reserved names
-            $methodName = $this->getName($node->name);
-            if (! is_string($methodName)) {
-                return null;
-            }
-
-            // handled elsewhere
-            if ($this->isNames(
-                $node->name,
-                [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::EXPECT_EXCEPTION]
-            ) || str_starts_with($methodName, 'assert')) {
-                return null;
-            }
-
-            $this->prepareMethodCall($class);
-
-            if (str_starts_with($methodName, PhpSpecMethodName::BE_CONSTRUCTED)) {
-                return $this->beConstructedWithAssignFactory->create(
-                    $node,
-                    $this->getTestedClass(),
-                    $this->getTestedObjectPropertyFetch()
-                );
-            }
-
-            $args = $node->args;
-            foreach (ProphecyPromisesToPHPUnitAssertMap::PROMISES_BY_ASSERT_METHOD as $assertMethod => $promiseMethods) {
-                if (! $this->isNames($node->name, $promiseMethods)) {
-                    continue;
+            $this->traverseNodesWithCallable($classMethod, function (\PhpParser\Node $node) use (
+                $class,
+                $testedObjectPropertyFetch,
+                $testedClass
+            ) {
+                if (! $node instanceof MethodCall) {
+                    return null;
                 }
 
-                return $this->assertMethodCallFactory->createAssertMethod(
-                    $assertMethod,
-                    $node->var,
-                    $args[0]->value ?? null,
-                    $this->getTestedObjectPropertyFetch()
-                );
-            }
+                // unwrap getWrappedObject()
+                if ($this->isName($node->name, PhpSpecMethodName::GET_WRAPPED_OBJECT)) {
+                    return $node->var;
+                }
 
-            if ($this->shouldSkip($node)) {
-                return null;
-            }
+                if ($this->isNames(
+                    $node->name,
+                    [PhpSpecMethodName::DURING_INSTANTIATION, PhpSpecMethodName::DURING]
+                )) {
+                    // handled in another rule
+                    return null;
+                }
 
-            if ($this->isName($node->name, 'clone')) {
-                return new Clone_($this->getTestedObjectPropertyFetch());
-            }
+                // skip reserved names
+                $methodName = $this->getName($node->name);
+                if (! is_string($methodName)) {
+                    return null;
+                }
 
-            $methodName = $this->getName($node->name);
-            if ($methodName === null) {
-                return null;
-            }
+                // handled elsewhere
+                if ($this->isNames(
+                    $node->name,
+                    [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::EXPECT_EXCEPTION]
+                ) || str_starts_with($methodName, 'assert')) {
+                    return null;
+                }
 
-            // it's a local method call, skip
-            if ($class->getMethod($methodName) instanceof ClassMethod) {
-                return null;
-            }
+                if (str_starts_with($methodName, PhpSpecMethodName::BE_CONSTRUCTED)) {
+                    return $this->beConstructedWithAssignFactory->create(
+                        $node,
+                        $testedClass,
+                        $testedObjectPropertyFetch
+                    );
+                }
 
-            // direct PHPUnit method calls, no need to call on property
-            if (in_array($methodName, ['atLeastOnce', 'equalTo', 'isInstanceOf', 'isType'], true)) {
+                $args = $node->args;
+                foreach (ProphecyPromisesToPHPUnitAssertMap::PROMISES_BY_ASSERT_METHOD as $assertMethod => $promiseMethods) {
+                    if (! $this->isNames($node->name, $promiseMethods)) {
+                        continue;
+                    }
+
+                    return $this->assertMethodCallFactory->createAssertMethod(
+                        $assertMethod,
+                        $node->var,
+                        $args[0]->value ?? null,
+                        $testedObjectPropertyFetch
+                    );
+                }
+
+                if ($this->shouldSkip($node)) {
+                    return null;
+                }
+
+                if ($this->isName($node->name, 'clone')) {
+                    return new Clone_($testedObjectPropertyFetch);
+                }
+
+                $methodName = $this->getName($node->name);
+                if ($methodName === null) {
+                    return null;
+                }
+
+                // it's a local method call, skip
+                if ($class->getMethod($methodName) instanceof ClassMethod) {
+                    return null;
+                }
+
+                // direct PHPUnit method calls, no need to call on property
+                if (in_array($methodName, ['atLeastOnce', 'equalTo', 'isInstanceOf', 'isType'], true)) {
+                    return $node;
+                }
+
+                $node->var = $testedObjectPropertyFetch;
+
                 return $node;
-            }
-
-            $node->var = $this->getTestedObjectPropertyFetch();
-
-            return $node;
-        });
+            });
+        }
 
         return $node;
     }
@@ -167,7 +168,7 @@ use PhpSpec\ObjectBehavior;
 
 class TestClassMethod extends ObjectBehavior
 {
-    public function let()
+    public function it_shoud_do()
     {
         $this->beConstructedWith(5);
     }
@@ -179,7 +180,7 @@ use PhpSpec\ObjectBehavior;
 
 class TestClassMethod extends ObjectBehavior
 {
-    public function let()
+    public function it_shoud_do()
     {
         $testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
     }
@@ -188,41 +189,6 @@ CODE_SAMPLE
             ),
 
         ]);
-    }
-
-    private function prepareMethodCall(Class_ $class): void
-    {
-        if ($this->isPrepared) {
-            return;
-        }
-
-        $className = $this->getName($class);
-        if (! is_string($className)) {
-            return;
-        }
-
-        $this->testedClass = $this->phpSpecRenaming->resolveTestedClassName($class);
-        $this->testedObjectPropertyFetch = $this->createTestedObjectPropertyFetch($class);
-
-        $this->isPrepared = true;
-    }
-
-    private function getTestedObjectPropertyFetch(): PropertyFetch
-    {
-        if (! $this->testedObjectPropertyFetch instanceof PropertyFetch) {
-            throw new ShouldNotHappenException();
-        }
-
-        return $this->testedObjectPropertyFetch;
-    }
-
-    private function getTestedClass(): string
-    {
-        if ($this->testedClass === null) {
-            throw new ShouldNotHappenException();
-        }
-
-        return $this->testedClass;
     }
 
     private function shouldSkip(MethodCall $methodCall): bool
@@ -242,6 +208,7 @@ CODE_SAMPLE
     private function createTestedObjectPropertyFetch(Class_ $class): PropertyFetch
     {
         $propertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($class);
+
         return new PropertyFetch(new Variable('this'), $propertyName);
     }
 }
