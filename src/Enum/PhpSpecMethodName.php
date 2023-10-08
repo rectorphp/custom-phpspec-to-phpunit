@@ -50,4 +50,14 @@ final class PhpSpecMethodName
      * @var string
      */
     public const GET_WRAPPED_OBJECT = 'getWrappedObject';
+
+    /**
+     * @var string
+     */
+    public const DURING = 'during';
+
+    /**
+     * @var string
+     */
+    public const SHOULD_THROW = 'shouldThrow';
 }
