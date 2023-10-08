@@ -24,12 +24,21 @@ use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
 
 final class MockCallFactory
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly PhpSpecMockCollector $phpSpecMockCollector,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\PhpSpecMockCollector
+     */
+    private $phpSpecMockCollector;
+    public function __construct(NodeNameResolver $nodeNameResolver, PhpSpecMockCollector $phpSpecMockCollector)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->phpSpecMockCollector = $phpSpecMockCollector;
     }
-
     /**
      * Variable or property fetch, based on number of present params in whole class
      * @return Expression<Assign>|null

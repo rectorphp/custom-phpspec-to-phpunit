@@ -12,7 +12,7 @@ final class StringUtils
     public static function removeSuffixes(string $name, array $suffixesToRemove): string
     {
         foreach ($suffixesToRemove as $suffixToRemove) {
-            if (str_ends_with($name, $suffixToRemove)) {
+            if (substr_compare($name, $suffixToRemove, -strlen($suffixToRemove)) === 0) {
                 $name = substr($name, 0, -strlen($suffixToRemove));
             }
         }
@@ -26,7 +26,7 @@ final class StringUtils
     public static function removePrefixes(string $name, array $prefixesToRemove): string
     {
         foreach ($prefixesToRemove as $prefixToRemove) {
-            if (str_starts_with($name, $prefixToRemove)) {
+            if (strncmp($name, $prefixToRemove, strlen($prefixToRemove)) === 0) {
                 $name = substr($name, strlen($prefixToRemove));
             }
         }
