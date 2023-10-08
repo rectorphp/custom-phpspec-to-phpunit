@@ -8,7 +8,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Rector\\PhpSpecToPHPUnit\\": "src"
+            "Rector\\PhpSpecToPHPUnit\\": ["src", "rules"]
         }
     }
 }
