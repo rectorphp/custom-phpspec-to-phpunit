@@ -160,10 +160,9 @@ CODE_SAMPLE
         $args = $staticCall->getArgs();
         $firstArg = $args[0];
 
-        $argType = $this->valueResolver->getValue($firstArg->value);
+        $argType = $this->nodeTypeResolver->getType($firstArg->value);
 
-        $methodName = $argType->isScalar()
-            ->yes() ? 'isType' : 'isInstanceOf';
+        $methodName = $argType->isScalar()->yes() ? 'isType' : 'isInstanceOf';
         return $this->nodeFactory->createLocalMethodCall($methodName, $args);
     }
 

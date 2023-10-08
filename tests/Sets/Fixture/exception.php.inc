@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
+namespace spec\Rector\PhpSpecToPHPUnit\Fixture;
 
 use PhpSpec\ObjectBehavior;
 
@@ -8,7 +8,7 @@ class ExceptionSpec extends ObjectBehavior
 {
     public function it_should_throw_exceptions_where_rates_are_not_loaded()
     {
-        $this->beConstructedWith('https://non-existent-rates.example.com/denni_kurz.txt');
+        $this->beConstructedWith('random-string');
 
         $this->shouldThrow(RatesNotLoadedException::class)->during('get');
     }
@@ -18,22 +18,20 @@ class ExceptionSpec extends ObjectBehavior
 -----
 <?php
 
-namespace Sets\Fixture;
+namespace Tests\Rector\PhpSpecToPHPUnit\Fixture;
 
-use Tests\Rector\PhpSpecToPHPUnit\Tests\Rector\Variable\PhpSpecToPHPUnitRector\Fixture\RatesNotLoadedException;
+use PhpSpec\ObjectBehavior;
 
 class ExceptionTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\Exception $exception;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->exception = new \Sets\Fixture\Exception();
+        $this->exception = new \Rector\PhpSpecToPHPUnit\Fixture\Exception();
     }
-    public function testThrowExceptionsWhereRatesAreNotLoaded()
+    public function testThrowExceptionsWhereRatesAreNotLoaded(): void
     {
-        $this->exception = new \Sets\Fixture\Exception('https://non-existent-rates.example.com/denni_kurz.txt');
-
+        $this->exception = new \Rector\PhpSpecToPHPUnit\Fixture\Exception('random-string');
         $this->expectException(RatesNotLoadedException::class);
         $this->exception->get();
     }

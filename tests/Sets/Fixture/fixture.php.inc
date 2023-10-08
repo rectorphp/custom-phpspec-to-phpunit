@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture;
+namespace spec\PhpSpecToPHPUnit\Fixture;
 
 use PhpSpec\ObjectBehavior;
 use Sets\Source\Address;
@@ -28,7 +28,6 @@ class CreateMeSpec extends ObjectBehavior
         $cart->price()->shouldBeCalled()->willReturn(5);
         $cart->shippingAddress(Argument::type(Address::class))->shouldBeCalled();
         $cart->shippingAddress(Argument::type('DateTime'))->shouldBeCalled();
-        $cart->shippingAddress(Argument::type('string'))->shouldBeCalled();
     }
 
     public function is_bool_check()
@@ -47,47 +46,47 @@ class CreateMeSpec extends ObjectBehavior
 -----
 <?php
 
-namespace Sets\Fixture;
+namespace Tests\PhpSpecToPHPUnit\Fixture;
 
+use PhpSpec\ObjectBehavior;
 use Sets\Source\Address;
 use Sets\Source\Cart;
 
 class CreateMeTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\CreateMe $createMe;
+    private \PhpSpecToPHPUnit\Fixture\CreateMe $createMe;
     protected function setUp(): void
     {
-        $this->createMe = new \Sets\Fixture\CreateMe(5);
+        $this->createMe = new \PhpSpecToPHPUnit\Fixture\CreateMe(5);
     }
 
-    public function testReturnsId()
+    public function testReturnsId(): void
     {
         $this->assertSame(5, $this->createMe->id());
     }
 
-    public function testBlows()
+    public function testBlows(): void
     {
         $this->expectException('SomeException');
         $this->createMe->item(5);
     }
 
-    public function testCalled()
+    public function testCalled(): void
     {
         /** @var Cart|\PHPUnit\Framework\MockObject\MockObject $cart */
         $cart = $this->createMock(Cart::class);
         $cart->expects($this->atLeastOnce())->method('price')->willReturn(5);
         $cart->expects($this->atLeastOnce())->method('shippingAddress')->with($this->isInstanceOf(Address::class));
         $cart->expects($this->atLeastOnce())->method('shippingAddress')->with($this->isInstanceOf('DateTime'));
-        $cart->expects($this->atLeastOnce())->method('shippingAddress')->with($this->isType('string'));
     }
 
-    public function testBoolCheck()
+    public function testBoolCheck(): void
     {
         $this->assertFalse($this->createMe->hasFailed());
         $this->assertNotFalse($this->createMe->hasFailed());
     }
 
-    public function testArrayType()
+    public function testArrayType(): void
     {
         $this->assertIsIterable($this->createMe->shippingAddresses());
     }

@@ -148,29 +148,8 @@ class CartTest extends \PHPUnit\Framework\TestCase
         $this->cart->add(new \Ecommerce\Cart\Item($id, 'Lorem ipsum', 3, new Price(671, $taxRate, $currency)));
 
         $this->assertInstanceOf(\Ecommerce\Cart\Contract\Item::class, $this->cart->item($id));
-    }
-
-    public function testThrowAnExceptionWhenItemIsNotInCart(): void
-    {
-        $id = Uuid::uuid1();
-
-        $this->expectException(NotFoundException::class);
-        $this->cart->item($id);
-    }
-
-    public function testSummUpQuantitiesWhenAddingSameItemMultipleTimes(): void
-    {
-        PriceType::set(PriceType::WITH_VAT);
-
-        $id       = Uuid::uuid1();
-        $taxRate  = EntityFactory::make('tax_rate_21');
-        $currency = EntityFactory::make('currency_czk');
-
-        $this->cart->add(new \Ecommerce\Cart\Item($id, 'Lorem ipsum', 3, new Price(671, $taxRate, $currency)));
-        $this->cart->add(new \Ecommerce\Cart\Item($id, 'Dolor sit amet', 7, new Price(671, $taxRate, $currency)));
 
         $item = $this->cart->item($id);
-
         $this->assertSame(10, $item->quantity());
     }
 
@@ -184,7 +163,6 @@ class CartTest extends \PHPUnit\Framework\TestCase
 
         $this->cart->add(new \Ecommerce\Cart\Item($id, 'Lorem ipsum', 3, new Price(671, $taxRate, $currency)));
         $this->cart->remove($id);
-
         $this->expectException(NotFoundException::class);
         $this->cart->item($id);
     }

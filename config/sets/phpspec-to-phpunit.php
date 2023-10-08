@@ -27,6 +27,7 @@ return static function (RectorConfig $rectorConfig): void {
         RemoveShouldHaveTypeRector::class,
 
         // 1. first convert mocks
+        \Rector\PhpSpecToPHPUnit\Rector\ClassMethod\DuringMethodCallRector::class,
         ShouldThrowAndInstantiationOrderRector::class,
         PhpSpecMocksToPHPUnitMocksRector::class,
         PhpSpecPromisesToPHPUnitAssertRector::class,
