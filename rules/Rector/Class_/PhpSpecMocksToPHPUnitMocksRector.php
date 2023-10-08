@@ -32,7 +32,6 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
     public function __construct(
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly MockCallFactory $mockCallFactory,
-        private readonly ValueResolver $valueResolver,
     ) {
     }
 
