@@ -28,19 +28,53 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 {
-    private ?string $testedClass = null;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory
+     */
+    private $assertMethodCallFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory
+     */
+    private $beConstructedWithAssignFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\DuringMethodCallFactory
+     */
+    private $duringMethodCallFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    /**
+     * @var string|null
+     */
+    private $testedClass;
 
-    private bool $isPrepared = false;
+    /**
+     * @var bool
+     */
+    private $isPrepared = false;
 
-    private ?PropertyFetch $testedObjectPropertyFetch = null;
+    /**
+     * @var \PhpParser\Node\Expr\PropertyFetch|null
+     */
+    private $testedObjectPropertyFetch;
 
-    public function __construct(
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly AssertMethodCallFactory $assertMethodCallFactory,
-        private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
-        private readonly DuringMethodCallFactory $duringMethodCallFactory,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector
-    ) {
+    public function __construct(PhpSpecRenaming $phpSpecRenaming, AssertMethodCallFactory $assertMethodCallFactory, BeConstructedWithAssignFactory $beConstructedWithAssignFactory, DuringMethodCallFactory $duringMethodCallFactory, PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector)
+    {
+        $this->phpSpecRenaming = $phpSpecRenaming;
+        $this->assertMethodCallFactory = $assertMethodCallFactory;
+        $this->beConstructedWithAssignFactory = $beConstructedWithAssignFactory;
+        $this->duringMethodCallFactory = $duringMethodCallFactory;
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
     }
 
     /**
@@ -55,7 +89,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
      * @param Class_ $node
      * @return \PhpParser\Node|Node[]|null
      */
-    public function refactor(Node $node): Node|array|null
+    public function refactor(Node $node)
     {
         if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
             return null;
@@ -67,7 +101,7 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
 
         $this->traverseNodesWithCallable($node->stmts, function (\PhpParser\Node $node) use (
             $class
-        ): \PhpParser\Node|null|array {
+        ) {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -97,13 +131,13 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
             if ($this->isNames(
                 $node->name,
                 [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::EXPECT_EXCEPTION]
-            ) || str_starts_with($methodName, 'assert')) {
+            ) || strncmp($methodName, 'assert', strlen('assert')) === 0) {
                 return null;
             }
 
             $this->prepareMethodCall($class);
 
-            if (str_starts_with($methodName, 'beConstructed')) {
+            if (strncmp($methodName, 'beConstructed', strlen('beConstructed')) === 0) {
                 return $this->beConstructedWithAssignFactory->create(
                     $node,
                     $this->getTestedClass(),
