@@ -16,6 +16,7 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
@@ -31,6 +32,7 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
     public function __construct(
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly MockCallFactory $mockCallFactory,
+        private readonly ValueResolver $valueResolver,
     ) {
     }
 
