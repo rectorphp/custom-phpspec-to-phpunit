@@ -212,7 +212,7 @@ Rename test method from underscore PhpSpec syntax to test* PHPUnit syntax
  class RenameMethodTest extends ObjectBehavior
  {
 -    public function is_shoud_be_valid()
-+    public function testShoudBeValid()
++    public function testShouldBeValid(): void
      {
      }
  }
