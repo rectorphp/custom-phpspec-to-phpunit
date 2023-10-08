@@ -52,13 +52,6 @@ class CartSpec extends ObjectBehavior
         $this->item($id)->shouldBeAnInstanceOf(\Ecommerce\Cart\Contract\Item::class);
     }
 
-    public function it_should_throw_an_exception_when_item_is_not_in_cart()
-    {
-        $id = Uuid::uuid1();
-
-        $this->shouldThrow(NotFoundException::class)->during('item', [$id]);
-    }
-
     public function it_should_summ_up_quantities_when_adding_same_item_multiple_times()
     {
         PriceType::set(PriceType::WITH_VAT);

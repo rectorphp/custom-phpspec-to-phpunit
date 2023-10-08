@@ -6,6 +6,7 @@ namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -141,9 +142,31 @@ CODE_SAMPLE
         $args = $duringMethodCall->getArgs();
         $firstArg = $args[0];
 
+        // include arguments too
         $methodName = $this->valueResolver->getValue($firstArg->value);
+        $newArgs = $this->resolveMethodCallArgs($args);
 
-        $objectMethodCall = new MethodCall(new Variable('this'), $methodName);
+        $objectMethodCall = new MethodCall(new Variable('this'), $methodName, $newArgs);
+
         return new Expression($objectMethodCall);
+    }
+
+    /**
+     * @param Arg[] $args
+     * @return Arg[]
+     */
+    private function resolveMethodCallArgs(array $args): array
+    {
+        if (! isset($args[1])) {
+            return [];
+        }
+
+        $secondArg = $args[1];
+        if (! $secondArg->value instanceof Array_) {
+            return [];
+        }
+
+        $array = $secondArg->value;
+        return $this->nodeFactory->createArgs($array->items);
     }
 }
