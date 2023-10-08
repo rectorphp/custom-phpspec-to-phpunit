@@ -66,6 +66,7 @@ final class RenameTestMethodRector extends AbstractRector
         }
 
         $node->name = new Identifier($phpUnitTestMethodName);
+        $node->returnType = new Identifier('void');
 
         return $node;
     }
@@ -90,7 +91,7 @@ use PhpSpec\ObjectBehavior;
 
 class RenameMethodTest extends ObjectBehavior
 {
-    public function testShoudBeValid()
+    public function testShouldBeValid(): void
     {
     }
 }

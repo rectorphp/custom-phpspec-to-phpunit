@@ -6,7 +6,7 @@ use PhpSpec\ObjectBehavior;
 
 class RenameMethodTest extends ObjectBehavior
 {
-    public function is_shoud_be_valid()
+    public function is_should_be_valid()
     {
     }
 }
@@ -21,7 +21,7 @@ use PhpSpec\ObjectBehavior;
 
 class RenameMethodTest extends ObjectBehavior
 {
-    public function testShoudBeValid()
+    public function testShouldBeValid(): void
     {
     }
 }
