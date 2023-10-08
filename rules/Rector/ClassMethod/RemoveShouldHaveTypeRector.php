@@ -20,11 +20,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RemoveShouldHaveTypeRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    public function __construct(PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector)
+    {
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
     }
-
     /**
      * @return array<class-string<Node>>
      */

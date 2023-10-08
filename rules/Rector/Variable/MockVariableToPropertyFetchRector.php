@@ -19,12 +19,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class MockVariableToPropertyFetchRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecMockCollector $phpSpecMockCollector,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\PhpSpecMockCollector
+     */
+    private $phpSpecMockCollector;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector
+     */
+    private $phpSpecBehaviorNodeDetector;
+    public function __construct(PhpSpecMockCollector $phpSpecMockCollector, PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector)
+    {
+        $this->phpSpecMockCollector = $phpSpecMockCollector;
+        $this->phpSpecBehaviorNodeDetector = $phpSpecBehaviorNodeDetector;
     }
-
     /**
      * @return array<class-string<Node>>
      */

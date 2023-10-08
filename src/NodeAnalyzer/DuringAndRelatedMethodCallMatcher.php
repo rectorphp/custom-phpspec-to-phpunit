@@ -13,11 +13,15 @@ use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
 
 final class DuringAndRelatedMethodCallMatcher
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
-
     /**
      * Looks for e.g.:
      *

@@ -15,13 +15,18 @@ use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
 final class PhpSpecMockCollector
 {
     /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    /**
      * @var array<string, mixed>
      */
-    private array $propertyMocksByClass = [];
+    private $propertyMocksByClass = [];
 
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-    ) {
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     /**
