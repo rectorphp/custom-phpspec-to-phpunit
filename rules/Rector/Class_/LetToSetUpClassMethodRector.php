@@ -5,26 +5,16 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
-use Rector\PhpSpecToPHPUnit\NodeFactory\SetUpMethodFactory;
-use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
-use Rector\StaticTypeMapper\StaticTypeMapper;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -37,8 +27,6 @@ final class LetToSetUpClassMethodRector extends AbstractRector
         private readonly VisibilityManipulator $visibilityManipulator,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly SetUpMethodFactory $setUpMethodFactory,
-        private readonly StaticTypeMapper $staticTypeMapper,
     ) {
     }
 
@@ -48,44 +36,6 @@ final class LetToSetUpClassMethodRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [Class_::class];
-    }
-
-    /**
-     * @param Class_ $node
-     */
-    public function refactor(Node $node): ?Node
-    {
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
-            return null;
-        }
-
-        $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
-
-        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);
-        $testedObjectType = new ObjectType($testedClass);
-
-        $newClasStmts = [];
-
-        // add default property, if let() method is here
-        $letClassMethod = $node->getMethod(PhpSpecMethodName::LET);
-        if ($letClassMethod instanceof ClassMethod) {
-            $newClasStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
-                $testedObjectPropertyName,
-                $testedObjectType
-            );
-
-            // rename and add void return type
-            $letClassMethod->name = new Identifier(MethodName::SET_UP);
-            $letClassMethod->returnType = new Identifier('void');
-
-            // no params
-            $letClassMethod->params = [];
-            $this->visibilityManipulator->makeProtected($letClassMethod);
-        }
-
-        $node->stmts = array_merge($newClasStmts, $node->stmts);
-
-        return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -124,23 +74,41 @@ CODE_SAMPLE
         );
     }
 
-    private function createSetUpClassMethod(string $propertyName, ObjectType $testedObjectType): ClassMethod
+    /**
+     * @param Class_ $node
+     */
+    public function refactor(Node $node): ?Node
     {
-        $propertyFetch = new PropertyFetch(new Variable('this'), $propertyName);
-
-        $testedObjectType = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode(
-            $testedObjectType,
-            TypeKind::RETURN
-        );
-
-        if (! $testedObjectType instanceof Name) {
-            throw new ShouldNotHappenException();
+        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
+            return null;
         }
 
-        $new = new New_($testedObjectType);
-        $assign = new Assign($propertyFetch, $new);
+        $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
 
-        $assignExpression = new Expression($assign);
-        return $this->setUpMethodFactory->create($assignExpression);
+        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);
+        $testedObjectType = new ObjectType($testedClass);
+
+        $newClasStmts = [];
+
+        // add default property, if let() method is here
+        $letClassMethod = $node->getMethod(PhpSpecMethodName::LET);
+        if ($letClassMethod instanceof ClassMethod) {
+            $newClasStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
+                $testedObjectPropertyName,
+                $testedObjectType
+            );
+
+            // rename and add void return type
+            $letClassMethod->name = new Identifier(MethodName::SET_UP);
+            $letClassMethod->returnType = new Identifier('void');
+
+            // no params
+            $letClassMethod->params = [];
+            $this->visibilityManipulator->makeProtected($letClassMethod);
+        }
+
+        $node->stmts = array_merge($newClasStmts, $node->stmts);
+
+        return $node;
     }
 }
