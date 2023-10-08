@@ -8,7 +8,7 @@ use Rector\PhpSpecToPHPUnit\Rector\Class_\LetToSetUpClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\MoveParameterMockToPropertyMockRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecClassToPHPUnitClassRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecMocksToPHPUnitMocksRector;
-use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecPromisesToPHPUnitAssertRector;
+use Rector\PhpSpecToPHPUnit\Rector\Class_\PromisesToAssertsRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RemoveShouldHaveTypeRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\ShouldThrowAndInstantiationOrderRector;
@@ -30,7 +30,7 @@ return static function (RectorConfig $rectorConfig): void {
         \Rector\PhpSpecToPHPUnit\Rector\ClassMethod\DuringMethodCallRector::class,
         ShouldThrowAndInstantiationOrderRector::class,
         PhpSpecMocksToPHPUnitMocksRector::class,
-        PhpSpecPromisesToPHPUnitAssertRector::class,
+        PromisesToAssertsRector::class,
 
         // 2. then class methods
         LetToSetUpClassMethodRector::class,

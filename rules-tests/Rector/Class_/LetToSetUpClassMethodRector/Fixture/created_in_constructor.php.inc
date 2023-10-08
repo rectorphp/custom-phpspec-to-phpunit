@@ -22,7 +22,9 @@ use PhpSpec\ObjectBehavior;
 
 class TestClassMethod extends ObjectBehavior
 {
-    public function let()
+    private TestClassMethod $testClassMethod;
+
+    protected function setUp(): void
     {
         $this->testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
     }

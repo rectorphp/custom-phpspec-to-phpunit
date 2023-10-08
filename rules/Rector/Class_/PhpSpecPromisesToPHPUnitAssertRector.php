@@ -23,9 +23,9 @@ use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PhpSpecPromisesToPHPUnitAssertRector\PhpSpecPromisesToPHPUnitAssertRectorTest
+ * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PromisesToAssertsRector\PromisesToAssertsRectorTest
  */
-final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
+final class PromisesToAssertsRector extends AbstractRector
 {
     private ?string $testedClass = null;
 

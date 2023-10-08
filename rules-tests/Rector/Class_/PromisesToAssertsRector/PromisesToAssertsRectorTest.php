@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PhpSpecPromisesToPHPUnitAssertRector;
+namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PromisesToAssertsRector;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class PhpSpecPromisesToPHPUnitAssertRectorTest extends AbstractRectorTestCase
+final class PromisesToAssertsRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('provideData')]
     public function test(string $filePath): void
