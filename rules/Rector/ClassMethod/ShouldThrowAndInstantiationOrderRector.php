@@ -12,7 +12,9 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
+use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -23,6 +25,7 @@ final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
+        private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
     ) {
     }
 
@@ -59,8 +62,11 @@ final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
                 continue;
             }
 
-            $shouldThrowMethodCall = $this->matchShouldThrowMethodCall($stmt);
-            if (! $shouldThrowMethodCall instanceof MethodCall) {
+            $duringAndRelatedMethodCall = $this->duringAndRelatedMethodCallMatcher->match(
+                $stmt,
+                PhpSpecMethodName::DURING_INSTANTIATION
+            );
+            if (! $duringAndRelatedMethodCall instanceof DuringAndRelatedMethodCall) {
                 continue;
             }
 
@@ -70,7 +76,9 @@ final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
             }
 
             // move previous expression here
-            $node->stmts[$key - 1] = $this->createExpectExceptionStmt($shouldThrowMethodCall);
+            $node->stmts[$key - 1] = $this->createExpectExceptionStmt(
+                $duringAndRelatedMethodCall->getExceptionMethodCall()
+            );
             $node->stmts[$key] = $previousStmt;
 
             $hasChanged = true;
@@ -123,37 +131,5 @@ CODE_SAMPLE
         $thisExpectExceptionMethodCall->args[] = new Arg($nestedMethodCall->getArgs()[0]->value);
 
         return new Expression($thisExpectExceptionMethodCall);
-    }
-
-    /**
-     * Looks for:
-     *
-     * $this->shouldThrow(ValidationException::class)->duringInstantiation();
-     *
-     * Returns MethodCall:
-     *
-     * $this->shouldThrow(ValidationException::class)
-     */
-    private function matchShouldThrowMethodCall(Expression $expression): ?MethodCall
-    {
-        if (! $expression->expr instanceof MethodCall) {
-            return null;
-        }
-
-        $methodCall = $expression->expr;
-        if (! $this->isName($methodCall->name, 'duringInstantiation')) {
-            return null;
-        }
-
-        $nestedMethodCall = $methodCall->var;
-        if (! $nestedMethodCall instanceof MethodCall) {
-            return null;
-        }
-
-        if (! $this->isName($nestedMethodCall->name, 'shouldThrow')) {
-            return null;
-        }
-
-        return $nestedMethodCall;
     }
 }

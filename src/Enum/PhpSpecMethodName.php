@@ -60,4 +60,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const SHOULD_THROW = 'shouldThrow';
+
+    /**
+     * @var string
+     */
+    public const DURING_INSTANTIATION = 'duringInstantiation';
 }

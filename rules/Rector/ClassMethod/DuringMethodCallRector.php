@@ -64,8 +64,12 @@ final class DuringMethodCallRector extends AbstractRector
 
             $expectExceptionExpression = $this->createExpectExceptionStmt($shouldThrowMethodCall);
 
+            /** @var Node\Stmt[] $currentStmts */
             $currentStmts = $node->stmts;
             array_splice($currentStmts, $key, 0, [$expectExceptionExpression]);
+
+            // update stmts
+            $node->stmts = $currentStmts;
 
             return $node;
         }
