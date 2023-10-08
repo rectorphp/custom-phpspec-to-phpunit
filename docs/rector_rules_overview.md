@@ -1,4 +1,26 @@
-# 11 Rules Overview
+# 12 Rules Overview
+
+## DuringMethodCallRector
+
+Split `shouldThrow()` and `during()` method to expected exception and method call
+
+- class: [`Rector\PhpSpecToPHPUnit\Rector\ClassMethod\DuringMethodCallRector`](../rules/Rector/ClassMethod/DuringMethodCallRector.php)
+
+```diff
+ use PhpSpec\ObjectBehavior;
+
+ class DuringMethodSpec extends ObjectBehavior
+ {
+     public function is_should()
+     {
+-        $this->shouldThrow(ValidationException::class)->during('someMethod');
++        $this->expectException(ValidationException::class);
++        $this->someMethod();
+     }
+ }
+```
+
+<br>
 
 ## LetGoToTearDownClassMethodRector
 

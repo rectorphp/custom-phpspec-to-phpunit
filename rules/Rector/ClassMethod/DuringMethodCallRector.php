@@ -92,17 +92,16 @@ final class DuringMethodCallRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Reorder and rename shouldThrow() method to mark before instantiation', [
+        return new RuleDefinition('Split shouldThrow() and during() method to expected exception and method call', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
 
-class RenameMethodTest extends ObjectBehavior
+class DuringMethodSpec extends ObjectBehavior
 {
     public function is_should()
     {
-        $this->beConstructedThrough('create', [$data]);
-        $this->shouldThrow(ValidationException::class)->duringInstantiation();
+        $this->shouldThrow(ValidationException::class)->during('someMethod');
     }
 }
 CODE_SAMPLE
@@ -110,12 +109,12 @@ CODE_SAMPLE
                 <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
 
-class RenameMethodTest extends ObjectBehavior
+class DuringMethodSpec extends ObjectBehavior
 {
     public function is_should()
     {
         $this->expectException(ValidationException::class);
-        $this->beConstructedThrough('create', [$data]);
+        $this->someMethod();
     }
 }
 CODE_SAMPLE
