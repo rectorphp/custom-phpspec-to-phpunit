@@ -6,6 +6,7 @@ namespace Sets;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Rector\PhpSpecToPHPUnit\Set\MigrationSetList;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 final class PhpSpecToPHPUnitSetTest extends AbstractRectorTestCase
@@ -23,6 +24,6 @@ final class PhpSpecToPHPUnitSetTest extends AbstractRectorTestCase
 
     public function provideConfigFilePath(): string
     {
-        return __DIR__ . '/../../config/sets/phpspec-to-phpunit.php';
+        return MigrationSetList::PHPSPEC_TO_PHPUNIT;
     }
 }
