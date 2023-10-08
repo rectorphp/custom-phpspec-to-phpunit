@@ -61,6 +61,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
+        "platform-check": false,
         "allow-plugins": {
             "cweagans/composer-patches": true,
             "rector/extension-installer": true,
