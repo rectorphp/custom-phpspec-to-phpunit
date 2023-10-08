@@ -19,7 +19,6 @@ use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory;
-use Rector\PhpSpecToPHPUnit\NodeFactory\DuringMethodCallFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -38,7 +37,6 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly AssertMethodCallFactory $assertMethodCallFactory,
         private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
-        private readonly DuringMethodCallFactory $duringMethodCallFactory,
         private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector
     ) {
     }
@@ -77,14 +75,11 @@ final class PhpSpecPromisesToPHPUnitAssertRector extends AbstractRector
                 return $node->var;
             }
 
-            if ($this->isName($node->name, 'during')) {
-                return $this->duringMethodCallFactory->create($node, $this->getTestedObjectPropertyFetch());
-            }
-
-            if ($this->isName($node->name, 'duringInstantiation')) {
-                // handled in another rule
+            if ($this->isNames(
+                $node->name,
+                [PhpSpecMethodName::DURING_INSTANTIATION, PhpSpecMethodName::DURING]
+            )) {                // handled in another rule
                 return null;
-                // return $this->processDuringInstantiation($node);
             }
 
             // skip reserved names
