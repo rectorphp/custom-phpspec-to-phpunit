@@ -94,6 +94,11 @@ CODE_SAMPLE
 
     private function processMethodCall(MethodCall $methodCall): ?MethodCall
     {
+        if ($this->isName($methodCall->name, PhpSpecMethodName::SHOULD_NOT_BE_CALLED)) {
+            return $this->refactorShouldNotBeCalled($methodCall);
+        }
+
+
         if (! $this->isName($methodCall->name, PhpSpecMethodName::SHOULD_BE_CALLED)) {
             return null;
         }
@@ -107,9 +112,9 @@ CODE_SAMPLE
             throw new ShouldNotHappenException();
         }
 
-        $arg = $methodCall->var->args[0] ?? null;
+        $firstArg = $methodCall->var->getArgs()[0] ?? null;
 
-        $expectedArg = $arg instanceof Arg ? $arg->value : null;
+        $expectedArg = $firstArg instanceof Arg ? $firstArg->value : null;
 
         $methodCall->var->name = new Identifier('expects');
         $thisOnceMethodCall = $this->nodeFactory->createLocalMethodCall('atLeastOnce');
@@ -197,5 +202,24 @@ CODE_SAMPLE
         }
 
         return $class;
+    }
+
+    private function refactorShouldNotBeCalled(MethodCall $methodCall): MethodCall
+    {
+        $methodCall->name = new Identifier('expects');
+        $thisOnceMethodCall = $this->nodeFactory->createLocalMethodCall('never');
+        $methodCall->args = [new Arg($thisOnceMethodCall)];
+
+
+        // make use of method("name") convention
+        if ($methodCall->var instanceof MethodCall) {
+            $methodMethodCall = $methodCall->var;
+            $mockedMethodName = $this->getName($methodMethodCall->name);
+
+            $methodMethodCall->args = [new Arg(new String_($mockedMethodName))];
+            $methodMethodCall->name = new Identifier('method');
+        }
+
+        return $methodCall;
     }
 }

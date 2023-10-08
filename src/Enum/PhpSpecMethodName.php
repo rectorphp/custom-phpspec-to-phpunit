@@ -65,4 +65,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const DURING_INSTANTIATION = 'duringInstantiation';
+
+    /**
+     * @var string
+     */
+    public const SHOULD_NOT_BE_CALLED = 'shouldNotBeCalled';
 }
