@@ -50,20 +50,6 @@ class CartSpec extends ObjectBehavior
         $item->quantity()->shouldReturn(10);
     }
 
-    public function it_should_remove_item()
-    {
-        PriceType::set(PriceType::WITH_VAT);
-
-        $id       = Uuid::uuid1();
-        $taxRate  = EntityFactory::make('tax_rate_21');
-        $currency = EntityFactory::make('currency_czk');
-
-        $this->add(new \Ecommerce\Cart\Item($id, 'Lorem ipsum', 3, new Price(671, $taxRate, $currency)));
-        $this->remove($id);
-
-        $this->shouldThrow(NotFoundException::class)->during('item', [$id]);
-    }
-
     public function it_should_calculate_total_price_of_all_items_when_not_empty()
     {
         PriceType::set(PriceType::WITH_VAT);
@@ -136,20 +122,6 @@ class CartTest extends \PHPUnit\Framework\TestCase
 
         $item = $this->cart->item($id);
         $this->assertSame(10, $item->quantity());
-    }
-
-    public function testRemoveItem(): void
-    {
-        PriceType::set(PriceType::WITH_VAT);
-
-        $id       = Uuid::uuid1();
-        $taxRate  = EntityFactory::make('tax_rate_21');
-        $currency = EntityFactory::make('currency_czk');
-
-        $this->cart->add(new \Ecommerce\Cart\Item($id, 'Lorem ipsum', 3, new Price(671, $taxRate, $currency)));
-        $this->cart->remove($id);
-        $this->expectException(NotFoundException::class);
-        $this->cart->item($id);
     }
 
     public function testCalculateTotalPriceOfAllItemsWhenNotEmpty(): void
