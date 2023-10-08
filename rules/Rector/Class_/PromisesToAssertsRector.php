@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\NodeTraverser;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
@@ -61,13 +62,18 @@ final class PromisesToAssertsRector extends AbstractRector
 
         $this->isPrepared = false;
 
-        $propertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
+        // $propertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
 
         $class = $node;
 
         $this->traverseNodesWithCallable($node, function (\PhpParser\Node $node) use (
             $class
-        ): \PhpParser\Node|null {
+        ) {
+            if ($node instanceof ClassMethod && $this->isName($node->name, PhpSpecMethodName::LET)) {
+                // skip let method
+                return NodeTraverser::DONT_TRAVERSE_CHILDREN;
+            }
+
             if (! $node instanceof MethodCall) {
                 return null;
             }
