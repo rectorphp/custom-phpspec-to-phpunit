@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sets;
+namespace Rector\PhpSpecToPHPUnit\Tests\Sets;
 
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
