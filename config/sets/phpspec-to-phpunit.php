@@ -43,6 +43,6 @@ return static function (RectorConfig $rectorConfig): void {
         MockVariableToPropertyFetchRector::class,
 
         // 4. this one must be last, as it rename parent class and changes spec type that is used to detect this class
-        // PhpSpecClassToPHPUnitClassRector::class,
+        PhpSpecClassToPHPUnitClassRector::class,
     ]);
 };
