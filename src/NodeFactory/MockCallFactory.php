@@ -20,7 +20,7 @@ use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
-use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
+use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class MockCallFactory
 {
@@ -36,13 +36,13 @@ final class MockCallFactory
      */
     public function createCreateMockCall(Class_ $class, Param $param, Name $name): ?Expression
     {
-        $variableMocks = $this->phpSpecMockCollector->resolveVariableMocksFromClassMethodParams($class);
+        $variableMocks = $this->phpSpecMockCollector->resolveServiceMocksFromClassMethodParams($class);
 
         /** @var string $variableName */
         $variableName = $this->nodeNameResolver->getName($param->var);
 
         $variableMock = $this->resolveVariableMock($variableMocks, $variableName);
-        if (! $variableMock instanceof VariableMock) {
+        if (! $variableMock instanceof ServiceMock) {
             return null;
         }
 
@@ -89,9 +89,9 @@ final class MockCallFactory
     }
 
     /**
-     * @param VariableMock[] $variableMocks
+     * @param ServiceMock[] $variableMocks
      */
-    private function resolveVariableMock(array $variableMocks, string $variableName): ?VariableMock
+    private function resolveVariableMock(array $variableMocks, string $variableName): ?ServiceMock
     {
         foreach ($variableMocks as $variableMock) {
             if ($variableMock->getVariableName() === $variableName) {

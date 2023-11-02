@@ -5,14 +5,16 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\LetGoToTearDownClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\LetToSetUpClassMethodRector;
-use Rector\PhpSpecToPHPUnit\Rector\Class_\MoveParameterMockToPropertyMockRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecClassToPHPUnitClassRector;
-use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecMocksToPHPUnitMocksRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PromisesToAssertsRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\DuringMethodCallRector;
+use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\MoveParameterMockRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RemoveShouldHaveTypeRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\ShouldThrowAndInstantiationOrderRector;
+use Rector\PhpSpecToPHPUnit\Rector\Expression\ExpectedMockDeclarationRector;
+use Rector\PhpSpecToPHPUnit\Rector\Expression\ShouldNeverBeCalledRector;
+use Rector\PhpSpecToPHPUnit\Rector\MethodCall\RemoveShouldBeCalledRector;
 use Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector;
 use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
 
@@ -22,26 +24,39 @@ use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
  */
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
+        // namespace spec\
         RenameSpecNamespacePrefixToTestRector::class,
 
-        // 0. must be first, as it removes methods
+        // $this->shouldHaveType()
         RemoveShouldHaveTypeRector::class,
 
-        // 1. first convert mocks
         DuringMethodCallRector::class,
+
         ShouldThrowAndInstantiationOrderRector::class,
-        PhpSpecMocksToPHPUnitMocksRector::class,
+
         PromisesToAssertsRector::class,
 
-        // 2. then class methods
+        ExpectedMockDeclarationRector::class,
+
+        // ->shouldNeveBeCalled()
+        ShouldNeverBeCalledRector::class,
+
+        // ->shouldBeCalled()
+        RemoveShouldBeCalledRector::class,
+
+        // public method let() {}
         LetToSetUpClassMethodRector::class,
+
+        // public method letGo() {}
         LetGoToTearDownClassMethodRector::class,
+
         RenameTestClassMethodRector::class,
 
-        // 3. then the class itself
-        MoveParameterMockToPropertyMockRector::class,
+        // @todo possibly not needed - only those in let()
+        MoveParameterMockRector::class,
+
         MockVariableToPropertyFetchRector::class,
 
-        // 4. this one must be last, as it rename parent class and changes spec type that is used to detect this class
-        PhpSpecClassToPHPUnitClassRector::class,]);
+        PhpSpecClassToPHPUnitClassRector::class,
+    ]);
 };

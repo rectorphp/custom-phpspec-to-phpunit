@@ -8,9 +8,10 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
+use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class PhpSpecMockCollector
 {
@@ -25,23 +26,29 @@ final class PhpSpecMockCollector
     }
 
     /**
-     * @return VariableMock[]
+     * @return ServiceMock[]
      */
-    public function resolveVariableMocksFromClassMethodParams(Class_ $class): array
+    public function resolveServiceMocksFromClassMethodParams(Class_|ClassMethod $classOrClassMethod): array
     {
-        $variableMocks = [];
+        $serviceMocks = [];
 
-        foreach ($class->getMethods() as $classMethod) {
+        if ($classOrClassMethod instanceof ClassMethod) {
+            $classMethods = [$classOrClassMethod];
+        } else {
+            $classMethods = $classOrClassMethod->getMethods();
+        }
+
+        foreach ($classMethods as $classMethod) {
             if (! $classMethod->isPublic()) {
                 continue;
             }
 
             foreach ($classMethod->params as $param) {
-                $variableMocks[] = $this->createVariableMock($param);
+                $serviceMocks[] = $this->createServiceMock($param);
             }
         }
 
-        return array_unique($variableMocks);
+        return array_unique($serviceMocks);
     }
 
     public function isVariableMockInProperty(Class_ $class, Variable $variable): bool
@@ -52,7 +59,7 @@ final class PhpSpecMockCollector
         return in_array($variableName, $this->propertyMocksByClass[$className] ?? [], true);
     }
 
-    private function createVariableMock(Param $param): VariableMock
+    private function createServiceMock(Param $param): ServiceMock
     {
         /** @var string $variable */
         $variable = $this->nodeNameResolver->getName($param->var);
@@ -64,6 +71,6 @@ final class PhpSpecMockCollector
 
         $mockClassName = $param->type->toString();
 
-        return new VariableMock($variable, $mockClassName);
+        return new ServiceMock($variable, $mockClassName);
     }
 }

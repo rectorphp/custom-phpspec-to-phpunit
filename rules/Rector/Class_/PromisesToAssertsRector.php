@@ -15,7 +15,6 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\ProphecyPromisesToPHPUnitAssertMap;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -30,7 +29,6 @@ final class PromisesToAssertsRector extends AbstractRector
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly AssertMethodCallFactory $assertMethodCallFactory,
         private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector
     ) {
     }
 
@@ -48,10 +46,6 @@ final class PromisesToAssertsRector extends AbstractRector
      */
     public function refactor(Node $node): Node|array|null
     {
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
-            return null;
-        }
-
         $class = $node;
         $testedClass = $this->phpSpecRenaming->resolveTestedClassName($class);
 

@@ -7,11 +7,10 @@ use PhpSpec\ObjectBehavior;
 class BinValidatorSpec extends ObjectBehavior
 {
     public function it_should_invoke(
-        FirstType $firstType,
         SecondType $secondTypeOne,
         SecondType $secondTypeTwo
     ) {
-        $this->beConstructedWith($firstType, $secondTypeOne, $secondTypeTwo);
+        $this->beConstructedWith($secondTypeOne, $secondTypeTwo);
         $bin = '123456';
 
         $secondTypeOne->getName()->shouldBeCalled();
@@ -36,18 +35,17 @@ class BinValidatorTest extends \PHPUnit\Framework\TestCase
 {
     public function testInvoke(): void
     {
-        /** @var FirstType|\PHPUnit\Framework\MockObject\MockObject $firstType */
-        $firstType = $this->createMock(FirstType::class);
-        /** @var SecondType|\PHPUnit\Framework\MockObject\MockObject $secondTypeOne */
-        $secondTypeOne = $this->createMock(SecondType::class);
-        /** @var SecondType|\PHPUnit\Framework\MockObject\MockObject $secondTypeTwo */
-        $secondTypeTwo = $this->createMock(SecondType::class);
-        $binValidator = new \Fixture\Project\BinValidator($firstType, $secondTypeOne, $secondTypeTwo);
+        /** @var \spec\Fixture\Project\SecondType|\PHPUnit\Framework\MockObject\MockObject $secondTypeOneMock */
+        $secondTypeOneMock = $this->createMock(\spec\Fixture\Project\SecondType::class);
+        /** @var \spec\Fixture\Project\SecondType|\PHPUnit\Framework\MockObject\MockObject $secondTypeTwoMock */
+        $secondTypeTwoMock = $this->createMock(\spec\Fixture\Project\SecondType::class);
+        $binValidator = new \Fixture\Project\BinValidator($secondTypeOneMock, $secondTypeTwoMock);
         $bin = '123456';
-        $secondTypeOne->expects($this->atLeastOnce())->method('getName');
-        $secondTypeOne->expects($this->atLeastOnce())->method('validate')->with($this->equalTo($bin));
-        $secondTypeTwo->expects($this->atLeastOnce())->method('getName');
-        $secondTypeTwo->expects($this->atLeastOnce())->method('validate')->with($this->equalTo($bin));
+        $secondTypeOneMock->expects($this->once())->method('getName');
+        $secondTypeOneMock->expects($this->once())->method('validate')->with($this->equalTo($bin));
+
+        $secondTypeTwoMock->expects($this->once())->method('getName');
+        $secondTypeTwoMock->expects($this->once())->method('validate')->with($this->equalTo($bin));
         $binValidator->someMethodCall(new BinToValidate($bin));
     }
 }
