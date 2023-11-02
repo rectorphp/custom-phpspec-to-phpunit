@@ -112,7 +112,7 @@ CODE_SAMPLE
         }
 
         // already replaced
-        if ($this->isName($methodCall->name, 'method')) {
+        if ($this->isNames($methodCall->name, ['method', 'expects'])) {
             return null;
         }
 
