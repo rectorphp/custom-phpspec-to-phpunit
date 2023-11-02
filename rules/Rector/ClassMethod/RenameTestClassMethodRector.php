@@ -17,7 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\RenameTestMethodRector\RenameTestMethodRectorTest
  */
-final class RenameTestMethodRector extends AbstractRector
+final class RenameTestClassMethodRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,

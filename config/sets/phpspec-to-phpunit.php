@@ -11,7 +11,7 @@ use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecMocksToPHPUnitMocksRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PromisesToAssertsRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\DuringMethodCallRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RemoveShouldHaveTypeRector;
-use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestMethodRector;
+use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\ShouldThrowAndInstantiationOrderRector;
 use Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector;
 use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
@@ -36,7 +36,7 @@ return static function (RectorConfig $rectorConfig): void {
         // 2. then class methods
         LetToSetUpClassMethodRector::class,
         LetGoToTearDownClassMethodRector::class,
-        RenameTestMethodRector::class,
+        RenameTestClassMethodRector::class,
 
         // 3. then the class itself
         MoveParameterMockToPropertyMockRector::class,

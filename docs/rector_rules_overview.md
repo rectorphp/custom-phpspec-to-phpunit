@@ -204,7 +204,7 @@ Rename spec\ to Tests\ namespace
 
 Rename test method from underscore PhpSpec syntax to test* PHPUnit syntax
 
-- class: [`Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestMethodRector`](../rules/Rector/ClassMethod/RenameTestMethodRector.php)
+- class: [`Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestMethodRector`](../rules/Rector/ClassMethod/RenameTestClassMethodRector.php)
 
 ```diff
  use PhpSpec\ObjectBehavior;
