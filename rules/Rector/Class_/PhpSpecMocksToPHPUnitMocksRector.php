@@ -53,7 +53,6 @@ final class PhpSpecMocksToPHPUnitMocksRector extends AbstractRector
             return null;
         }
 
-        // @todo separate
         if ($node instanceof Class_) {
             return $this->refactorClass($node);
         }
@@ -99,35 +98,29 @@ CODE_SAMPLE
             return $this->refactorShouldNotBeCalled($methodCall);
         }
 
-        if (! $this->isName($methodCall->name, PhpSpecMethodName::SHOULD_BE_CALLED)) {
+        if ($this->isName($methodCall->name, PhpSpecMethodName::SHOULD_BE_CALLED)) {
+            return $this->refactorShouldBeCalled($methodCall);
+        }
+
+        // skip native system methods
+        if (! $methodCall->var instanceof Expr\Variable) {
             return null;
         }
 
-        if (! $methodCall->var instanceof MethodCall) {
-            throw new ShouldNotHappenException();
+        if ($this->isName($methodCall->var, 'this')) {
+            return null;
         }
 
-        $mockMethodName = $this->getName($methodCall->var->name);
-        if ($mockMethodName === null) {
-            throw new ShouldNotHappenException();
+        // already replaced
+        if ($this->isName($methodCall->name, 'method')) {
+            return null;
         }
 
-        $firstArg = $methodCall->var->getArgs()[0] ?? null;
-
-        $expectedArg = $firstArg instanceof Arg ? $firstArg->value : null;
-
-        $methodCall->var->name = new Identifier('expects');
-        $thisOnceMethodCall = $this->nodeFactory->createLocalMethodCall('atLeastOnce');
-        $methodCall->var->args = [new Arg($thisOnceMethodCall)];
-
-        $methodCall->name = new Identifier('method');
-        $methodCall->args = [new Arg(new String_($mockMethodName))];
-
-        if ($expectedArg !== null) {
-            return $this->appendWithMethodCall($methodCall, $expectedArg);
-        }
-
-        return $methodCall;
+        return new MethodCall(
+            $methodCall->var,
+            new Identifier('method'),
+            [new Arg(new String_($this->getName($methodCall->name)))],
+        );
     }
 
     private function appendWithMethodCall(MethodCall $methodCall, Expr $expr): MethodCall
@@ -218,6 +211,35 @@ CODE_SAMPLE
 
             $methodMethodCall->args = [new Arg(new String_($mockedMethodName))];
             $methodMethodCall->name = new Identifier('method');
+        }
+
+        return $methodCall;
+    }
+
+    private function refactorShouldBeCalled(MethodCall $methodCall)
+    {
+        if (! $methodCall->var instanceof MethodCall) {
+            throw new ShouldNotHappenException();
+        }
+
+        $mockMethodName = $this->getName($methodCall->var->name);
+        if ($mockMethodName === null) {
+            throw new ShouldNotHappenException();
+        }
+
+        $firstArg = $methodCall->var->getArgs()[0] ?? null;
+
+        $expectedArg = $firstArg instanceof Arg ? $firstArg->value : null;
+
+        $methodCall->var->name = new Identifier('expects');
+        $thisOnceMethodCall = $this->nodeFactory->createLocalMethodCall('atLeastOnce');
+        $methodCall->var->args = [new Arg($thisOnceMethodCall)];
+
+        $methodCall->name = new Identifier('method');
+        $methodCall->args = [new Arg(new String_($mockMethodName))];
+
+        if ($expectedArg !== null) {
+            return $this->appendWithMethodCall($methodCall, $expectedArg);
         }
 
         return $methodCall;
