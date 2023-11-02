@@ -116,11 +116,12 @@ CODE_SAMPLE
             return null;
         }
 
-        return new MethodCall(
-            $methodCall->var,
-            new Identifier('method'),
-            [new Arg(new String_($this->getName($methodCall->name)))],
-        );
+        $methodName = $this->getName($methodCall->name);
+        if (! is_string($methodName)) {
+            return null;
+        }
+
+        return new MethodCall($methodCall->var, new Identifier('method'), [new Arg(new String_($methodName))]);
     }
 
     private function appendWithMethodCall(MethodCall $methodCall, Expr $expr): MethodCall
@@ -216,7 +217,7 @@ CODE_SAMPLE
         return $methodCall;
     }
 
-    private function refactorShouldBeCalled(MethodCall $methodCall)
+    private function refactorShouldBeCalled(MethodCall $methodCall): MethodCall
     {
         if (! $methodCall->var instanceof MethodCall) {
             throw new ShouldNotHappenException();
