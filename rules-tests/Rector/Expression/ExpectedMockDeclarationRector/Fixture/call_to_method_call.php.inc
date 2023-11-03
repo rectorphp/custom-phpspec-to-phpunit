@@ -26,7 +26,7 @@ class ResultSpec extends ObjectBehavior
     public function it_should_succeed()
     {
         $someMock = $this->createMock(SomeClass::class);
-        $someMock->expects($this->once())->method('hasFailed')->willReturn(false);
+        $someMock->expects($this->once())->method('hasFailed')->shouldReturn(false);
     }
 }
 
