@@ -80,4 +80,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const BE_CONSTRUCTED = 'beConstructed';
+
+    /**
+     * @var string
+     */
+    public const CLONE = 'clone';
 }

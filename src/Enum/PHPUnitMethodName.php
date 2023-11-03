@@ -14,6 +14,16 @@ final class PHPUnitMethodName
     /**
      * @var string
      */
+    public const IS_TYPE = 'isType';
+
+    /**
+     * @var string
+     */
+    public const IS_INSTANCE_OF = 'isInstanceOf';
+
+    /**
+     * @var string
+     */
     public const EXPECTS = 'expects';
 
     /**
@@ -29,5 +39,15 @@ final class PHPUnitMethodName
     /**
      * @var string
      */
+    public const EQUAL_TO = 'equalTo';
+
+    /**
+     * @var string
+     */
     public const NEVER = 'never';
+
+    /**
+     * @var string
+     */
+    public const CREATE_MOCK = 'createMock';
 }

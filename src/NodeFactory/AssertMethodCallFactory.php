@@ -28,7 +28,7 @@ final class AssertMethodCallFactory
         string $name,
         Expr $value,
         ?Expr $expected,
-        PropertyFetch $testedObjectPropertyFetch
+        PropertyFetch|Variable $testedPropertyFetchOrVariable
     ): MethodCall {
         $this->isBoolAssert = false;
 
@@ -42,11 +42,14 @@ final class AssertMethodCallFactory
         if (! $this->isBoolAssert && $expected instanceof Expr) {
             $assetMethodCall->args[] = new Arg($this->thisToTestedObjectPropertyFetch(
                 $expected,
-                $testedObjectPropertyFetch
+                $testedPropertyFetchOrVariable
             ));
         }
 
-        $assetMethodCall->args[] = new Arg($this->thisToTestedObjectPropertyFetch($value, $testedObjectPropertyFetch));
+        $assetMethodCall->args[] = new Arg($this->thisToTestedObjectPropertyFetch(
+            $value,
+            $testedPropertyFetchOrVariable
+        ));
 
         return $assetMethodCall;
     }
@@ -71,7 +74,7 @@ final class AssertMethodCallFactory
         return $name;
     }
 
-    private function thisToTestedObjectPropertyFetch(Expr $expr, PropertyFetch $propertyFetch): Expr
+    private function thisToTestedObjectPropertyFetch(Expr $expr, PropertyFetch|Variable $propertyFetchOrVariable): Expr
     {
         if (! $expr instanceof Variable) {
             return $expr;
@@ -81,6 +84,6 @@ final class AssertMethodCallFactory
             return $expr;
         }
 
-        return $propertyFetch;
+        return $propertyFetchOrVariable;
     }
 }

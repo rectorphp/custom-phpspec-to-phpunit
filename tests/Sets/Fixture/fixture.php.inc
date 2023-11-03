@@ -21,6 +21,7 @@ class CreateMeSpec extends ObjectBehavior
     public function it_should_be_called(Cart $cart)
     {
         $cart->price()->shouldBeCalled()->willReturn(5);
+
         $cart->shippingAddress(Argument::type(Address::class))->shouldBeCalled();
         $cart->shippingAddress(Argument::type('DateTime'))->shouldBeCalled();
     }
@@ -62,11 +63,11 @@ class CreateMeTest extends \PHPUnit\Framework\TestCase
 
     public function testCalled(): void
     {
-        /** @var Cart|\PHPUnit\Framework\MockObject\MockObject $cart */
-        $cart = $this->createMock(Cart::class);
-        $cart->expects($this->once())->method('price')->willReturn(5);
-        $cart->expects($this->once())->method('shippingAddress')->with($this->isInstanceOf(Address::class));
-        $cart->expects($this->once())->method('shippingAddress')->with($this->isInstanceOf('DateTime'));
+        /** @var \Sets\Source\Cart|\PHPUnit\Framework\MockObject\MockObject $cartMock */
+        $cartMock = $this->createMock(\Sets\Source\Cart::class);
+        $cartMock->expects($this->once())->method('price')->willReturn(5);
+        $cartMock->expects($this->once())->method('shippingAddress')->with($this->isInstanceOf(Address::class));
+        $cartMock->expects($this->once())->method('shippingAddress')->with($this->isInstanceOf('DateTime'));
     }
 
     public function testBoolCheck(): void

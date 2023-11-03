@@ -15,6 +15,7 @@ use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\Generic\GenericClassStringType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
+use Rector\PhpSpecToPHPUnit\Naming\SystemMethodDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\ExpectsCallFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -63,10 +64,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             }
 
             // already converted
-            if ($this->isNames(
-                $node->name,
-                [PHPUnitMethodName::EXPECTS, PHPUnitMethodName::ONCE, PHPUnitMethodName::WITH]
-            )) {
+            if (SystemMethodDetector::detect($node->name->toString())) {
                 return null;
             }
 
@@ -79,6 +77,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             $methodMethodCall = ExpectsCallFactory::createMethodCall($expectsMethodCall, $methodName);
 
             $callArgs = $node->getArgs();
+
             if ($callArgs !== []) {
                 return $this->appendWithMethodCall($methodMethodCall, $callArgs[0]->value);
             }
