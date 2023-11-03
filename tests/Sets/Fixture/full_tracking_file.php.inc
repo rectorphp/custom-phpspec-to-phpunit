@@ -198,7 +198,7 @@ final class TrackingRulesTest extends TestCase
         $this->trackingRules = new TrackingRules($this->curveCardRepositoryMock, $this->trackingRulesRepositoryMock);
     }
 
-    public function testItUpdatesTheTrackingRulesForAUser(): void
+    public function testUpdatesTheTrackingRulesForAUser(): void
     {
         /** @var Transaction|MockObject $transactionMock */
         $transactionMock = $this->createMock(Transaction::class);
@@ -229,7 +229,7 @@ final class TrackingRulesTest extends TestCase
         $this->trackingRules->updateTrackingRules($transactionMock);
     }
 
-    public function testItDecidesIfWeShouldTrackAGivenTransaction(): void
+    public function testDecidesIfWeShouldTrackAGivenTransaction(): void
     {
         /** @var TrackingRule|MockObject $trackingRuleMock */
         $trackingRuleMock = $this->createMock(TrackingRule::class);
@@ -246,7 +246,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testNotTrackATransactionBecauseOldCustomerAndSmallValue()
+    public function testNotTrackATransactionBecauseOldCustomerAndSmallValue(): void
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
@@ -312,7 +312,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testNotTrackATransactionBecauseNotReachingMinimumTrackableAmount()
+    public function testNotTrackATransactionBecauseNotReachingMinimumTrackableAmount(): void
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
