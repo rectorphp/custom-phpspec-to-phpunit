@@ -37,8 +37,8 @@ final class BeConstructedWithAssignFactory
             $new = new New_(new FullyQualified($testedClass));
             $new->args = $methodCall->args;
 
-            $mockVariable = new Variable($propertyFetchOrVariable->name);
-            return new Assign($mockVariable, $new);
+            // $mockVariable = new Variable($propertyFetchOrVariable->name);
+            return new Assign($propertyFetchOrVariable, $new);
         }
 
         if ($this->nodeNameResolver->isName($methodCall->name, PhpSpecMethodName::BE_CONSTRUCTED_THROUGH)) {

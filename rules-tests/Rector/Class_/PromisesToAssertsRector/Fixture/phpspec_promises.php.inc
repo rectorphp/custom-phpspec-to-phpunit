@@ -24,7 +24,7 @@ final class PhpSpecPromises extends ObjectBehavior
 {
     public function it_returns_id()
     {
-        $this->assertSame(5, $this->phpSpecPromises->id());
+        $this->assertSame(5, $phpSpecPromises->id());
     }
 }
 
