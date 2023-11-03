@@ -246,7 +246,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testItShouldNotTrackATransactionBecauseOldCustomerAndSmallValue()
+    public function testNotTrackATransactionBecauseOldCustomerAndSmallValue()
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
@@ -263,7 +263,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testItShouldTrackATransactionEvenForOldCustomerBecauseAtmHighValue(): void
+    public function testTrackATransactionEvenForOldCustomerBecauseAtmHighValue(): void
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
@@ -282,7 +282,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testItShouldNotTrackATransactionBecauseOldCustomerAndAtmSmallValue(): void
+    public function testNotTrackATransactionBecauseOldCustomerAndAtmSmallValue(): void
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
@@ -312,7 +312,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testItShouldNotTrackATransactionBecauseNotReachingMinimumTrackableAmount()
+    public function testNotTrackATransactionBecauseNotReachingMinimumTrackableAmount()
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
