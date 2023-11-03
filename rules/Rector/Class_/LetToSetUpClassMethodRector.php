@@ -17,7 +17,6 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -29,7 +28,6 @@ final class LetToSetUpClassMethodRector extends AbstractRector
 {
     public function __construct(
         private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly PhpSpecRenaming $phpSpecRenaming,
     ) {
     }
@@ -83,10 +81,6 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
-            return null;
-        }
-
         $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
 
         $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);

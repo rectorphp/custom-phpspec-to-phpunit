@@ -11,7 +11,6 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -20,11 +19,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RemoveShouldHaveTypeRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
-    ) {
-    }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -38,10 +32,6 @@ final class RemoveShouldHaveTypeRector extends AbstractRector
      */
     public function refactor(Node $node): ?Class_
     {
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
-            return null;
-        }
-
         $hasChanged = false;
 
         foreach ($node->stmts as $key => $classStmt) {

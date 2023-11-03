@@ -6,13 +6,18 @@ namespace Rector\PhpSpecToPHPUnit;
 
 use PhpParser\Comment\Doc;
 use PHPUnit\Framework\MockObject\MockObject;
-use Rector\PhpSpecToPHPUnit\ValueObject\VariableMock;
+use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class DocFactory
 {
-    public static function createForProperty(VariableMock $variableMock): Doc
+    public static function createForMockAssign(ServiceMock $variableMock): Doc
     {
-        $comment = sprintf("/**\n * @var \%s|\%s\n */", $variableMock->getMockClassName(), MockObject::class);
+        $comment = sprintf(
+            "/** @var \%s|\%s $%s */",
+            $variableMock->getMockClassName(),
+            MockObject::class,
+            $variableMock->getVariableName() . 'Mock'
+        );
 
         return new Doc($comment);
     }

@@ -10,7 +10,6 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -22,7 +21,6 @@ final class LetGoToTearDownClassMethodRector extends AbstractRector
 {
     public function __construct(
         private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
     }
 
@@ -39,10 +37,6 @@ final class LetGoToTearDownClassMethodRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
-            return null;
-        }
-
         $letGoClassMethod = $node->getMethod(PhpSpecMethodName::LET_GO);
         if (! $letGoClassMethod instanceof ClassMethod) {
             return null;

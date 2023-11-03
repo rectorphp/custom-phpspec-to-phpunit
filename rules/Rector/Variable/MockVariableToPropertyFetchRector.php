@@ -9,7 +9,6 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -21,7 +20,6 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
     }
 
@@ -38,10 +36,6 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
-            return null;
-        }
-
         $hasChanged = false;
 
         $class = $node;

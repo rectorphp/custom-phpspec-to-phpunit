@@ -15,7 +15,6 @@ use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -26,7 +25,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class DuringMethodCallRector extends AbstractRector
 {
     public function __construct(
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
         private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
         private readonly ValueResolver $valueResolver,
     ) {
@@ -45,10 +43,6 @@ final class DuringMethodCallRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
-            return null;
-        }
-
         if (! $node->isPublic() || $node->stmts === null) {
             return null;
         }

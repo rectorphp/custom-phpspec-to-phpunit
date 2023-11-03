@@ -10,7 +10,6 @@ use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\PhpSpecBehaviorNodeDetector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,7 +20,6 @@ final class RenameTestClassMethodRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly PhpSpecBehaviorNodeDetector $phpSpecBehaviorNodeDetector,
     ) {
     }
 
@@ -38,10 +36,6 @@ final class RenameTestClassMethodRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->phpSpecBehaviorNodeDetector->isInPhpSpecBehavior($node)) {
-            return null;
-        }
-
         if (! $node->isPublic()) {
             return null;
         }

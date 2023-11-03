@@ -133,7 +133,7 @@ From PhpSpec mock expectations to PHPUnit mock expectations
      public function it_is_initializable()
      {
 -        $this->run()->shouldBeCalled();
-+        $this->expects($this->atLeastOnce())->method('run');
++        $this->expects($this->once())->method('run');
      }
  }
 ```
