@@ -69,6 +69,7 @@ final class MockVariableToPropertyFetchRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_SAMPLE'
 
+
  * $mock->call()
  * ↓
  * $this->mock->call()

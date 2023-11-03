@@ -90,42 +90,44 @@ CODE_SAMPLE
 
         // add default property, if let() method is here
         $letClassMethod = $node->getMethod(PhpSpecMethodName::LET);
-        if ($letClassMethod instanceof ClassMethod) {
-            $newClasStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
-                $testedObjectPropertyName,
-                $testedObjectType
-            );
-
-            // rename and add void return type
-            $letClassMethod->name = new Identifier(MethodName::SET_UP);
-            $letClassMethod->returnType = new Identifier('void');
-
-            // change be constructed with to an assign
-            $this->traverseNodesWithCallable($letClassMethod, function (Node $node) use (
-                $testedObjectType,
-                $testedObjectPropertyName
-            ) {
-                if (! $node instanceof Node\Expr\MethodCall) {
-                    return null;
-                }
-
-                if (! $this->isName($node->name, PhpSpecMethodName::BE_CONSTRUCTED_WITH)) {
-                    return null;
-                }
-
-                $new = new New_(new FullyQualified($testedObjectType->getClassName()));
-                $new->args = $node->getArgs();
-
-                $mockVariable = new Node\Expr\PropertyFetch(new Variable('this'), new Identifier(
-                    $testedObjectPropertyName
-                ));
-                return new Assign($mockVariable, $new);
-            });
-
-            // no params
-            $letClassMethod->params = [];
-            $this->visibilityManipulator->makeProtected($letClassMethod);
+        if (! $letClassMethod instanceof ClassMethod) {
+            return null;
         }
+
+        $newClasStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
+            $testedObjectPropertyName,
+            $testedObjectType
+        );
+
+        // rename and add void return type
+        $letClassMethod->name = new Identifier(MethodName::SET_UP);
+        $letClassMethod->returnType = new Identifier('void');
+
+        // change be constructed with to an assign
+        $this->traverseNodesWithCallable($letClassMethod, function (Node $node) use (
+            $testedObjectType,
+            $testedObjectPropertyName
+        ) {
+            if (! $node instanceof Node\Expr\MethodCall) {
+                return null;
+            }
+
+            if (! $this->isName($node->name, PhpSpecMethodName::BE_CONSTRUCTED_WITH)) {
+                return null;
+            }
+
+            $new = new New_(new FullyQualified($testedObjectType->getClassName()));
+            $new->args = $node->getArgs();
+
+            $mockVariable = new Node\Expr\PropertyFetch(new Variable('this'), new Identifier(
+                $testedObjectPropertyName
+            ));
+            return new Assign($mockVariable, $new);
+        });
+
+        // no params
+        $letClassMethod->params = [];
+        $this->visibilityManipulator->makeProtected($letClassMethod);
 
         $node->stmts = array_merge($newClasStmts, $node->stmts);
 

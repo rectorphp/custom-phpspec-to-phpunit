@@ -28,14 +28,17 @@ final class BeConstructedWithAssignFactory
     ) {
     }
 
-    public function create(MethodCall $methodCall, string $testedClass, PropertyFetch $propertyFetch): ?Assign
-    {
+    public function create(
+        MethodCall $methodCall,
+        string $testedClass,
+        PropertyFetch|Variable $propertyFetchOrVariable
+    ): ?Assign {
         if ($this->nodeNameResolver->isName($methodCall->name, PhpSpecMethodName::BE_CONSTRUCTED_WITH)) {
             $new = new New_(new FullyQualified($testedClass));
             $new->args = $methodCall->args;
 
-            $mockVariable = new Variable($propertyFetch->name->toString());
-            return new Assign($mockVariable, $new);
+            // $mockVariable = new Variable($propertyFetchOrVariable->name);
+            return new Assign($propertyFetchOrVariable, $new);
         }
 
         if ($this->nodeNameResolver->isName($methodCall->name, PhpSpecMethodName::BE_CONSTRUCTED_THROUGH)) {
@@ -52,7 +55,7 @@ final class BeConstructedWithAssignFactory
 
             $this->moveConstructorArguments($methodCall, $staticCall);
 
-            return new Assign($propertyFetch, $staticCall);
+            return new Assign($propertyFetchOrVariable, $staticCall);
         }
 
         return null;

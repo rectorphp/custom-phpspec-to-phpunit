@@ -11,15 +11,14 @@ class BinValidatorSpec extends ObjectBehavior
         SecondType $secondTypeTwo
     ) {
         $this->beConstructedWith($secondTypeOne, $secondTypeTwo);
-        $bin = '123456';
 
         $secondTypeOne->getName()->shouldBeCalled();
-        $secondTypeOne->validate($bin)->shouldBeCalled();
+        $secondTypeOne->validate(123)->shouldBeCalled();
 
         $secondTypeTwo->getName()->shouldBeCalled();
-        $secondTypeTwo->validate($bin)->shouldBeCalled();
+        $secondTypeTwo->validate(456)->shouldBeCalled();
 
-        $this->someMethodCall(new BinToValidate($bin));
+        $this->someMethodCall(new BinToValidate());
     }
 }
 
@@ -40,13 +39,11 @@ class BinValidatorTest extends \PHPUnit\Framework\TestCase
         /** @var \spec\Fixture\Project\SecondType|\PHPUnit\Framework\MockObject\MockObject $secondTypeTwoMock */
         $secondTypeTwoMock = $this->createMock(\spec\Fixture\Project\SecondType::class);
         $binValidator = new \Fixture\Project\BinValidator($secondTypeOneMock, $secondTypeTwoMock);
-        $bin = '123456';
         $secondTypeOneMock->expects($this->once())->method('getName');
-        $secondTypeOneMock->expects($this->once())->method('validate')->with($this->equalTo($bin));
-
+        $secondTypeOneMock->expects($this->once())->method('validate')->with(123);
         $secondTypeTwoMock->expects($this->once())->method('getName');
-        $secondTypeTwoMock->expects($this->once())->method('validate')->with($this->equalTo($bin));
-        $binValidator->someMethodCall(new BinToValidate($bin));
+        $secondTypeTwoMock->expects($this->once())->method('validate')->with(456);
+        $binValidator->someMethodCall(new BinToValidate());
     }
 }
 

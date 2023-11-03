@@ -10,11 +10,13 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Node\ClassMethod;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\ProphecyPromisesToPHPUnitAssertMap;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
+use Rector\PhpSpecToPHPUnit\Naming\SystemMethodDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -46,16 +48,19 @@ final class PromisesToAssertsRector extends AbstractRector
      */
     public function refactor(Node $node): Node|array|null
     {
+        $hasChanged = false;
+
         $class = $node;
         $testedClass = $this->phpSpecRenaming->resolveTestedClassName($class);
 
-        $testedObjectPropertyFetch = $this->createTestedObjectPropertyFetch($class);
+        $testedObjectPropertyFetchOrVariable = $this->createTestedObjectPropertyFetch($class);
 
         foreach ($node->getMethods() as $classMethod) {
             if (! $classMethod->isPublic()) {
                 continue;
             }
 
+            // handled elsewhere
             if ($this->isNames(
                 $classMethod,
                 [PhpSpecMethodName::LET, PhpSpecMethodName::LET_GO, PhpSpecMethodName::GET_MATCHERS]
@@ -65,8 +70,9 @@ final class PromisesToAssertsRector extends AbstractRector
 
             $this->traverseNodesWithCallable($classMethod, function (\PhpParser\Node $node) use (
                 $class,
-                $testedObjectPropertyFetch,
-                $testedClass
+                $testedObjectPropertyFetchOrVariable,
+                $testedClass,
+                &$hasChanged
             ) {
                 if (! $node instanceof MethodCall) {
                     return null;
@@ -100,10 +106,12 @@ final class PromisesToAssertsRector extends AbstractRector
                 }
 
                 if (str_starts_with($methodName, PhpSpecMethodName::BE_CONSTRUCTED)) {
+                    $hasChanged = true;
+
                     return $this->beConstructedWithAssignFactory->create(
                         $node,
                         $testedClass,
-                        $testedObjectPropertyFetch
+                        $testedObjectPropertyFetchOrVariable
                     );
                 }
 
@@ -113,11 +121,13 @@ final class PromisesToAssertsRector extends AbstractRector
                         continue;
                     }
 
+                    $hasChanged = true;
+
                     return $this->assertMethodCallFactory->createAssertMethod(
                         $assertMethod,
                         $node->var,
                         $args[0]->value ?? null,
-                        $testedObjectPropertyFetch
+                        $testedObjectPropertyFetchOrVariable
                     );
                 }
 
@@ -125,8 +135,9 @@ final class PromisesToAssertsRector extends AbstractRector
                     return null;
                 }
 
-                if ($this->isName($node->name, 'clone')) {
-                    return new Clone_($testedObjectPropertyFetch);
+                if ($this->isName($node->name, PhpSpecMethodName::CLONE)) {
+                    $hasChanged = true;
+                    return new Clone_($testedObjectPropertyFetchOrVariable);
                 }
 
                 $methodName = $this->getName($node->name);
@@ -140,14 +151,20 @@ final class PromisesToAssertsRector extends AbstractRector
                 }
 
                 // direct PHPUnit method calls, no need to call on property
-                if (in_array($methodName, ['atLeastOnce', 'equalTo', 'isInstanceOf', 'isType'], true)) {
+                if (SystemMethodDetector::detect($methodName)) {
                     return $node;
                 }
 
-                $node->var = $testedObjectPropertyFetch;
+                $node->var = $testedObjectPropertyFetchOrVariable;
+                $hasChanged = true;
 
-                return $node;
+                return null;
+                //                return $node;
             });
+        }
+
+        if (! $hasChanged) {
+            return null;
         }
 
         return $node;
@@ -196,13 +213,18 @@ CODE_SAMPLE
         }
 
         // skip "createMock" method
-        return $this->isName($methodCall->name, 'createMock');
+        return $this->isName($methodCall->name, PHPUnitMethodName::CREATE_MOCK);
     }
 
-    private function createTestedObjectPropertyFetch(Class_ $class): PropertyFetch
+    private function createTestedObjectPropertyFetch(Class_ $class): PropertyFetch|Variable
     {
-        $propertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($class);
+        $hasLetClassMethod = (bool) $class->getMethod(PhpSpecMethodName::LET);
 
-        return new PropertyFetch(new Variable('this'), $propertyName);
+        $testedVariableName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($class);
+        if ($hasLetClassMethod) {
+            return new PropertyFetch(new Variable('this'), $testedVariableName);
+        }
+
+        return new Variable($testedVariableName);
     }
 }

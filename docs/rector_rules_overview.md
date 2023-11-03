@@ -1,4 +1,4 @@
-# 12 Rules Overview
+# 14 Rules Overview
 
 ## DuringMethodCallRector
 
@@ -16,6 +16,27 @@ Split `shouldThrow()` and `during()` method to expected exception and method cal
 -        $this->shouldThrow(ValidationException::class)->during('someMethod');
 +        $this->expectException(ValidationException::class);
 +        $this->someMethod();
+     }
+ }
+```
+
+<br>
+
+## ExpectedMockDeclarationRector
+
+From PhpSpec mock expectations to PHPUnit mock expectations
+
+- class: [`Rector\PhpSpecToPHPUnit\Rector\Expression\ExpectedMockDeclarationRector`](../rules/Rector/Expression/ExpectedMockDeclarationRector.php)
+
+```diff
+ use PhpSpec\ObjectBehavior;
+
+ class ResultSpec extends ObjectBehavior
+ {
+     public function it_returns()
+     {
+-        $this->run()->shouldReturn(1000);
++        $this->expects($this->once())->method('run')->willReturn(1000);
      }
  }
 ```
@@ -80,21 +101,21 @@ Change local mock call to a property fetch mock call
 
 <br>
 
-## MoveParameterMockToPropertyMockRector
+## MoveParameterMockRector
 
-Move public class method parameter mocks to properties mocks
+Move parameter mocks to local mocks
 
-- class: [`Rector\PhpSpecToPHPUnit\Rector\Class_\MoveParameterMockToPropertyMockRector`](../rules/Rector/Class_/MoveParameterMockToPropertyMockRector.php)
+- class: [`Rector\PhpSpecToPHPUnit\Rector\ClassMethod\MoveParameterMockRector`](../rules/Rector/ClassMethod/MoveParameterMockRector.php)
 
 ```diff
  use PhpSpec\ObjectBehavior;
 
  final class AddMockProperty extends ObjectBehavior
  {
-+    private \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\AddMockPropertiesRector\Source\SomeType|\PHPUnit\Framework\MockObject\MockObject $someType;
-+
-     public function let(SomeType $someType)
+-    public function it_should_handle_stuff(SomeType $someType)
++    public function it_should_handle_stuff()
      {
++        $someTypeMock = $this->createMock(SomeType::class);
      }
  }
 ```
@@ -119,27 +140,6 @@ Rename spec class name and its parent class to PHPUnit format
 
 <br>
 
-## PhpSpecMocksToPHPUnitMocksRector
-
-From PhpSpec mock expectations to PHPUnit mock expectations
-
-- class: [`Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecMocksToPHPUnitMocksRector`](../rules/Rector/Class_/PhpSpecMocksToPHPUnitMocksRector.php)
-
-```diff
- use PhpSpec\ObjectBehavior;
-
- class ResultSpec extends ObjectBehavior
- {
-     public function it_is_initializable()
-     {
--        $this->run()->shouldBeCalled();
-+        $this->expects($this->once())->method('run');
-     }
- }
-```
-
-<br>
-
 ## PromisesToAssertsRector
 
 Convert promises and object construction to new instances
@@ -151,10 +151,31 @@ Convert promises and object construction to new instances
 
  class TestClassMethod extends ObjectBehavior
  {
-     public function let()
+     public function it_shoud_do()
      {
 -        $this->beConstructedWith(5);
 +        $testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
+     }
+ }
+```
+
+<br>
+
+## RemoveShouldBeCalledRector
+
+Remove `shouldBeCalled()` as implicit in PHPUnit
+
+- class: [`Rector\PhpSpecToPHPUnit\Rector\MethodCall\RemoveShouldBeCalledRector`](../rules/Rector/MethodCall/RemoveShouldBeCalledRector.php)
+
+```diff
+ use PhpSpec\ObjectBehavior;
+
+ class ResultSpec extends ObjectBehavior
+ {
+     public function it_is_initializable()
+     {
+-        $this->run()->shouldBeCalled();
++        $this->run();
      }
  }
 ```
@@ -200,11 +221,11 @@ Rename spec\ to Tests\ namespace
 
 <br>
 
-## RenameTestMethodRector
+## RenameTestClassMethodRector
 
 Rename test method from underscore PhpSpec syntax to test* PHPUnit syntax
 
-- class: [`Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestMethodRector`](../rules/Rector/ClassMethod/RenameTestClassMethodRector.php)
+- class: [`Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestClassMethodRector`](../rules/Rector/ClassMethod/RenameTestClassMethodRector.php)
 
 ```diff
  use PhpSpec\ObjectBehavior;
@@ -214,6 +235,27 @@ Rename test method from underscore PhpSpec syntax to test* PHPUnit syntax
 -    public function is_shoud_be_valid()
 +    public function testShouldBeValid(): void
      {
+     }
+ }
+```
+
+<br>
+
+## ShouldNeverBeCalledRector
+
+Handle `shouldNotBeCalled()` expectations
+
+- class: [`Rector\PhpSpecToPHPUnit\Rector\Expression\ShouldNeverBeCalledRector`](../rules/Rector/Expression/ShouldNeverBeCalledRector.php)
+
+```diff
+ use PhpSpec\ObjectBehavior;
+
+ class ResultSpec extends ObjectBehavior
+ {
+     public function it_is_initializable()
+     {
+-        $this->run()->shouldNotBeCalled();
++        $this->expects($this->never())->run();
      }
  }
 ```
