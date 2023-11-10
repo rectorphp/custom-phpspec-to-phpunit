@@ -22,6 +22,7 @@ use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\MoveParameterMockRector\MoveParameterMockRectorTest
@@ -48,6 +49,8 @@ final class MoveParameterMockRector extends AbstractRector
     {
         $hasChanged = false;
 
+        $letDefinedVariables = $this->resolveVariablesDefinedInLet($node);
+
         foreach ($node->getMethods() as $classMethod) {
             if ($this->shouldSkipClassMethod($classMethod)) {
                 continue;
@@ -61,13 +64,13 @@ final class MoveParameterMockRector extends AbstractRector
             // 1. remove params
             $classMethod->params = [];
 
-            $newAssignExpressions = $this->createMockAssignExpressions($serviceMocks);
+            $newAssignExpressions = $this->createMockAssignExpressions($serviceMocks, $letDefinedVariables);
 
             // 2. add assigns
             $classMethod->stmts = array_merge($newAssignExpressions, (array) $classMethod->stmts);
 
             // 3. rename following variables
-            $this->renameFollowingVariables($classMethod, $serviceMocks);
+            $this->renameFollowingVariables($classMethod, $serviceMocks, $letDefinedVariables);
             $hasChanged = true;
         }
 
@@ -128,13 +131,19 @@ CODE_SAMPLE
 
     /**
      * @param ServiceMock[] $serviceMocks
+     * @param string[] $letDefinedVariables
      * @return array<Expression<Assign>>
      */
-    private function createMockAssignExpressions(array $serviceMocks): array
+    private function createMockAssignExpressions(array $serviceMocks, array $letDefinedVariables): array
     {
         $newAssignExpressions = [];
 
         foreach ($serviceMocks as $serviceMock) {
+            // skip is defined in the constructor
+            if (in_array($serviceMock->getVariableName(), $letDefinedVariables, true)) {
+                continue;
+            }
+
             $assign = $this->createMethodCallAssign($serviceMock);
 
             $expression = new Expression($assign);
@@ -150,12 +159,17 @@ CODE_SAMPLE
     }
 
     /**
+     * @param string[] $letDefinedVariables
      * @param ServiceMock[] $serviceMocks
      */
-    private function renameFollowingVariables(ClassMethod $classMethod, array $serviceMocks): void
-    {
+    private function renameFollowingVariables(
+        ClassMethod $classMethod,
+        array $serviceMocks,
+        array $letDefinedVariables
+    ): void {
         $this->traverseNodesWithCallable((array) $classMethod->stmts, function (\PhpParser\Node $node) use (
-            $serviceMocks
+            $serviceMocks,
+            $letDefinedVariables
         ) {
             if (! $node instanceof Variable) {
                 return null;
@@ -166,7 +180,12 @@ CODE_SAMPLE
                     continue;
                 }
 
-                return new Variable($serviceMock->getVariableName() . 'Mock');
+                $renamedName = $serviceMock->getVariableName() . 'Mock';
+                if (in_array($serviceMock->getVariableName(), $letDefinedVariables, true)) {
+                    return new Node\Expr\PropertyFetch(new Variable('this'), $renamedName);
+                }
+
+                return new Variable($renamedName);
             }
 
             return null;
@@ -181,5 +200,25 @@ CODE_SAMPLE
 
         // handled somewhere else
         return $this->isNames($classMethod, [PhpSpecMethodName::LET_GO, PhpSpecMethodName::LET]);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function resolveVariablesDefinedInLet(Class_ $class): array
+    {
+        $letClassMethod = $class->getMethod(PhpSpecMethodName::LET);
+        if (! $letClassMethod instanceof ClassMethod) {
+            return [];
+        }
+
+        $variableNames = [];
+        foreach ($letClassMethod->params as $param) {
+            $variableNames[] = $this->getName($param->var);
+        }
+
+        Assert::allString($variableNames);
+
+        return $variableNames;
     }
 }
