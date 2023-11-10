@@ -51,7 +51,7 @@ final class PromisesToAssertsRector extends AbstractRector
         $hasChanged = false;
 
         $class = $node;
-        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($class);
+        $testedObject = $this->phpSpecRenaming->resolveTestedObject($class);
 
         $testedObjectPropertyFetchOrVariable = $this->createTestedObjectPropertyFetch($class);
 
@@ -71,7 +71,7 @@ final class PromisesToAssertsRector extends AbstractRector
             $this->traverseNodesWithCallable($classMethod, function (\PhpParser\Node $node) use (
                 $class,
                 $testedObjectPropertyFetchOrVariable,
-                $testedClass,
+                $testedObject,
                 &$hasChanged
             ) {
                 if (! $node instanceof MethodCall) {
@@ -110,7 +110,7 @@ final class PromisesToAssertsRector extends AbstractRector
 
                     return $this->beConstructedWithAssignFactory->create(
                         $node,
-                        $testedClass,
+                        $testedObject->getClassName(),
                         $testedObjectPropertyFetchOrVariable
                     );
                 }
@@ -220,11 +220,11 @@ CODE_SAMPLE
     {
         $hasLetClassMethod = (bool) $class->getMethod(PhpSpecMethodName::LET);
 
-        $testedVariableName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($class);
+        $testedObject = $this->phpSpecRenaming->resolveTestedObject($class);
         if ($hasLetClassMethod) {
-            return new PropertyFetch(new Variable('this'), $testedVariableName);
+            return new PropertyFetch(new Variable('this'), $testedObject->getPropertyName());
         }
 
-        return new Variable($testedVariableName);
+        return new Variable($testedObject->getPropertyName());
     }
 }

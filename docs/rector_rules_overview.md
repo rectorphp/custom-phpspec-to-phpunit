@@ -74,12 +74,19 @@ Change `let()` method to `setUp()` PHPUnit method, including property mock initi
 
  final class SomeTypeSpec extends ObjectBehavior
  {
--    public function let()
+-    public function let(SomeDependency $someDependency)
 +    private SomeType $someType;
++
++    /**
++     * @var MockObject<SomeDependency>
++     */
++    private MockObject $someDependencyMock;
 +
 +    protected function setUp(): void
      {
-+        $this->someType = new SomeType();
+-        $this->beConstructedWith($someDependency);
++        $this->someDependencyMock = $this->createMock(SomeDependency::class);
++        $this->someType = new SomeType($this->someDependencyMock);
      }
  }
 ```
