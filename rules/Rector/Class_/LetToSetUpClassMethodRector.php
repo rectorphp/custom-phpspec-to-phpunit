@@ -18,7 +18,6 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
-use PHPStan\Type\ObjectType;
 use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
@@ -136,13 +135,8 @@ CODE_SAMPLE
         return $node;
     }
 
-    private function changeBeConstructedWithToAnAssign(
-        ClassMethod $letClassMethod,
-        TestedObject $testedObject
-        //        ObjectType $testedObjectType,
-        //        string $testedObjectPropertyName,
-        //        array $definedMockVariableNames
-    ): void {
+    private function changeBeConstructedWithToAnAssign(ClassMethod $letClassMethod, TestedObject $testedObject): void
+    {
         $this->traverseNodesWithCallable($letClassMethod, function (Node $node) use ($testedObject) {
             if (! $node instanceof MethodCall) {
                 return null;
