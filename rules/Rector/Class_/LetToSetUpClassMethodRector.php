@@ -131,7 +131,7 @@ CODE_SAMPLE
             );
         }
 
-        $letClassMethod->stmts = array_merge((array) $letClassMethod->stmts, $newLetStmts);
+        $letClassMethod->stmts = array_merge($newLetStmts, (array) $letClassMethod->stmts);
 
         $node->stmts = array_merge($newProperties, $node->stmts);
 
