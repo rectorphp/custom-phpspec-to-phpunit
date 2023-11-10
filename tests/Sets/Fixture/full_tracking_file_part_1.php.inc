@@ -14,7 +14,7 @@ use Sift\TrackingRulesRepository;
 use Transaction\IssuerRequest;
 use Transaction\Transaction;
 
-class TrackingRulesSpec extends ObjectBehavior
+class TrackingRulesPart1Spec extends ObjectBehavior
 {
     /**
      * @var int
@@ -121,36 +121,6 @@ class TrackingRulesSpec extends ObjectBehavior
             null
         )->shouldBe(true);
     }
-
-    public function it_should_not_track_a_transaction_because_not_reaching_minimum_trackable_amount(
-        TrackingRulesRepository $trackingRulesRepository,
-        TrackingRule $trackingRule
-    ) {
-        $trackingRulesRepository->findForUser(self::USER_ID)->willReturn($trackingRule);
-        $trackingRule->getDaysSinceFirstTransaction()->willReturn(10);
-
-        $this->transactionShouldBeTracked(
-            self::USER_ID,
-            false,
-            new MonetaryAmount(300, 'GBP'),
-            null
-        )->shouldBe(false);
-    }
-
-    public function it_should_not_track_a_transaction_because_not_reaching_minimum_trackable_amount_using_initial_issuer_request(
-        TrackingRulesRepository $trackingRulesRepository,
-        TrackingRule $trackingRule
-    ) {
-        $trackingRulesRepository->findForUser(self::USER_ID)->willReturn($trackingRule);
-        $trackingRule->getDaysSinceFirstTransaction()->willReturn(10);
-
-        $this->transactionShouldBeTracked(
-            self::USER_ID,
-            false,
-            new MonetaryAmount(0, 'GBP'),
-            new MonetaryAmount(300, 'GBP')
-        )->shouldBe(false);
-    }
 }
 
 ?>
@@ -171,7 +141,7 @@ use Sift\TrackingRulesRepository;
 use Transaction\IssuerRequest;
 use Transaction\Transaction;
 
-final class TrackingRulesTest extends \PHPUnit\Framework\TestCase
+final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
 {
     private \Sift\TrackingRules $trackingRules;
     /**
@@ -308,43 +278,6 @@ final class TrackingRulesTest extends \PHPUnit\Framework\TestCase
             false,
             new MonetaryAmount(25000, 'GBP'),
             null
-        ));
-    }
-
-    public function testNotTrackATransactionBecauseNotReachingMinimumTrackableAmount(): void
-    {
-        /** @var TrackingRule|MockObject $trackingRule */
-        $trackingRule = $this->createMock(TrackingRule::class);
-
-        // these will never be called
-        $this->trackingRulesRepositoryMock->expects($this->never())->method('findForUser');
-        $trackingRule->expects($this->never())->method('getDaysSinceFirstTransaction');
-
-        $this->assertFalse($this->trackingRules->transactionShouldBeTracked(
-            self::USER_ID,
-            false,
-            new MonetaryAmount(300, 'GBP'),
-            null
-        ));
-    }
-
-    public function testNotTrackATransactionBecauseNotReachingMinimumTrackableAmountUsingInitialIssuerRequest(): void
-    {
-        /** @var TrackingRule|MockObject $trackingRule */
-        $trackingRule = $this->createMock(TrackingRule::class);
-
-        $this->trackingRulesRepositoryMock
-            ->expects($this->never())
-            ->method('findForUser');
-
-        $trackingRule->expects($this->never())
-            ->method('getDaysSinceFirstTransaction');
-
-        $this->assertFalse($this->trackingRules->transactionShouldBeTracked(
-            self::USER_ID,
-            false,
-            new MonetaryAmount(0, 'GBP'),
-            new MonetaryAmount(300, 'GBP')
         ));
     }
 }
