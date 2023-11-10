@@ -6,7 +6,9 @@ namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
@@ -60,6 +62,7 @@ CODE_SAMPLE
                     ,
                     <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\MockObject\MockObject;
 
 final class SomeTypeSpec extends ObjectBehavior
 {
@@ -88,20 +91,18 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
-
-        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);
-        $testedObjectType = new ObjectType($testedClass);
-
-        $newClasStmts = [];
-
-        // add default property, if let() method is here
         $letClassMethod = $node->getMethod(PhpSpecMethodName::LET);
         if (! $letClassMethod instanceof ClassMethod) {
             return null;
         }
 
-        $newClasStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
+        $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
+
+        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);
+        $testedObjectType = new ObjectType($testedClass);
+
+        $newClassStmts = [];
+        $newClassStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
             $testedObjectPropertyName,
             $testedObjectType
         );
@@ -110,12 +111,27 @@ CODE_SAMPLE
         $letClassMethod->name = new Identifier(MethodName::SET_UP);
         $letClassMethod->returnType = new Identifier('void');
 
-        // change be constructed with to an assign
+        $this->changeBeConstructedWithToAnAssign($letClassMethod, $testedObjectType, $testedObjectPropertyName);
+
+        // no params
+        $letClassMethod->params = [];
+        $this->visibilityManipulator->makeProtected($letClassMethod);
+
+        $node->stmts = array_merge($newClassStmts, $node->stmts);
+
+        return $node;
+    }
+
+    private function changeBeConstructedWithToAnAssign(
+        ClassMethod $letClassMethod,
+        ObjectType $testedObjectType,
+        string $testedObjectPropertyName
+    ): void {
         $this->traverseNodesWithCallable($letClassMethod, function (Node $node) use (
             $testedObjectType,
             $testedObjectPropertyName
         ) {
-            if (! $node instanceof Node\Expr\MethodCall) {
+            if (! $node instanceof MethodCall) {
                 return null;
             }
 
@@ -123,21 +139,10 @@ CODE_SAMPLE
                 return null;
             }
 
-            $new = new New_(new FullyQualified($testedObjectType->getClassName()));
-            $new->args = $node->getArgs();
+            $new = new New_(new FullyQualified($testedObjectType->getClassName()), $node->getArgs());
+            $mockPropertyFetch = new PropertyFetch(new Variable('this'), new Identifier($testedObjectPropertyName));
 
-            $mockVariable = new Node\Expr\PropertyFetch(new Variable('this'), new Identifier(
-                $testedObjectPropertyName
-            ));
-            return new Assign($mockVariable, $new);
+            return new Assign($mockPropertyFetch, $new);
         });
-
-        // no params
-        $letClassMethod->params = [];
-        $this->visibilityManipulator->makeProtected($letClassMethod);
-
-        $node->stmts = array_merge($newClasStmts, $node->stmts);
-
-        return $node;
     }
 }
