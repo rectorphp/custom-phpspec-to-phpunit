@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Naming;
 
 use PhpParser\Node\Stmt\Class_;
+use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpSpecToPHPUnit\StringUtils;
+use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
 
 final class PhpSpecRenaming
 {
@@ -50,7 +52,16 @@ final class PhpSpecRenaming
         return $newClassName . 'Test';
     }
 
-    public function resolveTestedObjectPropertyName(Class_ $class): string
+    public function resolveTestedObject(Class_ $class): TestedObject
+    {
+        $className = $this->resolveTestedClassName($class);
+        $propertyName = $this->resolveTestedObjectPropertyName($class);
+        $testedObjectType = new ObjectType($className);
+
+        return new TestedObject($className, $propertyName, $testedObjectType);
+    }
+
+    private function resolveTestedObjectPropertyName(Class_ $class): string
     {
         // anonymous class?
         if ($class->name === null) {
@@ -63,7 +74,7 @@ final class PhpSpecRenaming
         return lcfirst($bareClassName);
     }
 
-    public function resolveTestedClassName(Class_ $class): string
+    private function resolveTestedClassName(Class_ $class): string
     {
         $className = (string) $this->nodeNameResolver->getName($class);
 

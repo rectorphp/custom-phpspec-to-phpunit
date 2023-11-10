@@ -96,28 +96,26 @@ CODE_SAMPLE
             return null;
         }
 
-        $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyName($node);
+        $testedObject = $this->phpSpecRenaming->resolveTestedObject($node);
 
-        $testedClass = $this->phpSpecRenaming->resolveTestedClassName($node);
-        $testedObjectType = new ObjectType($testedClass);
-
-        $newClassStmts = [];
-        $newClassStmts[] = $this->nodeFactory->createPrivatePropertyFromNameAndType(
-            $testedObjectPropertyName,
-            $testedObjectType
+        $testedObjectProperty = $this->nodeFactory->createPrivatePropertyFromNameAndType(
+            $testedObject->getPropertyName(),
+            $testedObject->getTestedObjectType()
         );
 
-        // rename and add void return type
+        $this->changeBeConstructedWithToAnAssign(
+            $letClassMethod,
+            $testedObject->getTestedObjectType(),
+            $testedObject->getPropertyName()
+        );
+
         $letClassMethod->name = new Identifier(MethodName::SET_UP);
         $letClassMethod->returnType = new Identifier('void');
-
-        $this->changeBeConstructedWithToAnAssign($letClassMethod, $testedObjectType, $testedObjectPropertyName);
-
-        // no params
         $letClassMethod->params = [];
         $this->visibilityManipulator->makeProtected($letClassMethod);
 
-        $node->stmts = array_merge($newClassStmts, $node->stmts);
+        // add as first
+        $node->stmts = array_merge([$testedObjectProperty], $node->stmts);
 
         return $node;
     }
