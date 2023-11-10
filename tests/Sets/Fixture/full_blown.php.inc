@@ -86,7 +86,7 @@ use Ecommerce\Taxing\PriceType;
 use PhpSpec\ObjectBehavior;
 use Ramsey\Uuid\Uuid;
 
-class CartTest extends \PHPUnit\Framework\TestCase
+final class CartTest extends \PHPUnit\Framework\TestCase
 {
     private \Sets\Fixture\Cart $cart;
     protected function setUp(): void

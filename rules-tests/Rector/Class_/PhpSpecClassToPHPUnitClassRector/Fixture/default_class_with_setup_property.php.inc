@@ -16,7 +16,7 @@ namespace spec\Rector\PhpSpecToPHPUnit;
 
 use PhpSpec\ObjectBehavior;
 
-class DefaultClassWithSetupPropertyTest extends \PHPUnit\Framework\TestCase
+final class DefaultClassWithSetupPropertyTest extends \PHPUnit\Framework\TestCase
 {
 }
 

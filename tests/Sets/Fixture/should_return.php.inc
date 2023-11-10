@@ -24,7 +24,7 @@ use PhpSpec\ObjectBehavior;
 use Sets\Source\Address;
 use Sets\Source\Cart;
 
-class ShouldReturnTest extends \PHPUnit\Framework\TestCase
+final class ShouldReturnTest extends \PHPUnit\Framework\TestCase
 {
     public function testReturnsId(): void
     {

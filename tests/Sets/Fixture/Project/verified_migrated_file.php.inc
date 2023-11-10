@@ -30,7 +30,7 @@ namespace Tests\Fixture\Project;
 
 use PhpSpec\ObjectBehavior;
 
-class BinValidatorTest extends \PHPUnit\Framework\TestCase
+final class BinValidatorTest extends \PHPUnit\Framework\TestCase
 {
     public function testInvoke(): void
     {
