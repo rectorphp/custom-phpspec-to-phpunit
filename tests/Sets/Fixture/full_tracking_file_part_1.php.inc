@@ -162,7 +162,7 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
         $issuerRequestMock->expects($this->once())->method('getCurveCardId')->willReturn('curveCardGlobalId');
         $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')->with(self::USER_ID);
         $userMock->expects($this->once())->method('getId')->willReturn(self::USER_ID);
-        $this->trackingRulesRepositoryMock->expects($this->once())->method('save');
+        $this->trackingRulesRepositoryMock->expects($this->once())->method('save')->with($this->any());
         $this->trackingRulesPart1->updateTrackingRules($transactionMock);
     }
 

@@ -90,4 +90,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const WILL_RETURN = 'willReturn';
+
+    /**
+     * @var string
+     */
+    public const WITH = 'with';
 }

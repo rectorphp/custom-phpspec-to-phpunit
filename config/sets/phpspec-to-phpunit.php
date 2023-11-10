@@ -15,6 +15,7 @@ use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\ShouldThrowAndInstantiationOrderR
 use Rector\PhpSpecToPHPUnit\Rector\Expression\ExpectedMockDeclarationRector;
 use Rector\PhpSpecToPHPUnit\Rector\Expression\ShouldNeverBeCalledRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\RemoveShouldBeCalledRector;
+use Rector\PhpSpecToPHPUnit\Rector\MethodCall\WithArgumentsMethodCallRector;
 use Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector;
 
 /**
@@ -48,6 +49,9 @@ return static function (RectorConfig $rectorConfig): void {
 
         // public method letGo() {}
         LetGoToTearDownClassMethodRector::class,
+
+        // ->with(Argument::cetera()) calls
+        WithArgumentsMethodCallRector::class,
 
         MoveParameterMockRector::class,
 
