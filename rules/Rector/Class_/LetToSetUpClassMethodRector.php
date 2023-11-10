@@ -51,8 +51,9 @@ use PhpSpec\ObjectBehavior;
 
 final class SomeTypeSpec extends ObjectBehavior
 {
-    public function let()
+    public function let(SomeDependency $someDependency)
     {
+        $this->beConstructedWith($someDependency);
     }
 }
 CODE_SAMPLE
@@ -64,9 +65,15 @@ final class SomeTypeSpec extends ObjectBehavior
 {
     private SomeType $someType;
 
+    /**
+     * @var MockObject<SomeDependency>
+     */
+    private MockObject $someDependencyMock;
+
     protected function setUp(): void
     {
-        $this->someType = new SomeType();
+        $this->someDependencyMock = $this->createMock(SomeDependency::class);
+        $this->someType = new SomeType($this->someDependencyMock);
     }
 }
 CODE_SAMPLE
