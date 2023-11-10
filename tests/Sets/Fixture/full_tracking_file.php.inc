@@ -171,8 +171,9 @@ use Sift\TrackingRulesRepository;
 use Transaction\IssuerRequest;
 use Transaction\Transaction;
 
-final class TrackingRulesTest extends TestCase
+final class TrackingRulesTest extends \PHPUnit\Framework\TestCase
 {
+    private \Sift\TrackingRules $trackingRules;
     /**
      * @var int
      */
@@ -188,14 +189,12 @@ final class TrackingRulesTest extends TestCase
      */
     private MockObject $curveCardRepositoryMock;
 
-    private TrackingRules $trackingRules;
-
     protected function setUp(): void
     {
         $this->trackingRulesRepositoryMock = $this->createMock(TrackingRulesRepository::class);
         $this->curveCardRepositoryMock = $this->createMock(CurveCardRepositoryInterface::class);
 
-        $this->trackingRules = new TrackingRules($this->curveCardRepositoryMock, $this->trackingRulesRepositoryMock);
+        $this->trackingRules = new \Sift\TrackingRules($this->curveCardRepositoryMock, $this->trackingRulesRepositoryMock);
     }
 
     public function testUpdatesTheTrackingRulesForAUser(): void
