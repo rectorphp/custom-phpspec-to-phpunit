@@ -12,10 +12,12 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\DocFactory;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -36,47 +38,42 @@ final class MoveParameterMockRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [ClassMethod::class];
+        return [Class_::class];
     }
 
     /**
-     * @param ClassMethod $node
+     * @param Class_ $node
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $node->isPublic()) {
-            return null;
-        }
+        $hasChanged = false;
 
-        $serviceMocks = $this->phpSpecMockCollector->resolveServiceMocksFromClassMethodParams($node);
-        if ($serviceMocks === []) {
-            return null;
-        }
-
-        // 1. remove params
-        $node->params = [];
-
-        $newAssignExpressions = $this->createMockAssignExpressions($serviceMocks);
-
-        // 2. add assigns
-        $node->stmts = array_merge($newAssignExpressions, (array) $node->stmts);
-
-        // 3. rename following variables
-        $this->traverseNodesWithCallable($node->stmts, function (\PhpParser\Node $node) use ($serviceMocks) {
-            if (! $node instanceof Variable) {
-                return null;
+        foreach ($node->getMethods() as $classMethod) {
+            if ($this->shouldSkipClassMethod($classMethod)) {
+                continue;
             }
 
-            foreach ($serviceMocks as $serviceMock) {
-                if (! $this->isName($node, $serviceMock->getVariableName())) {
-                    continue;
-                }
-
-                return new Variable($serviceMock->getVariableName() . 'Mock');
+            $serviceMocks = $this->phpSpecMockCollector->resolveServiceMocksFromClassMethodParams($classMethod);
+            if ($serviceMocks === []) {
+                continue;
             }
 
+            // 1. remove params
+            $classMethod->params = [];
+
+            $newAssignExpressions = $this->createMockAssignExpressions($serviceMocks);
+
+            // 2. add assigns
+            $classMethod->stmts = array_merge($newAssignExpressions, (array) $classMethod->stmts);
+
+            // 3. rename following variables
+            $this->renameFollowingVariables($classMethod, $serviceMocks);
+            $hasChanged = true;
+        }
+
+        if (! $hasChanged) {
             return null;
-        });
+        }
 
         return $node;
     }
@@ -150,5 +147,39 @@ CODE_SAMPLE
         }
 
         return $newAssignExpressions;
+    }
+
+    /**
+     * @param ServiceMock[] $serviceMocks
+     */
+    private function renameFollowingVariables(ClassMethod $classMethod, array $serviceMocks): void
+    {
+        $this->traverseNodesWithCallable((array) $classMethod->stmts, function (\PhpParser\Node $node) use (
+            $serviceMocks
+        ) {
+            if (! $node instanceof Variable) {
+                return null;
+            }
+
+            foreach ($serviceMocks as $serviceMock) {
+                if (! $this->isName($node, $serviceMock->getVariableName())) {
+                    continue;
+                }
+
+                return new Variable($serviceMock->getVariableName() . 'Mock');
+            }
+
+            return null;
+        });
+    }
+
+    private function shouldSkipClassMethod(ClassMethod $classMethod): bool
+    {
+        if (! $classMethod->isPublic()) {
+            return true;
+        }
+
+        // handled somewhere else
+        return $this->isNames($classMethod, [PhpSpecMethodName::LET_GO, PhpSpecMethodName::LET]);
     }
 }
