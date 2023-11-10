@@ -6,7 +6,7 @@ use PhpSpec\ObjectBehavior;
 use Rector\Class_\LetToSetUpClassMethodRector\Source\FirstItem;
 use Rector\Class_\LetToSetUpClassMethodRector\Source\SecondItem;
 
-final class JustOnce extends ObjectBehavior
+final class JustOnceSpec extends ObjectBehavior
 {
     public function let(FirstItem $firstItem, SecondItem $secondItem)
     {
@@ -26,19 +26,19 @@ use Rector\Class_\LetToSetUpClassMethodRector\Source\SecondItem;
 final class JustOnceSpec extends ObjectBehavior
 {
     /**
-     * @var MockObject<FirstItem>
+     * @var \Rector\Class_\LetToSetUpClassMethodRector\Source\FirstItem|\PHPUnit\Framework\MockObject\MockObject
      */
-    private MockObject $firstItemMock;
+    private \PHPUnit\Framework\MockObject\Generator\MockType $firstItemMock;
     /**
-     * @var MockObject<SecondItem>
+     * @var \Rector\Class_\LetToSetUpClassMethodRector\Source\SecondItem|\PHPUnit\Framework\MockObject\MockObject
      */
-    private MockObject $secondItemMock;
+    private \PHPUnit\Framework\MockObject\Generator\MockType $secondItemMock;
     private \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture\JustOnce $justOnce;
     protected function setUp(): void
     {
-        $this->firstItemMock = $this->createMock(FirstItem::class);
-        $this->secondItemMock = $this->createMock(SecondItem::class);
-        $this->justOnce = new JustOnce($this->firstItemMock, $this->secondItemMock);
+        $this->firstItemMock = $this->createMock(\Rector\Class_\LetToSetUpClassMethodRector\Source\FirstItem::class);
+        $this->secondItemMock = $this->createMock(\Rector\Class_\LetToSetUpClassMethodRector\Source\SecondItem::class);
+        $this->justOnce = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture\JustOnce($this->firstItemMock, $this->secondItemMock);
     }
 }
 

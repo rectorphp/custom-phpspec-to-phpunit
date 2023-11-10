@@ -5,20 +5,31 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
+use PHPUnit\Framework\MockObject\Generator\MockType;
+use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
+use Rector\PhpSpecToPHPUnit\DocFactory;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
+use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
+use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -31,6 +42,7 @@ final class LetToSetUpClassMethodRector extends AbstractRector
     public function __construct(
         private readonly VisibilityManipulator $visibilityManipulator,
         private readonly PhpSpecRenaming $phpSpecRenaming,
+        private readonly BetterNodeFinder $betterNodeFinder,
     ) {
     }
 
@@ -98,24 +110,33 @@ CODE_SAMPLE
 
         $testedObject = $this->phpSpecRenaming->resolveTestedObject($node);
 
-        $testedObjectProperty = $this->nodeFactory->createPrivatePropertyFromNameAndType(
-            $testedObject->getPropertyName(),
-            $testedObject->getTestedObjectType()
-        );
+        $mockParams = $letClassMethod->getParams();
 
-        $this->changeBeConstructedWithToAnAssign(
-            $letClassMethod,
-            $testedObject->getTestedObjectType(),
-            $testedObject->getPropertyName()
-        );
+        $mockProperites = $this->createMockProperties($mockParams);
+        $mockAssignExpressions = $this->createMockAssignExpressions($mockParams);
 
-        $letClassMethod->name = new Identifier(MethodName::SET_UP);
-        $letClassMethod->returnType = new Identifier('void');
-        $letClassMethod->params = [];
-        $this->visibilityManipulator->makeProtected($letClassMethod);
+        $mockObjectAssign = $this->createMockObjectAssign($testedObject, $mockParams);
 
-        // add as first
-        $node->stmts = array_merge([$testedObjectProperty], $node->stmts);
+        // add tested object properties
+        $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
+        $newProperties = array_merge($mockProperites, [$testedObjectProperty]);
+
+        $this->refactorToSetUpClassMethod($letClassMethod);
+
+        $newLetStmts = $mockAssignExpressions;
+        if (! $this->hasBeConstructedWithMethodCall($letClassMethod)) {
+            $newLetStmts[] = $mockObjectAssign;
+        } else {
+            $this->changeBeConstructedWithToAnAssign(
+                $letClassMethod,
+                $testedObject->getTestedObjectType(),
+                $testedObject->getPropertyName()
+            );
+        }
+
+        $letClassMethod->stmts = array_merge((array) $letClassMethod->stmts, $newLetStmts);
+
+        $node->stmts = array_merge($newProperties, $node->stmts);
 
         return $node;
     }
@@ -141,6 +162,117 @@ CODE_SAMPLE
             $mockPropertyFetch = new PropertyFetch(new Variable('this'), new Identifier($testedObjectPropertyName));
 
             return new Assign($mockPropertyFetch, $new);
+        });
+    }
+
+    private function createTestedObjectProperty(TestedObject $testedObject): Property
+    {
+        return $this->nodeFactory->createPrivatePropertyFromNameAndType(
+            $testedObject->getPropertyName(),
+            $testedObject->getTestedObjectType()
+        );
+    }
+
+    /**
+     * @param Param[] $params
+     * @return Property[]
+     */
+    private function createMockProperties(array $params): array
+    {
+        $properties = [];
+
+        foreach ($params as $param) {
+            $parameterName = $this->getName($param->var) . 'Mock';
+
+            $paramType = new ObjectType(MockType::class);
+            $mockProperty = $this->nodeFactory->createPrivatePropertyFromNameAndType($parameterName, $paramType);
+
+            if (! $param->type instanceof Name) {
+                throw new ShouldNotHappenException();
+            }
+
+            $mockedClass = $param->type->toString();
+
+            // add docblock
+            $propertyDoc = DocFactory::createForMockProperty(new ServiceMock($parameterName, $mockedClass));
+            $mockProperty->setDocComment($propertyDoc);
+
+            $properties[] = $mockProperty;
+        }
+
+        return $properties;
+    }
+
+    /**
+     * @param Param[] $params
+     * @return Expression[]
+     */
+    private function createMockAssignExpressions(array $params): array
+    {
+        $assignExpressions = [];
+
+        foreach ($params as $param) {
+            $parameterName = $this->getName($param->var) . 'Mock';
+
+            if (! $param->type instanceof Name) {
+                throw new ShouldNotHappenException();
+            }
+
+            $mockClassName = $param->type->toString();
+            $createMockMethodCall = $this->nodeFactory->createMethodCall('this', 'createMock', [
+                new Node\Expr\ClassConstFetch(new FullyQualified($mockClassName), 'class'),
+            ]);
+
+            $mockPropertyFetch = new PropertyFetch(new Variable('this'), new Identifier($parameterName));
+
+            $assign = new Assign($mockPropertyFetch, $createMockMethodCall);
+            $assignExpressions[] = new Expression($assign);
+        }
+
+        return $assignExpressions;
+    }
+
+    /**
+     * @param Param[] $params
+     * @return Expression<Assign>
+     */
+    private function createMockObjectAssign(TestedObject $testedObject, array $params): Expression
+    {
+        $mockObjectPropertyFetch = new PropertyFetch(new Variable('this'), new Identifier(
+            $testedObject->getPropertyName()
+        ));
+
+        $newArgs = [];
+        foreach ($params as $param) {
+            $parameterName = $this->getName($param) . 'Mock';
+            $mockProperty = new PropertyFetch(new Variable('this'), $parameterName);
+
+            $newArgs[] = new Arg($mockProperty);
+        }
+
+        $new = new New_(new FullyQualified($testedObject->getClassName()), $newArgs);
+        $assign = new Assign($mockObjectPropertyFetch, $new);
+
+        return new Expression($assign);
+    }
+
+    private function refactorToSetUpClassMethod(ClassMethod $letClassMethod): void
+    {
+        $letClassMethod->name = new Identifier(MethodName::SET_UP);
+        $letClassMethod->returnType = new Identifier('void');
+        $letClassMethod->params = [];
+
+        $this->visibilityManipulator->makeProtected($letClassMethod);
+    }
+
+    private function hasBeConstructedWithMethodCall(ClassMethod $letClassMethod): bool
+    {
+        return (bool) $this->betterNodeFinder->findFirst((array) $letClassMethod->stmts, function (Node $node) {
+            if (! $node instanceof MethodCall) {
+                return false;
+            }
+
+            return $this->isName($node->name, PhpSpecMethodName::BE_CONSTRUCTED_WITH);
         });
     }
 }

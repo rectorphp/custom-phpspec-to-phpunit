@@ -10,13 +10,26 @@ use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class DocFactory
 {
-    public static function createForMockAssign(ServiceMock $variableMock): Doc
+    public static function createForMockAssign(ServiceMock $serviceMock): Doc
     {
         $comment = sprintf(
             "/** @var \%s|\%s $%s */",
-            $variableMock->getMockClassName(),
+            $serviceMock->getMockClassName(),
             MockObject::class,
-            $variableMock->getVariableName() . 'Mock'
+            $serviceMock->getVariableName() . 'Mock'
+        );
+
+        return new Doc($comment);
+    }
+
+    public static function createForMockProperty(ServiceMock $serviceMock): Doc
+    {
+        $comment = sprintf(
+            "/**%s * @var \%s|\%s%s */",
+            PHP_EOL,
+            $serviceMock->getMockClassName(),
+            MockObject::class,
+            PHP_EOL
         );
 
         return new Doc($comment);
