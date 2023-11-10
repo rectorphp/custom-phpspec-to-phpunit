@@ -9,6 +9,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
@@ -18,11 +19,11 @@ use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\DocFactory;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetClassMethodAnalyzer;
 use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Webmozart\Assert\Assert;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\MoveParameterMockRector\MoveParameterMockRectorTest
@@ -31,6 +32,7 @@ final class MoveParameterMockRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecMockCollector $phpSpecMockCollector,
+        private readonly LetClassMethodAnalyzer $letClassMethodAnalyzer,
     ) {
     }
 
@@ -49,7 +51,7 @@ final class MoveParameterMockRector extends AbstractRector
     {
         $hasChanged = false;
 
-        $letDefinedVariables = $this->resolveVariablesDefinedInLet($node);
+        $letDefinedVariables = $this->letClassMethodAnalyzer->resolveDefinedMockVariableNames($node);
 
         foreach ($node->getMethods() as $classMethod) {
             if ($this->shouldSkipClassMethod($classMethod)) {
@@ -145,7 +147,6 @@ CODE_SAMPLE
             }
 
             $assign = $this->createMethodCallAssign($serviceMock);
-
             $expression = new Expression($assign);
 
             // add docblock to help the IDE
@@ -182,7 +183,7 @@ CODE_SAMPLE
 
                 $renamedName = $serviceMock->getVariableName() . 'Mock';
                 if (in_array($serviceMock->getVariableName(), $letDefinedVariables, true)) {
-                    return new Node\Expr\PropertyFetch(new Variable('this'), $renamedName);
+                    return new PropertyFetch(new Variable('this'), $renamedName);
                 }
 
                 return new Variable($renamedName);
@@ -200,25 +201,5 @@ CODE_SAMPLE
 
         // handled somewhere else
         return $this->isNames($classMethod, [PhpSpecMethodName::LET_GO, PhpSpecMethodName::LET]);
-    }
-
-    /**
-     * @return string[]
-     */
-    private function resolveVariablesDefinedInLet(Class_ $class): array
-    {
-        $letClassMethod = $class->getMethod(PhpSpecMethodName::LET);
-        if (! $letClassMethod instanceof ClassMethod) {
-            return [];
-        }
-
-        $variableNames = [];
-        foreach ($letClassMethod->params as $param) {
-            $variableNames[] = $this->getName($param->var);
-        }
-
-        Assert::allString($variableNames);
-
-        return $variableNames;
     }
 }

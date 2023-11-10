@@ -44,18 +44,17 @@ return static function (RectorConfig $rectorConfig): void {
         // ->shouldBeCalled()
         RemoveShouldBeCalledRector::class,
 
+        MockVariableToPropertyFetchRector::class,
+
         // public method let() {}
         LetToSetUpClassMethodRector::class,
 
         // public method letGo() {}
         LetGoToTearDownClassMethodRector::class,
 
-        RenameTestClassMethodRector::class,
-
-        // @todo possibly not needed - only those in let()
         MoveParameterMockRector::class,
 
-        MockVariableToPropertyFetchRector::class,
+        RenameTestClassMethodRector::class,
 
         PhpSpecClassToPHPUnitClassRector::class,
     ]);

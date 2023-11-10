@@ -28,24 +28,15 @@ final class PhpSpecMockCollector
     /**
      * @return ServiceMock[]
      */
-    public function resolveServiceMocksFromClassMethodParams(Class_|ClassMethod $classOrClassMethod): array
+    public function resolveServiceMocksFromClassMethodParams(ClassMethod $classMethod): array
     {
-        $serviceMocks = [];
-
-        if ($classOrClassMethod instanceof ClassMethod) {
-            $classMethods = [$classOrClassMethod];
-        } else {
-            $classMethods = $classOrClassMethod->getMethods();
+        if (! $classMethod->isPublic()) {
+            return [];
         }
 
-        foreach ($classMethods as $classMethod) {
-            if (! $classMethod->isPublic()) {
-                continue;
-            }
-
-            foreach ($classMethod->params as $param) {
-                $serviceMocks[] = $this->createServiceMock($param);
-            }
+        $serviceMocks = [];
+        foreach ($classMethod->params as $param) {
+            $serviceMocks[] = $this->createServiceMock($param);
         }
 
         return array_unique($serviceMocks);
