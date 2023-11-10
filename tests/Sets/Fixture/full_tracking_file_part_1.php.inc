@@ -150,7 +150,7 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
     {
         /** @var \Transaction\Transaction|\PHPUnit\Framework\MockObject\MockObject $transactionMock */
         $transactionMock = $this->createMock(Transaction::class);
-        /** @var IssuerRequest|MockObject $issuerRequestMock */
+        /** @var IssuerRequest|\PHPUnit\Framework\MockObject\MockObject $issuerRequestMock */
         $issuerRequestMock = $this->createMock(IssuerRequest::class);
         /** @var MockObject|UserInterface $userMock */
         $userMock = $this->createMock(UserInterface::class);
@@ -168,8 +168,8 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
 
     public function testNotTrackATransactionBecauseOldCustomerAndSmallValue(): void
     {
-        /** @var \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule|MockObject $trackingRuleMock */
-        $trackingRuleMock = $this->createMock(\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule::class);
+        /** @var \Sift\TrackingRule|\PHPUnit\Framework\MockObject\MockObject $trackingRuleMock */
+        $trackingRuleMock = $this->createMock(\Sift\TrackingRule::class);
         $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')->with(self::USER_ID)->willReturn($trackingRuleMock);
         $trackingRuleMock->expects($this->once())->method('getDaysSinceFirstTransaction')->willReturn(40);
         $this->assertFalse($this->trackingRulesPart1->transactionShouldBeTracked(
@@ -182,8 +182,8 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
 
     public function testTrackATransactionEvenForOldCustomerBecauseAtmHighValue(): void
     {
-        /** @var \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule|MockObject $trackingRuleMock */
-        $trackingRuleMock = $this->createMock(\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule::class);
+        /** @var \Sift\TrackingRule|\PHPUnit\Framework\MockObject\MockObject $trackingRuleMock */
+        $trackingRuleMock = $this->createMock(\Sift\TrackingRule::class);
         $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')->with(self::USER_ID)->willReturn($trackingRuleMock);
         $trackingRuleMock->expects($this->once())->method('getDaysSinceFirstTransaction')->willReturn(40);
         $this->assertTrue($this->trackingRulesPart1->transactionShouldBeTracked(
@@ -196,8 +196,8 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
 
     public function testNotTrackATransactionBecauseOldCustomerAndAtmSmallValue(): void
     {
-        /** @var \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule|MockObject $trackingRuleMock */
-        $trackingRuleMock = $this->createMock(\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule::class);
+        /** @var \Sift\TrackingRule|\PHPUnit\Framework\MockObject\MockObject $trackingRuleMock */
+        $trackingRuleMock = $this->createMock(\Sift\TrackingRule::class);
         $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')->with(self::USER_ID)->willReturn($trackingRuleMock);
         $trackingRuleMock->expects($this->once())->method('getDaysSinceFirstTransaction')->willReturn(40);
         $this->assertFalse($this->trackingRulesPart1->transactionShouldBeTracked(
@@ -210,8 +210,8 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
 
     public function testTrackATransactionBecauseOldCustomerButHighValue(): void
     {
-        /** @var \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule|MockObject $trackingRuleMock */
-        $trackingRuleMock = $this->createMock(\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule::class);
+        /** @var \Sift\TrackingRule|\PHPUnit\Framework\MockObject\MockObject $trackingRuleMock */
+        $trackingRuleMock = $this->createMock(\Sift\TrackingRule::class);
         $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')->with(self::USER_ID)->willReturn($trackingRuleMock);
         $trackingRuleMock->expects($this->once())->method('getDaysSinceFirstTransaction')->willReturn(40);
         $this->assertTrue($this->trackingRulesPart1->transactionShouldBeTracked(
