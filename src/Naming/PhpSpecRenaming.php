@@ -8,6 +8,7 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetClassMethodAnalyzer;
 use Rector\PhpSpecToPHPUnit\StringUtils;
 use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
 
@@ -25,6 +26,7 @@ final class PhpSpecRenaming
 
     public function __construct(
         private readonly NodeNameResolver $nodeNameResolver,
+        private readonly LetClassMethodAnalyzer $letClassMethodAnalyzer,
     ) {
     }
 
@@ -58,7 +60,9 @@ final class PhpSpecRenaming
         $propertyName = $this->resolveTestedObjectPropertyName($class);
         $testedObjectType = new ObjectType($className);
 
-        return new TestedObject($className, $propertyName, $testedObjectType);
+        $definedMockVariableNames = $this->letClassMethodAnalyzer->resolveDefinedMockVariableNames($class);
+
+        return new TestedObject($className, $propertyName, $testedObjectType, $definedMockVariableNames);
     }
 
     private function resolveTestedObjectPropertyName(Class_ $class): string

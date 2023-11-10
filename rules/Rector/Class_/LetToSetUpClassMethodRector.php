@@ -41,7 +41,6 @@ final class LetToSetUpClassMethodRector extends AbstractRector
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly LetMockNodeFactory $letMockNodeFactory,
-        private readonly LetClassMethodAnalyzer $letClassMethodAnalyzer,
     ) {
     }
 
@@ -107,17 +106,7 @@ CODE_SAMPLE
             return null;
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        $definedMockVariableNames = $this->letClassMethodAnalyzer->resolveDefinedMockVariableNames($node);
-
->>>>>>> 4e48d7a (fixup! misc)
-=======
-        $definedMockVariableNames = $this->letClassMethodAnalyzer->resolveDefinedMockVariableNames($node);
-
-
->>>>>>> 53f6023 (misc)
+        //        $definedMockVariableNames = $this->letClassMethodAnalyzer->resolveDefinedMockVariableNames($node);
         $testedObject = $this->phpSpecRenaming->resolveTestedObject($node);
 
         $mockParams = $letClassMethod->getParams();
@@ -137,12 +126,7 @@ CODE_SAMPLE
         if (! $this->hasBeConstructedWithMethodCall($letClassMethod)) {
             $newLetStmts[] = $mockObjectAssign;
         } else {
-            $this->changeBeConstructedWithToAnAssign(
-                $letClassMethod,
-                $testedObject->getTestedObjectType(),
-                $testedObject->getPropertyName(),
-                $definedMockVariableNames
-            );
+            $this->changeBeConstructedWithToAnAssign($letClassMethod, $testedObject);
         }
 
         $letClassMethod->stmts = array_merge($newLetStmts, (array) $letClassMethod->stmts);
@@ -152,20 +136,14 @@ CODE_SAMPLE
         return $node;
     }
 
-    /**
-     * @param string[] $definedMockVariableNames
-     */
     private function changeBeConstructedWithToAnAssign(
         ClassMethod $letClassMethod,
-        ObjectType $testedObjectType,
-        string $testedObjectPropertyName,
-        array $definedMockVariableNames
+        TestedObject $testedObject
+        //        ObjectType $testedObjectType,
+        //        string $testedObjectPropertyName,
+        //        array $definedMockVariableNames
     ): void {
-        $this->traverseNodesWithCallable($letClassMethod, function (Node $node) use (
-            $testedObjectType,
-            $testedObjectPropertyName,
-            $definedMockVariableNames
-        ) {
+        $this->traverseNodesWithCallable($letClassMethod, function (Node $node) use ($testedObject) {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -174,10 +152,17 @@ CODE_SAMPLE
                 return null;
             }
 
-            $newArgs = $this->normalizeMockVariablesToPropertyFetches($node->getArgs(), $definedMockVariableNames);
+            $newArgs = $this->normalizeMockVariablesToPropertyFetches(
+                $node->getArgs(),
+                $testedObject->getDefinedMockVariableNames()
+            );
 
-            $new = new New_(new FullyQualified($testedObjectType->getClassName()), $newArgs);
-            $mockPropertyFetch = new PropertyFetch(new Variable('this'), new Identifier($testedObjectPropertyName));
+            $testedObjectFullyQualified = $testedObject->getTestedObjectFullyQualified();
+
+            $new = new New_($testedObjectFullyQualified, $newArgs);
+            $mockPropertyFetch = new PropertyFetch(new Variable('this'), new Identifier(
+                $testedObject->getPropertyName()
+            ));
 
             return new Assign($mockPropertyFetch, $new);
         });
@@ -267,8 +252,10 @@ CODE_SAMPLE
                 continue;
             }
 
+            $variableName = $this->getName($variable);
+
             // rename mock variable defined in let to a property fetch
-            $arg->value = new PropertyFetch(new Variable('this'), $variable->name . 'Mock');
+            $arg->value = new PropertyFetch(new Variable('this'), $variableName . 'Mock');
         }
 
         return $args;
