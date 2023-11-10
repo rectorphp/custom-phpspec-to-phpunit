@@ -126,13 +126,13 @@ use Transaction\Transaction;
 final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Core\Entities\Card\CurveCardRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private \PHPUnit\Framework\MockObject\Generator\MockType $trackingRulesRepositoryMock;
-    /**
      * @var CurveCardRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private \PHPUnit\Framework\MockObject\Generator\MockType $curveCardRepositoryMock;
+    /**
+     * @var \Core\Entities\Card\CurveCardRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private \PHPUnit\Framework\MockObject\Generator\MockType $trackingRulesRepositoryMock;
     private \Sift\TrackingRulesPart1 $trackingRulesPart1;
     /**
      * @var int
@@ -158,10 +158,7 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
         /** @var MockObject|CurveCard $curveCardMock */
         $curveCardMock = $this->createMock(CurveCard::class);
         $curveCardMock->expects($this->once())->method('getUser')->willReturn($userMock);
-        $this->curveCardRepositoryMock->expects($this->once())
-            ->method('findOneByGlobalId')
-            ->with('curveCardGlobalId')
-            ->willReturn($curveCardMock);
+        $this->curveCardRepositoryMock->expects($this->once())->method('findOneByGlobalId')->with('curveCardGlobalId')->willReturn($curveCardMock);
         $transactionMock->expects($this->once())->method('getIssuerRequests')->willReturn([$issuerRequestMock]);
         $issuerRequestMock->expects($this->once())->method('getCurveCardId')->willReturn('curveCardGlobalId');
         $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')->with(self::USER_ID);
