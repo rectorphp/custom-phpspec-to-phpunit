@@ -149,13 +149,13 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
     public function testUpdatesTheTrackingRulesForAUser(): void
     {
         /** @var \Transaction\Transaction|\PHPUnit\Framework\MockObject\MockObject $transactionMock */
-        $transactionMock = $this->createMock(Transaction::class);
-        /** @var IssuerRequest|\PHPUnit\Framework\MockObject\MockObject $issuerRequestMock */
-        $issuerRequestMock = $this->createMock(IssuerRequest::class);
-        /** @var MockObject|UserInterface $userMock */
-        $userMock = $this->createMock(UserInterface::class);
-        /** @var MockObject|CurveCard $curveCardMock */
-        $curveCardMock = $this->createMock(CurveCard::class);
+        $transactionMock = $this->createMock(\Transaction\Transaction::class);
+        /** @var \Transaction\IssuerRequest|\PHPUnit\Framework\MockObject\MockObject $issuerRequestMock */
+        $issuerRequestMock = $this->createMock(\Transaction\IssuerRequest::class);
+        /** @var \Core\Entities\Card\CurveCard|\PHPUnit\Framework\MockObject\MockObject $curveCardMock */
+        $curveCardMock = $this->createMock(\Core\Entities\Card\CurveCard::class);
+        /** @var \Core\Models\UserInterface|\PHPUnit\Framework\MockObject\MockObject $userMock */
+        $userMock = $this->createMock(\Core\Models\UserInterface::class);
         $curveCardMock->expects($this->once())->method('getUser')->willReturn($userMock);
         $this->curveCardRepositoryMock->expects($this->once())->method('findOneByGlobalId')->with('curveCardGlobalId')->willReturn($curveCardMock);
         $transactionMock->expects($this->once())->method('getIssuerRequests')->willReturn([$issuerRequestMock]);
