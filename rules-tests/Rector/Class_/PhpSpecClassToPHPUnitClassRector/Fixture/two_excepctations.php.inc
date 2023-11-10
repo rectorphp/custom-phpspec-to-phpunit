@@ -27,7 +27,7 @@ namespace spec\Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\PhpSpecToPHPUnitRecto
 
 use PhpSpec\ObjectBehavior;
 
-class ResultTest extends \PHPUnit\Framework\TestCase
+final class ResultTest extends \PHPUnit\Framework\TestCase
 {
     public function it_is_initializable()
     {

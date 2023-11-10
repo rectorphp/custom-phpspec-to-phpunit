@@ -30,7 +30,7 @@ namespace Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
 
-class ShouldReturnTest extends \PHPUnit\Framework\TestCase
+final class ShouldReturnTest extends \PHPUnit\Framework\TestCase
 {
     private \Sets\Fixture\ShouldReturn $shouldReturn;
     protected function setUp(): void

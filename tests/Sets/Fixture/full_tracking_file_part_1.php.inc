@@ -14,8 +14,13 @@ use Sift\TrackingRulesRepository;
 use Transaction\IssuerRequest;
 use Transaction\Transaction;
 
-class TrackingRulesSpec extends ObjectBehavior
+class TrackingRulesPart1Spec extends ObjectBehavior
 {
+    /**
+     * @var int
+     */
+    private const USER_ID = 'userId';
+
     public function let(
         CurveCardRepositoryInterface $curveCardRepository,
         TrackingRulesRepository $trackingRulesRepository,
@@ -36,8 +41,8 @@ class TrackingRulesSpec extends ObjectBehavior
         $curveCardRepository->findOneByGlobalId('curveCardGlobalId')->willReturn($curveCard);
         $transaction->getIssuerRequests()->willReturn([$issuerRequest]);
         $issuerRequest->getCurveCardId()->willReturn('curveCardGlobalId');
-        $trackingRulesRepository->findForUser('userId')->willReturn();
-        $user->getId()->willReturn('userId');
+        $trackingRulesRepository->findForUser(self::USER_ID)->willReturn();
+        $user->getId()->willReturn(self::USER_ID);
         $trackingRulesRepository->save(Argument::cetera())->shouldBeCalled();
         $this->updateTrackingRules($transaction);
     }
@@ -46,11 +51,11 @@ class TrackingRulesSpec extends ObjectBehavior
         TrackingRulesRepository $trackingRulesRepository,
         TrackingRule $trackingRule
     ) {
-        $trackingRulesRepository->findForUser('userId')->willReturn($trackingRule);
+        $trackingRulesRepository->findForUser(self::USER_ID)->willReturn($trackingRule);
         $trackingRule->getDaysSinceFirstTransaction()->willReturn(10);
 
         $this->transactionShouldBeTracked(
-            'userId',
+            self::USER_ID,
             true,
             new MonetaryAmount(600, 'GBP'),
             null
@@ -61,11 +66,11 @@ class TrackingRulesSpec extends ObjectBehavior
         TrackingRulesRepository $trackingRulesRepository,
         TrackingRule $trackingRule
     ) {
-        $trackingRulesRepository->findForUser('userId')->willReturn($trackingRule);
+        $trackingRulesRepository->findForUser(self::USER_ID)->willReturn($trackingRule);
         $trackingRule->getDaysSinceFirstTransaction()->willReturn(40);
 
         $this->transactionShouldBeTracked(
-            'userId',
+            self::USER_ID,
             false,
             new MonetaryAmount(15000, 'GBP'),
             null
@@ -76,11 +81,11 @@ class TrackingRulesSpec extends ObjectBehavior
         TrackingRulesRepository $trackingRulesRepository,
         TrackingRule $trackingRule
     ) {
-        $trackingRulesRepository->findForUser('userId')->willReturn($trackingRule);
+        $trackingRulesRepository->findForUser(self::USER_ID)->willReturn($trackingRule);
         $trackingRule->getDaysSinceFirstTransaction()->willReturn(40);
 
         $this->transactionShouldBeTracked(
-            'userId',
+            self::USER_ID,
             true,
             new MonetaryAmount(16000, 'GBP'),
             null
@@ -91,11 +96,11 @@ class TrackingRulesSpec extends ObjectBehavior
         TrackingRulesRepository $trackingRulesRepository,
         TrackingRule $trackingRule
     ) {
-        $trackingRulesRepository->findForUser('userId')->willReturn($trackingRule);
+        $trackingRulesRepository->findForUser(self::USER_ID)->willReturn($trackingRule);
         $trackingRule->getDaysSinceFirstTransaction()->willReturn(40);
 
         $this->transactionShouldBeTracked(
-            'userId',
+            self::USER_ID,
             true,
             new MonetaryAmount(12000, 'GBP'),
             null
@@ -106,45 +111,15 @@ class TrackingRulesSpec extends ObjectBehavior
         TrackingRulesRepository $trackingRulesRepository,
         TrackingRule $trackingRule
     ) {
-        $trackingRulesRepository->findForUser('userId')->willReturn($trackingRule);
+        $trackingRulesRepository->findForUser(self::USER_ID)->willReturn($trackingRule);
         $trackingRule->getDaysSinceFirstTransaction()->willReturn(40);
 
         $this->transactionShouldBeTracked(
-            'userId',
+            self::USER_ID,
             false,
             new MonetaryAmount(25000, 'GBP'),
             null
         )->shouldBe(true);
-    }
-
-    public function it_should_not_track_a_transaction_because_not_reaching_minimum_trackable_amount(
-        TrackingRulesRepository $trackingRulesRepository,
-        TrackingRule $trackingRule
-    ) {
-        $trackingRulesRepository->findForUser('userId')->willReturn($trackingRule);
-        $trackingRule->getDaysSinceFirstTransaction()->willReturn(10);
-
-        $this->transactionShouldBeTracked(
-            'userId',
-            false,
-            new MonetaryAmount(300, 'GBP'),
-            null
-        )->shouldBe(false);
-    }
-
-    public function it_should_not_track_a_transaction_because_not_reaching_minimum_trackable_amount_using_initial_issuer_request(
-        TrackingRulesRepository $trackingRulesRepository,
-        TrackingRule $trackingRule
-    ) {
-        $trackingRulesRepository->findForUser('userId')->willReturn($trackingRule);
-        $trackingRule->getDaysSinceFirstTransaction()->willReturn(10);
-
-        $this->transactionShouldBeTracked(
-            'userId',
-            false,
-            new MonetaryAmount(0, 'GBP'),
-            new MonetaryAmount(300, 'GBP')
-        )->shouldBe(false);
     }
 }
 
@@ -166,8 +141,9 @@ use Sift\TrackingRulesRepository;
 use Transaction\IssuerRequest;
 use Transaction\Transaction;
 
-final class TrackingRulesTest extends TestCase
+final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
 {
+    private \Sift\TrackingRules $trackingRules;
     /**
      * @var int
      */
@@ -183,17 +159,15 @@ final class TrackingRulesTest extends TestCase
      */
     private MockObject $curveCardRepositoryMock;
 
-    private TrackingRules $trackingRules;
-
     protected function setUp(): void
     {
         $this->trackingRulesRepositoryMock = $this->createMock(TrackingRulesRepository::class);
         $this->curveCardRepositoryMock = $this->createMock(CurveCardRepositoryInterface::class);
 
-        $this->trackingRules = new TrackingRules($this->curveCardRepositoryMock, $this->trackingRulesRepositoryMock);
+        $this->trackingRules = new \Sift\TrackingRules($this->curveCardRepositoryMock, $this->trackingRulesRepositoryMock);
     }
 
-    public function testItUpdatesTheTrackingRulesForAUser(): void
+    public function testUpdatesTheTrackingRulesForAUser(): void
     {
         /** @var Transaction|MockObject $transactionMock */
         $transactionMock = $this->createMock(Transaction::class);
@@ -224,7 +198,7 @@ final class TrackingRulesTest extends TestCase
         $this->trackingRules->updateTrackingRules($transactionMock);
     }
 
-    public function testItDecidesIfWeShouldTrackAGivenTransaction(): void
+    public function testDecidesIfWeShouldTrackAGivenTransaction(): void
     {
         /** @var TrackingRule|MockObject $trackingRuleMock */
         $trackingRuleMock = $this->createMock(TrackingRule::class);
@@ -241,7 +215,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testItShouldNotTrackATransactionBecauseOldCustomerAndSmallValue()
+    public function testNotTrackATransactionBecauseOldCustomerAndSmallValue(): void
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
@@ -258,7 +232,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testItShouldTrackATransactionEvenForOldCustomerBecauseAtmHighValue(): void
+    public function testTrackATransactionEvenForOldCustomerBecauseAtmHighValue(): void
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
@@ -277,7 +251,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testItShouldNotTrackATransactionBecauseOldCustomerAndAtmSmallValue(): void
+    public function testNotTrackATransactionBecauseOldCustomerAndAtmSmallValue(): void
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
@@ -292,7 +266,7 @@ final class TrackingRulesTest extends TestCase
         ));
     }
 
-    public function testitShouldTrackATransactionBecauseOldCustomerButHighValue(): void
+    public function testTrackATransactionBecauseOldCustomerButHighValue(): void
     {
         /** @var TrackingRule|MockObject $trackingRule */
         $trackingRule = $this->createMock(TrackingRule::class);
@@ -304,43 +278,6 @@ final class TrackingRulesTest extends TestCase
             false,
             new MonetaryAmount(25000, 'GBP'),
             null
-        ));
-    }
-
-    public function testItShouldNotTrackATransactionBecauseNotReachingMinimumTrackableAmount()
-    {
-        /** @var TrackingRule|MockObject $trackingRule */
-        $trackingRule = $this->createMock(TrackingRule::class);
-
-        // these will never be called
-        $this->trackingRulesRepositoryMock->expects($this->never())->method('findForUser');
-        $trackingRule->expects($this->never())->method('getDaysSinceFirstTransaction');
-
-        $this->assertFalse($this->trackingRules->transactionShouldBeTracked(
-            self::USER_ID,
-            false,
-            new MonetaryAmount(300, 'GBP'),
-            null
-        ));
-    }
-
-    public function testitShouldNotTrackATransactionBecauseNotReachingMinimumTrackableAmountUsingInitialIssuerRequest(): void
-    {
-        /** @var TrackingRule|MockObject $trackingRule */
-        $trackingRule = $this->createMock(TrackingRule::class);
-
-        $this->trackingRulesRepositoryMock
-            ->expects($this->never())
-            ->method('findForUser');
-
-        $trackingRule->expects($this->never())
-            ->method('getDaysSinceFirstTransaction');
-
-        $this->assertFalse($this->trackingRules->transactionShouldBeTracked(
-            self::USER_ID,
-            false,
-            new MonetaryAmount(0, 'GBP'),
-            new MonetaryAmount(300, 'GBP')
         ));
     }
 }

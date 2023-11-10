@@ -30,7 +30,7 @@ use PhpSpec\ObjectBehavior;
 use Sets\Source\Address;
 use Sets\Source\Cart;
 
-class TestBoolCheckTest extends \PHPUnit\Framework\TestCase
+final class TestBoolCheckTest extends \PHPUnit\Framework\TestCase
 {
     private \PhpSpecToPHPUnit\Fixture\TestBoolCheck $testBoolCheck;
     protected function setUp(): void

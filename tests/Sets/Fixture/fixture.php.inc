@@ -31,7 +31,7 @@ use PhpSpec\ObjectBehavior;
 use Sets\Source\Address;
 use Sets\Source\Cart;
 
-class CreateMeTest extends \PHPUnit\Framework\TestCase
+final class CreateMeTest extends \PHPUnit\Framework\TestCase
 {
     private \PhpSpecToPHPUnit\Fixture\CreateMe $createMe;
     protected function setUp(): void

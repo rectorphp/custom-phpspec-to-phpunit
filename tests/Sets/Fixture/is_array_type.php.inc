@@ -24,7 +24,7 @@ use PhpSpec\ObjectBehavior;
 use Sets\Source\Address;
 use Sets\Source\Cart;
 
-class IsArrayTypeTest extends \PHPUnit\Framework\TestCase
+final class IsArrayTypeTest extends \PHPUnit\Framework\TestCase
 {
     public function testArrayType(): void
     {

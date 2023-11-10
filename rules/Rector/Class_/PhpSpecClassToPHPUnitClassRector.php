@@ -10,6 +10,7 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
+use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -20,6 +21,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 {
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,
+        private readonly VisibilityManipulator $visibilityManipulator,
     ) {
     }
 
@@ -47,6 +49,8 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         $phpunitTestClassName = $this->phpSpecRenaming->createPHPUnitTestClassName($node);
         $node->name = new Identifier($phpunitTestClassName);
         $node->extends = new FullyQualified('PHPUnit\Framework\TestCase');
+
+        $this->visibilityManipulator->makeFinal($node);
 
         return $node;
     }
