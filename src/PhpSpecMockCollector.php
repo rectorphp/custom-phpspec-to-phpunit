@@ -15,11 +15,6 @@ use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class PhpSpecMockCollector
 {
-    /**
-     * @var array<string, mixed>
-     */
-    private array $propertyMocksByClass = [];
-
     public function __construct(
         private readonly NodeNameResolver $nodeNameResolver,
     ) {
