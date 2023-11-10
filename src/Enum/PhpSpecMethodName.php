@@ -85,4 +85,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const CLONE = 'clone';
+
+    /**
+     * @var string
+     */
+    public const WILL_RETURN = 'willReturn';
 }

@@ -30,18 +30,24 @@ final class RemoveShouldBeCalledRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isName($node->name, PhpSpecMethodName::SHOULD_BE_CALLED)) {
-            return null;
+        if ($this->isName($node->name, PhpSpecMethodName::SHOULD_BE_CALLED)) {
+            // The shouldBeCalled() is implicit and not needed, handled by another rule
+            return $node->var;
         }
 
-        // The shouldBeCalled() is implicit and not needed, handled by another rule
-        return $node->var;
+        if ($this->isName($node->name, PhpSpecMethodName::WILL_RETURN)) {
+            if ($node->getArgs() === []) {
+                return $node->var;
+            }
+        }
+
+        return null;
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Remove shouldBeCalled() as implicit in PHPUnit',
+            'Remove shouldBeCalled() as implicit in PHPUnit, also empty willReturn() as no return is implicit in PHPUnit',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
@@ -52,6 +58,8 @@ class ResultSpec extends ObjectBehavior
     public function it_is_initializable()
     {
         $this->run()->shouldBeCalled();
+
+        $this->go()->willReturn();
     }
 }
 CODE_SAMPLE
@@ -64,6 +72,8 @@ class ResultSpec extends ObjectBehavior
     public function it_is_initializable()
     {
         $this->run();
+
+        $this->go();
     }
 }
 CODE_SAMPLE
