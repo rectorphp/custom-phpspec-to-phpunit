@@ -50,4 +50,9 @@ final class PHPUnitMethodName
      * @var string
      */
     public const CREATE_MOCK = 'createMock';
+
+    /**
+     * @var string
+     */
+    public const ANY = 'any';
 }
