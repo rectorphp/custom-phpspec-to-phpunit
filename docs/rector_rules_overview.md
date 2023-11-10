@@ -1,4 +1,4 @@
-# 14 Rules Overview
+# 13 Rules Overview
 
 ## DuringMethodCallRector
 
@@ -71,6 +71,7 @@ Change `let()` method to `setUp()` PHPUnit method, including property mock initi
 
 ```diff
  use PhpSpec\ObjectBehavior;
++use PHPUnit\Framework\MockObject\MockObject;
 
  final class SomeTypeSpec extends ObjectBehavior
  {
@@ -89,21 +90,6 @@ Change `let()` method to `setUp()` PHPUnit method, including property mock initi
 +        $this->someType = new SomeType($this->someDependencyMock);
      }
  }
-```
-
-<br>
-
-## MockVariableToPropertyFetchRector
-
-Change local mock call to a property fetch mock call
-
-- class: [`Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector`](../rules/Rector/Variable/MockVariableToPropertyFetchRector.php)
-
-```diff
--* $mock->call()
-- * ↓
-- * $this->mock->call()
-+// to be done
 ```
 
 <br>

@@ -16,7 +16,6 @@ use Rector\PhpSpecToPHPUnit\Rector\Expression\ExpectedMockDeclarationRector;
 use Rector\PhpSpecToPHPUnit\Rector\Expression\ShouldNeverBeCalledRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\RemoveShouldBeCalledRector;
 use Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector;
-use Rector\PhpSpecToPHPUnit\Rector\Variable\MockVariableToPropertyFetchRector;
 
 /**
  * @see https://gnugat.github.io/2015/09/23/phpunit-with-phpspec.html
@@ -50,12 +49,9 @@ return static function (RectorConfig $rectorConfig): void {
         // public method letGo() {}
         LetGoToTearDownClassMethodRector::class,
 
-        RenameTestClassMethodRector::class,
-
-        // @todo possibly not needed - only those in let()
         MoveParameterMockRector::class,
 
-        MockVariableToPropertyFetchRector::class,
+        RenameTestClassMethodRector::class,
 
         PhpSpecClassToPHPUnitClassRector::class,
     ]);

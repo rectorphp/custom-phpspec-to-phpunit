@@ -128,11 +128,11 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
     /**
      * @var \Core\Entities\Card\CurveCardRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private \PHPUnit\Framework\MockObject\Generator\MockType $trackingRulesRepositoryMock;
-    /**
-     * @var CurveCardRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
     private \PHPUnit\Framework\MockObject\Generator\MockType $curveCardRepositoryMock;
+    /**
+     * @var \Sift\TrackingRulesRepository|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private \PHPUnit\Framework\MockObject\Generator\MockType $trackingRulesRepositoryMock;
     private \Sift\TrackingRulesPart1 $trackingRulesPart1;
     /**
      * @var int
@@ -141,9 +141,8 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->trackingRulesRepositoryMock = $this->createMock(TrackingRulesRepository::class);
-        $this->curveCardRepositoryMock = $this->createMock(CurveCardRepositoryInterface::class);
-
+        $this->curveCardRepositoryMock = $this->createMock(\Core\Entities\Card\CurveCardRepositoryInterface::class);
+        $this->trackingRulesRepositoryMock = $this->createMock(\Sift\TrackingRulesRepository::class);
         $this->trackingRulesPart1 = new \Sift\TrackingRulesPart1($this->curveCardRepositoryMock, $this->trackingRulesRepositoryMock);
     }
 
@@ -158,10 +157,7 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
         /** @var MockObject|CurveCard $curveCardMock */
         $curveCardMock = $this->createMock(CurveCard::class);
         $curveCardMock->expects($this->once())->method('getUser')->willReturn($userMock);
-        $this->curveCardRepositoryMock->expects($this->once())
-            ->method('findOneByGlobalId')
-            ->with('curveCardGlobalId')
-            ->willReturn($curveCardMock);
+        $this->curveCardRepositoryMock->expects($this->once())->method('findOneByGlobalId')->with('curveCardGlobalId')->willReturn($curveCardMock);
         $transactionMock->expects($this->once())->method('getIssuerRequests')->willReturn([$issuerRequestMock]);
         $issuerRequestMock->expects($this->once())->method('getCurveCardId')->willReturn('curveCardGlobalId');
         $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')->with(self::USER_ID);
@@ -188,9 +184,7 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
     {
         /** @var \Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule|MockObject $trackingRuleMock */
         $trackingRuleMock = $this->createMock(\Rector\PhpSpecToPHPUnit\Tests\Sets\Fixture\Tracking\TrackingRule::class);
-        $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')
-            ->with(self::USER_ID)
-            ->willReturn($trackingRuleMock);
+        $this->trackingRulesRepositoryMock->expects($this->once())->method('findForUser')->with(self::USER_ID)->willReturn($trackingRuleMock);
         $trackingRuleMock->expects($this->once())->method('getDaysSinceFirstTransaction')->willReturn(40);
         $this->assertTrue($this->trackingRulesPart1->transactionShouldBeTracked(
             self::USER_ID,

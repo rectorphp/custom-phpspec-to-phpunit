@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
@@ -59,7 +60,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             }
 
             // typically the top method call must be on a variable
-            if (! $node->var instanceof Variable) {
+            if (! $node->var instanceof Variable && ! $node->var instanceof PropertyFetch) {
                 return null;
             }
 
