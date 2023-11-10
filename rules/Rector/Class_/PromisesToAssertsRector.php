@@ -158,8 +158,7 @@ final class PromisesToAssertsRector extends AbstractRector
                 $node->var = $testedObjectPropertyFetchOrVariable;
                 $hasChanged = true;
 
-                return null;
-                //                return $node;
+                return $node;
             });
         }
 
