@@ -1,4 +1,4 @@
-# 13 Rules Overview
+# 14 Rules Overview
 
 ## DuringMethodCallRector
 
@@ -156,7 +156,7 @@ Convert promises and object construction to new instances
 
 ## RemoveShouldBeCalledRector
 
-Remove `shouldBeCalled()` as implicit in PHPUnit
+Remove `shouldBeCalled()` as implicit in PHPUnit, also empty `willReturn()` as no return is implicit in PHPUnit
 
 - class: [`Rector\PhpSpecToPHPUnit\Rector\MethodCall\RemoveShouldBeCalledRector`](../rules/Rector/MethodCall/RemoveShouldBeCalledRector.php)
 
@@ -169,6 +169,9 @@ Remove `shouldBeCalled()` as implicit in PHPUnit
      {
 -        $this->run()->shouldBeCalled();
 +        $this->run();
+
+-        $this->go()->willReturn();
++        $this->go();
      }
  }
 ```
@@ -271,6 +274,28 @@ Reorder and rename `shouldThrow()` method to mark before instantiation
 +        $this->expectException(ValidationException::class);
          $this->beConstructedThrough('create', [$data]);
 -        $this->shouldThrow(ValidationException::class)->duringInstantiation();
+     }
+ }
+```
+
+<br>
+
+## WithArgumentsMethodCallRector
+
+Migrate ->with(Arguments::*()) call to PHPUnit
+
+- class: [`Rector\PhpSpecToPHPUnit\Rector\MethodCall\WithArgumentsMethodCallRector`](../rules/Rector/MethodCall/WithArgumentsMethodCallRector.php)
+
+```diff
+ use PhpSpec\ObjectBehavior;
+-use Prophecy\Argument;
+
+ class ResultSpec extends ObjectBehavior
+ {
+     public function it_is_initializable()
+     {
+-        $this->run()->with(Arguments::cetera());
++        $this->run()->with($this->any());
      }
  }
 ```

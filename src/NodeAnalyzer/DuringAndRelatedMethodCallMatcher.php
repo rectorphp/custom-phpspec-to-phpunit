@@ -38,7 +38,13 @@ final class DuringAndRelatedMethodCallMatcher
         }
 
         $methodCall = $stmt->expr;
-        if (! $this->nodeNameResolver->isName($methodCall->name, $duringMethodName)) {
+
+        $methodName = $this->nodeNameResolver->getName($methodCall->name);
+        if (! is_string($methodName)) {
+            return null;
+        }
+
+        if (! str_starts_with($methodName, $duringMethodName)) {
             return null;
         }
 

@@ -4,15 +4,11 @@ namespace spec\Rector\PhpSpecToPHPUnit;
 
 use PhpSpec\ObjectBehavior;
 
-class DuringWIthLet extends ObjectBehavior
+final class DuringWithNamedMethod extends ObjectBehavior
 {
-    public function let()
-    {
-    }
-
     public function is_shoud_be_valid()
     {
-        $this->shouldThrow(ValidationException::class)->during('someMethod');
+        $this->shouldThrow(ValidationException::class)->duringSomeMethod();
     }
 }
 
@@ -24,12 +20,8 @@ namespace spec\Rector\PhpSpecToPHPUnit;
 
 use PhpSpec\ObjectBehavior;
 
-class DuringWIthLet extends ObjectBehavior
+final class DuringWithNamedMethod extends ObjectBehavior
 {
-    public function let()
-    {
-    }
-
     public function is_shoud_be_valid()
     {
         $this->expectException(ValidationException::class);
