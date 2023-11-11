@@ -1,6 +1,8 @@
 # Rector Rules for PhpSpec to PHPUnit migration
 
 
+* [Rules Overview](/docs/rector_rules_overview.md)
+
 ## Install
 
 ```bash
