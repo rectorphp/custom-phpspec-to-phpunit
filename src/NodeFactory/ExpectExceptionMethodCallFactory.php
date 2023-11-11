@@ -11,14 +11,12 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Core\PhpParser\Node\NodeFactory;
-use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
 
 final class ExpectExceptionMethodCallFactory
 {
     public function __construct(
         private readonly NodeFactory $nodeFactory,
-        private readonly ValueResolver $valueResolver,
     ) {
     }
 
@@ -45,7 +43,7 @@ final class ExpectExceptionMethodCallFactory
         $exceptionMethodCall = $duringAndRelatedMethodCall->getExceptionMethodCall();
 
         $args = $duringMethodCall->getArgs();
-        $firstArg = $args[0];
+        $firstArg = $args[0] ?? null;
 
         if ($exceptionMethodCall->var instanceof PropertyFetch) {
             $callerExpr = new Variable($exceptionMethodCall->var->name->toString());
@@ -54,12 +52,16 @@ final class ExpectExceptionMethodCallFactory
             $callerExpr = $exceptionMethodCall->var;
         }
 
+        $calledMethodName = $duringAndRelatedMethodCall->getCalledMethodName();
+
         // include arguments too
-        $methodName = $this->valueResolver->getValue($firstArg->value);
-        $newArgs = $this->resolveMethodCallArgs($args);
+        if ($firstArg instanceof Arg) {
+            $newArgs = $this->resolveMethodCallArgs($args);
+        } else {
+            $newArgs = [];
+        }
 
-        $objectMethodCall = new MethodCall($callerExpr, $methodName, $newArgs);
-
+        $objectMethodCall = new MethodCall($callerExpr, $calledMethodName, $newArgs);
         return new Expression($objectMethodCall);
     }
 
