@@ -128,11 +128,11 @@ final class TrackingRulesPart1Test extends \PHPUnit\Framework\TestCase
     /**
      * @var \Core\Entities\Card\CurveCardRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private \PHPUnit\Framework\MockObject\Generator\MockType $curveCardRepositoryMock;
+    private \PHPUnit\Framework\MockObject\MockObject $curveCardRepositoryMock;
     /**
      * @var \Sift\TrackingRulesRepository|\PHPUnit\Framework\MockObject\MockObject
      */
-    private \PHPUnit\Framework\MockObject\Generator\MockType $trackingRulesRepositoryMock;
+    private \PHPUnit\Framework\MockObject\MockObject $trackingRulesRepositoryMock;
     private \Sift\TrackingRulesPart1 $trackingRulesPart1;
     /**
      * @var int
