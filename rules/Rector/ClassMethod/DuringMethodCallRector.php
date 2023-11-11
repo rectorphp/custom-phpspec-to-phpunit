@@ -57,19 +57,12 @@ final class DuringMethodCallRector extends AbstractRector
                 continue;
             }
 
-            $expectExceptionExpression = $this->expectExceptionMethodCallFactory->createExpectsException(
-                $duringAndRelatedMethodCall
-            );
-            $objectMethodCallExpression = $this->expectExceptionMethodCallFactory->createMethodCallStmt(
-                $duringAndRelatedMethodCall
-            );
+            $newStmts = [
+                $this->expectExceptionMethodCallFactory->createExpectsException($duringAndRelatedMethodCall),
+                $this->expectExceptionMethodCallFactory->createMethodCallStmt($duringAndRelatedMethodCall),
+            ];
 
-            /** @var Node\Stmt[] $currentStmts */
-            $currentStmts = $node->stmts;
-            array_splice($currentStmts, $key, 1, [$expectExceptionExpression, $objectMethodCallExpression]);
-
-            // update stmts
-            $node->stmts = $currentStmts;
+            array_splice($node->stmts, $key, 1, $newStmts);
 
             return $node;
         }
