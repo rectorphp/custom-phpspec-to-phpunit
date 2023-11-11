@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit;
 
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -35,14 +33,6 @@ final class PhpSpecMockCollector
         }
 
         return array_unique($serviceMocks);
-    }
-
-    public function isVariableMockInProperty(Class_ $class, Variable $variable): bool
-    {
-        $variableName = $this->nodeNameResolver->getName($variable);
-        $className = (string) $this->nodeNameResolver->getName($class);
-
-        return in_array($variableName, $this->propertyMocksByClass[$className] ?? [], true);
     }
 
     private function createServiceMock(Param $param): ServiceMock
