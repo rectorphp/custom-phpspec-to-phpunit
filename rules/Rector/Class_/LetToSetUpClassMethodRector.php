@@ -22,6 +22,7 @@ use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\MockVariableReplacer;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\Naming\PropertyNameResolver;
 use Rector\PhpSpecToPHPUnit\NodeFactory\LetMockNodeFactory;
@@ -40,6 +41,7 @@ final class LetToSetUpClassMethodRector extends AbstractRector
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly BetterNodeFinder $betterNodeFinder,
         private readonly LetMockNodeFactory $letMockNodeFactory,
+        private readonly MockVariableReplacer $mockVariableReplacer,
     ) {
     }
 
@@ -117,27 +119,7 @@ CODE_SAMPLE
         $mockObjectAssign = $this->createMockObjectAssign($testedObject, $mockParams);
 
         // update mock variables to properties references
-        $this->traverseNodesWithCallable((array) $letClassMethod->stmts, function (\PhpParser\Node $node) use (
-            $mockPropertyNames
-        ): ?\PhpParser\Node {
-            if (! $node instanceof MethodCall) {
-                return null;
-            }
-
-            if (! $node->var instanceof Variable) {
-                return null;
-            }
-
-            /** @var string $variableName */
-            $variableName = $node->var->name;
-            if (! in_array($variableName . 'Mock', $mockPropertyNames, true)) {
-                return null;
-            }
-
-            $node->var = new PropertyFetch(new Variable('this'), $variableName . 'Mock');
-
-            return $node;
-        });
+        $this->mockVariableReplacer->replaceVariableMockByProperties($letClassMethod, $mockPropertyNames);
 
         // add tested object properties
         $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
@@ -159,9 +141,9 @@ CODE_SAMPLE
         return $node;
     }
 
-    private function changeBeConstructedWithToAnAssign(ClassMethod $letClassMethod, TestedObject $testedObject): void
+    private function changeBeConstructedWithToAnAssign(ClassMethod $classMethod, TestedObject $testedObject): void
     {
-        $this->traverseNodesWithCallable($letClassMethod, function (Node $node) use ($testedObject) {
+        $this->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use ($testedObject) {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -251,12 +233,12 @@ CODE_SAMPLE
 
     /**
      * @param Arg[] $args
-     * @param string[] $definedMockVariableNames
+     * @param string[] $mockVariableNames
      * @return Arg[]
      */
-    private function normalizeMockVariablesToPropertyFetches(array $args, array $definedMockVariableNames)
+    private function normalizeMockVariablesToPropertyFetches(array $args, array $mockVariableNames)
     {
-        if ($definedMockVariableNames === []) {
+        if ($mockVariableNames === []) {
             return $args;
         }
 
@@ -266,7 +248,7 @@ CODE_SAMPLE
             }
 
             $variable = $arg->value;
-            if (! $this->isNames($variable, $definedMockVariableNames)) {
+            if (! $this->isNames($variable, $mockVariableNames)) {
                 continue;
             }
 
