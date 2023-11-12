@@ -37,16 +37,16 @@ final class PhpSpecMockCollector
 
     private function createServiceMock(Param $param): ServiceMock
     {
-        /** @var string $variable */
-        $variable = $this->nodeNameResolver->getName($param->var);
+        /** @var string $variableName */
+        $variableName = $this->nodeNameResolver->getName($param->var);
 
         // this should be always typed
         if (! $param->type instanceof Name) {
-            throw new ShouldNotHappenException('Param type must be always typed');
+            throw new ShouldNotHappenException(sprintf('Param "%s" must be typed', $variableName));
         }
 
         $mockClassName = $param->type->toString();
 
-        return new ServiceMock($variable, $mockClassName);
+        return new ServiceMock($variableName, $mockClassName);
     }
 }
