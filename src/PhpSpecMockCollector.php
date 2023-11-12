@@ -29,6 +29,10 @@ final class PhpSpecMockCollector
 
         $serviceMocks = [];
         foreach ($classMethod->params as $param) {
+            if (! $param->type instanceof Name) {
+                continue;
+            }
+
             $serviceMocks[] = $this->createServiceMock($param);
         }
 

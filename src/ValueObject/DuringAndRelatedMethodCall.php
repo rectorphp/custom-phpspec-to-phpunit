@@ -53,7 +53,7 @@ final class DuringAndRelatedMethodCall
         }
 
         $args = $this->duringMethodCall->getArgs();
-        if ($args === []) {
+        if (count($args) < 2) {
             return [];
         }
 
