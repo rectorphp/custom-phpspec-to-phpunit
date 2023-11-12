@@ -55,6 +55,8 @@ final class PromisesToAssertsRector extends AbstractRector
 
         $testedObjectPropertyFetchOrVariable = $this->createTestedObjectPropertyFetch($class);
 
+        $localMethodNames = $this->getLocalMethodNames($node);
+
         foreach ($node->getMethods() as $classMethod) {
             if (! $classMethod->isPublic()) {
                 continue;
@@ -72,13 +74,14 @@ final class PromisesToAssertsRector extends AbstractRector
                 $class,
                 $testedObjectPropertyFetchOrVariable,
                 $testedObject,
-                &$hasChanged
+                &$hasChanged,
+                $localMethodNames,
             ) {
                 if (! $node instanceof MethodCall) {
                     return null;
                 }
 
-                if ($this->isName($node->name, 'any')) {
+                if ($this->isName($node->name, PHPUnitMethodName::ANY)) {
                     return null;
                 }
 
@@ -98,6 +101,11 @@ final class PromisesToAssertsRector extends AbstractRector
                 // skip reserved names
                 $methodName = $this->getName($node->name);
                 if (! is_string($methodName)) {
+                    return null;
+                }
+
+                // skip local method names
+                if (in_array($methodName, $localMethodNames, true)) {
                     return null;
                 }
 
@@ -229,5 +237,19 @@ CODE_SAMPLE
         }
 
         return new Variable($testedObject->getPropertyName());
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getLocalMethodNames(Class_ $class): array
+    {
+        $localMethodNames = [];
+        foreach ($class->getMethods() as $classMethod) {
+            $localMethodNames[] = $this->getName($classMethod);
+        }
+
+        /** @var string[] $localMethodNames */
+        return $localMethodNames;
     }
 }
