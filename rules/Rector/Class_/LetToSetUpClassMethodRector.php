@@ -23,7 +23,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
-use Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetClassMethodAnalyzer;
+use Rector\PhpSpecToPHPUnit\Naming\PropertyNameResolver;
 use Rector\PhpSpecToPHPUnit\NodeFactory\LetMockNodeFactory;
 use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
@@ -105,7 +105,6 @@ CODE_SAMPLE
             return null;
         }
 
-        //        $definedMockVariableNames = $this->letClassMethodAnalyzer->resolveDefinedMockVariableNames($node);
         $testedObject = $this->phpSpecRenaming->resolveTestedObject($node);
 
         $mockParams = $letClassMethod->getParams();
@@ -113,7 +112,32 @@ CODE_SAMPLE
         $mockProperties = $this->letMockNodeFactory->createMockProperties($mockParams);
         $mockAssignExpressions = $this->letMockNodeFactory->createMockPropertyAssignExpressions($mockParams);
 
+        $mockPropertyNames = PropertyNameResolver::resolveFromPropertyAssigns($mockAssignExpressions);
+
         $mockObjectAssign = $this->createMockObjectAssign($testedObject, $mockParams);
+
+        // update mock variables to properties references
+        $this->traverseNodesWithCallable((array) $letClassMethod->stmts, function (\PhpParser\Node $node) use (
+            $mockPropertyNames
+        ): ?\PhpParser\Node {
+            if (! $node instanceof MethodCall) {
+                return null;
+            }
+
+            if (! $node->var instanceof Variable) {
+                return null;
+            }
+
+            /** @var string $variableName */
+            $variableName = $node->var->name;
+            if (! in_array($variableName . 'Mock', $mockPropertyNames, true)) {
+                return null;
+            }
+
+            $node->var = new PropertyFetch(new Variable('this'), $variableName . 'Mock');
+
+            return $node;
+        });
 
         // add tested object properties
         $testedObjectProperty = $this->createTestedObjectProperty($testedObject);

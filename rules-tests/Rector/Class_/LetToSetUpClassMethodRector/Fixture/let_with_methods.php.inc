@@ -33,7 +33,7 @@ final class LetWithMethods extends ObjectBehavior
     {
         $this->firstItemMock = $this->createMock(\Rector\Class_\LetToSetUpClassMethodRector\Source\FirstItem::class);
         $this->letWithMethods = new \Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LetToSetUpClassMethodRector\Fixture\LetWithMethods($this->firstItemMock);
-        $this->firstItemMock->expects($this->once())->method('someMethod');
+        $this->firstItemMock->someMethod();
     }
 }
 
