@@ -31,7 +31,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class MoveParameterMockRector extends AbstractRector
 {
     public function __construct(
-        private readonly ServiceMockResolver    $phpSpecMockCollector,
+        private readonly ServiceMockResolver $phpSpecMockCollector,
         private readonly LetClassMethodAnalyzer $letClassMethodAnalyzer,
     ) {
     }
