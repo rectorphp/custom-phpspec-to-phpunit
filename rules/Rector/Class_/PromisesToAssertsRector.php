@@ -44,7 +44,7 @@ final class PromisesToAssertsRector extends AbstractRector
 
     /**
      * @param Class_ $node
-     * @return \PhpParser\Node|Node[]|null
+     * @return Node|Node[]|null
      */
     public function refactor(Node $node): Node|array|null
     {
@@ -70,7 +70,7 @@ final class PromisesToAssertsRector extends AbstractRector
                 continue;
             }
 
-            $this->traverseNodesWithCallable($classMethod, function (\PhpParser\Node $node) use (
+            $this->traverseNodesWithCallable($classMethod, function (Node $node) use (
                 $class,
                 $testedObjectPropertyFetchOrVariable,
                 $testedObject,

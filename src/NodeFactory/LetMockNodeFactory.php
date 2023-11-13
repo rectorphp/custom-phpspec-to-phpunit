@@ -88,9 +88,9 @@ final class LetMockNodeFactory
 
     private function crateMockProperty(string $parameterName): Property
     {
-        $paramType = new ObjectType(MockObject::class);
+        $objectType = new ObjectType(MockObject::class);
 
-        return $this->nodeFactory->createPrivatePropertyFromNameAndType($parameterName, $paramType);
+        return $this->nodeFactory->createPrivatePropertyFromNameAndType($parameterName, $objectType);
     }
 
     private function createMockVariableName(Param $param): string

@@ -19,12 +19,12 @@ final class PropertyNameResolver
     {
         $propertyNames = [];
 
-        foreach ($expressions as $stmt) {
-            if (! $stmt->expr instanceof Assign) {
+        foreach ($expressions as $expression) {
+            if (! $expression->expr instanceof Assign) {
                 continue;
             }
 
-            $assign = $stmt->expr;
+            $assign = $expression->expr;
             if (! $assign->var instanceof PropertyFetch) {
                 continue;
             }

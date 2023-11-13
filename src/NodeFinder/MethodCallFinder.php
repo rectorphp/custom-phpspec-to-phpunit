@@ -16,7 +16,7 @@ final class MethodCallFinder
     {
         $nodeFinder = new NodeFinder();
 
-        $foundMethodCall = $nodeFinder->findFirst($stmt, function (Node $node) use ($desiredMethodName): bool {
+        $foundMethodCall = $nodeFinder->findFirst($stmt, static function (Node $node) use ($desiredMethodName): bool {
             if (! $node instanceof MethodCall) {
                 return false;
             }

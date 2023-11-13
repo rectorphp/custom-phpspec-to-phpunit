@@ -24,7 +24,7 @@ final class MockVariableReplacer
     {
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable(
             (array) $classMethod->stmts,
-            function (Node $node) use ($mockPropertyNames): ?PropertyFetch {
+            static function (Node $node) use ($mockPropertyNames): ?PropertyFetch {
                 if (! $node instanceof Variable) {
                     return null;
                 }

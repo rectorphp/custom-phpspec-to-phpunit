@@ -35,10 +35,8 @@ final class RemoveShouldBeCalledRector extends AbstractRector
             return $node->var;
         }
 
-        if ($this->isName($node->name, PhpSpecMethodName::WILL_RETURN)) {
-            if ($node->getArgs() === []) {
-                return $node->var;
-            }
+        if ($this->isName($node->name, PhpSpecMethodName::WILL_RETURN) && $node->getArgs() === []) {
+            return $node->var;
         }
 
         return null;
