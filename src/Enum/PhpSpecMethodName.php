@@ -95,4 +95,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const WITH = 'with';
+
+    /**
+     * @var string
+     */
+    public const SHOULD_NOT_THROW = 'shouldNotThrow';
 }

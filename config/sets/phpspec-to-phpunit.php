@@ -14,6 +14,7 @@ use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RenameTestClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\ShouldThrowAndInstantiationOrderRector;
 use Rector\PhpSpecToPHPUnit\Rector\Expression\ExpectedMockDeclarationRector;
 use Rector\PhpSpecToPHPUnit\Rector\Expression\ShouldNeverBeCalledRector;
+use Rector\PhpSpecToPHPUnit\Rector\Expression\ShouldNotThrowRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\RemoveShouldBeCalledRector;
 use Rector\PhpSpecToPHPUnit\Rector\MethodCall\WithArgumentsMethodCallRector;
 use Rector\PhpSpecToPHPUnit\Rector\Namespace_\RenameSpecNamespacePrefixToTestRector;
@@ -40,6 +41,9 @@ return static function (RectorConfig $rectorConfig): void {
 
         // ->shouldNeveBeCalled()
         ShouldNeverBeCalledRector::class,
+
+        // should not throw
+        ShouldNotThrowRector::class,
 
         // ->shouldBeCalled()
         RemoveShouldBeCalledRector::class,

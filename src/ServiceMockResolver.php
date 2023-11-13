@@ -11,7 +11,7 @@ use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
-final class PhpSpecMockCollector
+final class ServiceMockResolver
 {
     public function __construct(
         private readonly NodeNameResolver $nodeNameResolver,

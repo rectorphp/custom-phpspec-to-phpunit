@@ -1,4 +1,4 @@
-# 14 Rules Overview
+# 15 Rules Overview
 
 ## DuringMethodCallRector
 
@@ -252,6 +252,31 @@ Handle `shouldNotBeCalled()` expectations
      {
 -        $this->run()->shouldNotBeCalled();
 +        $this->expects($this->never())->run();
+     }
+ }
+```
+
+<br>
+
+## ShouldNotThrowRector
+
+Handle `shouldNotThrow()` expectations
+
+- class: [`Rector\PhpSpecToPHPUnit\Rector\Expression\ShouldNotThrowRector`](../rules/Rector/Expression/ShouldNotThrowRector.php)
+
+```diff
+ use PhpSpec\ObjectBehavior;
+
+ class ResultSpec extends ObjectBehavior
+ {
+     public function it_is_initializable()
+     {
+-        $this->shouldNotThrow(Exception::class)->during(
+-            'someMethodCall',
+-            ['someArguments']
+-        );
++        // should not throw an exception
++        $this->result->someMethodCall('someArguments');
      }
  }
 ```
