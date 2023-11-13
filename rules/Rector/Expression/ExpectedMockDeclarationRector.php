@@ -126,8 +126,6 @@ CODE_SAMPLE
 
     private function appendWithMethodCall(MethodCall $methodCall, Expr $expr): MethodCall
     {
-        $withMethodCall = new MethodCall($methodCall, PHPUnitMethodName::WITH);
-
         if ($expr instanceof StaticCall) {
             /** @var string $className */
             $className = $this->getName($expr->class);
@@ -138,15 +136,21 @@ CODE_SAMPLE
                     return $methodCall;
                 }
 
+                if ($this->isName($expr->name, 'that')) {
+                    // will return callable
+                    $expr = $expr->getArgs()[0]
+->value;
+
+                    return new MethodCall($methodCall, PHPUnitMethodName::WILL_RETURN, [new Arg($expr)]);
+                }
+
                 if ($this->isName($expr->name, 'type')) {
                     $expr = $this->createIsTypeOrIsInstanceOf($expr);
                 }
             }
         }
 
-        $withMethodCall->args = [new Arg($expr)];
-
-        return $withMethodCall;
+        return new MethodCall($methodCall, PHPUnitMethodName::WITH, [new Arg($expr)]);
     }
 
     private function createIsTypeOrIsInstanceOf(StaticCall $staticCall): MethodCall
