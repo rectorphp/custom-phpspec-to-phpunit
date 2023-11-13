@@ -12,6 +12,12 @@ use PhpParser\NodeFinder;
 
 final class MethodCallFinder
 {
+    public static function hasByName(Stmt $stmt, string $desiredMethodName): bool
+    {
+        $foundMethodCall = self::findByName($stmt, $desiredMethodName);
+        return $foundMethodCall instanceof MethodCall;
+    }
+
     public static function findByName(Stmt $stmt, string $desiredMethodName): ?MethodCall
     {
         $nodeFinder = new NodeFinder();
