@@ -18,7 +18,6 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\MethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
@@ -26,6 +25,7 @@ use Rector\PhpSpecToPHPUnit\MockVariableReplacer;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\Naming\PropertyNameResolver;
 use Rector\PhpSpecToPHPUnit\NodeFactory\LetMockNodeFactory;
+use Rector\PhpSpecToPHPUnit\NodeFinder\MethodCallFinder;
 use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -39,7 +39,6 @@ final class LetToSetUpClassMethodRector extends AbstractRector
     public function __construct(
         private readonly VisibilityManipulator $visibilityManipulator,
         private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly BetterNodeFinder $betterNodeFinder,
         private readonly LetMockNodeFactory $letMockNodeFactory,
         private readonly MockVariableReplacer $mockVariableReplacer,
     ) {
@@ -128,7 +127,7 @@ CODE_SAMPLE
         $this->refactorToSetUpClassMethod($letClassMethod);
 
         $newLetStmts = $mockAssignExpressions;
-        if (! $this->hasBeConstructedWithMethodCall($letClassMethod)) {
+        if (! MethodCallFinder::hasByName($letClassMethod, PhpSpecMethodName::BE_CONSTRUCTED_WITH)) {
             $newLetStmts[] = $assignExpression;
         } else {
             $this->changeBeConstructedWithToAnAssign($letClassMethod, $testedObject);
@@ -203,17 +202,6 @@ CODE_SAMPLE
         $letClassMethod->params = [];
 
         $this->visibilityManipulator->makeProtected($letClassMethod);
-    }
-
-    private function hasBeConstructedWithMethodCall(ClassMethod $letClassMethod): bool
-    {
-        return (bool) $this->betterNodeFinder->findFirst((array) $letClassMethod->stmts, function (Node $node): bool {
-            if (! $node instanceof MethodCall) {
-                return false;
-            }
-
-            return $this->isName($node->name, PhpSpecMethodName::BE_CONSTRUCTED_WITH);
-        });
     }
 
     /**
