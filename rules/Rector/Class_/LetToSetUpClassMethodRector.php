@@ -116,7 +116,7 @@ CODE_SAMPLE
 
         $mockPropertyNames = PropertyNameResolver::resolveFromPropertyAssigns($mockAssignExpressions);
 
-        $expression = $this->createMockObjectAssign($testedObject, $mockParams);
+        $assignExpression = $this->createMockObjectAssign($testedObject, $mockParams);
 
         // update mock variables to properties references
         $this->mockVariableReplacer->replaceVariableMockByProperties($letClassMethod, $mockPropertyNames);
@@ -129,7 +129,7 @@ CODE_SAMPLE
 
         $newLetStmts = $mockAssignExpressions;
         if (! $this->hasBeConstructedWithMethodCall($letClassMethod)) {
-            $newLetStmts[] = $expression;
+            $newLetStmts[] = $assignExpression;
         } else {
             $this->changeBeConstructedWithToAnAssign($letClassMethod, $testedObject);
         }
