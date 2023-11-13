@@ -58,4 +58,9 @@ final class PHPUnitMethodName
      * @var string
      */
     public const ANY = 'any';
+
+    /**
+     * @var string
+     */
+    public const WILL_RETURN = 'willReturn';
 }
