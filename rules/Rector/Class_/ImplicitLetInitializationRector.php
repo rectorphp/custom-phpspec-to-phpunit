@@ -21,6 +21,7 @@ use Rector\Core\ValueObject\MethodName;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
+use Rector\PhpSpecToPHPUnit\NodeFinder\MethodCallFinder;
 use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -97,6 +98,11 @@ CODE_SAMPLE
             return null;
         }
 
+        // has be constructed through in every public method
+        if ($this->hasConstructedThroughInEveryClassMethod($node)) {
+            return null;
+        }
+
         $testedObject = $this->phpSpecRenaming->resolveTestedObject($node);
 
         $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
@@ -127,5 +133,26 @@ CODE_SAMPLE
             $testedObject->getPropertyName(),
             $testedObject->getTestedObjectType()
         );
+    }
+
+    private function hasConstructedThroughInEveryClassMethod(Class_ $class): bool
+    {
+        foreach ($class->getMethods() as $classMethod) {
+            if (! $classMethod->isPublic()) {
+                continue;
+            }
+
+            if (MethodCallFinder::hasByName($classMethod, PhpSpecMethodName::BE_CONSTRUCTED_WITH)) {
+                continue;
+            }
+
+            if (MethodCallFinder::hasByName($classMethod, PhpSpecMethodName::BE_CONSTRUCTED_THROUGH)) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }
