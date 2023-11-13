@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\NodeFactory;
 
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
@@ -63,26 +61,12 @@ final class BeConstructedWithAssignFactory
 
     private function moveConstructorArguments(MethodCall $methodCall, StaticCall $staticCall): void
     {
-        if (! isset($methodCall->args[1])) {
+        $secondArg = $methodCall->getArgs()[1] ?? null;
+        if (! $secondArg instanceof Arg) {
             return;
         }
 
-        if (! $methodCall->args[1] instanceof Arg) {
-            return;
-        }
-
-        if (! $methodCall->args[1]->value instanceof Array_) {
-            return;
-        }
-
-        /** @var Array_ $array */
-        $array = $methodCall->args[1]->value;
-        foreach ($array->items as $arrayItem) {
-            if (! $arrayItem instanceof ArrayItem) {
-                continue;
-            }
-
-            $staticCall->args[] = new Arg($arrayItem->value);
-        }
+        $newArgs = ArgsFactory::createArgsFromArgArray($secondArg);
+        $staticCall->args = $newArgs;
     }
 }

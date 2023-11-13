@@ -22,13 +22,12 @@ class ShouldNotThrow extends ObjectBehavior
 namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Expression\ShouldNotThrowRector\Fixture;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ShouldNotThrow extends ObjectBehavior
 {
     public function it_does_test()
     {
-        // should not throw exception
+        /** should not throw exception */
         $this->shouldNotThrow->someMethodCall('someArguments');
     }
 }

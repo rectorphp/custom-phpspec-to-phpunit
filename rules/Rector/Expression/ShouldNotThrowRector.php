@@ -4,24 +4,38 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\Expression;
 
-use PhpParser\Builder\Method;
+use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Nop;
+use PHPStan\Analyser\Scope;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
+use Rector\PhpSpecToPHPUnit\NodeFactory\ArgsFactory;
 use Rector\PhpSpecToPHPUnit\NodeFinder\MethodCallFinder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Expression\ShouldNotThrowRector\ShouldNotThrowRectorTest
  */
 final class ShouldNotThrowRector extends AbstractRector
 {
+    public function __construct(
+        private readonly PhpSpecRenaming $phpSpecRenaming,
+    ) {
+    }
+
     /**
      * @return array<class-string<Node>>
      */
@@ -70,8 +84,9 @@ CODE_SAMPLE
 
     /**
      * @param Expression $node
+     * @return array<Stmt>|null
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?array
     {
         $shouldNotThrowMethodCall = MethodCallFinder::findByName($node, PhpSpecMethodName::SHOULD_NOT_THROW);
         if (! $shouldNotThrowMethodCall instanceof MethodCall) {
@@ -82,6 +97,16 @@ CODE_SAMPLE
         $duringMethodCall = MethodCallFinder::findByName($node, PhpSpecMethodName::DURING);
         if (! $duringMethodCall instanceof MethodCall) {
             return null;
+        }
+
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if ($scope instanceof Scope) {
+            $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyNameFromScope($scope);
+            Assert::string($testedObjectPropertyName);
+
+            $callerExpr = new PropertyFetch(new Variable('this'), new Identifier($testedObjectPropertyName));
+        } else {
+            $callerExpr = new Variable('this');
         }
 
         $duringArgs = $duringMethodCall->getArgs();
@@ -97,7 +122,19 @@ CODE_SAMPLE
         $string = $firstArg->value;
         $methodName = $string->value;
 
-        $node->expr = new MethodCall(new Variable('this'), $methodName);
-        return $node;
+        $nop = new Nop();
+        $nop->setDocComment(new Doc('/** should not throw exception */'));
+
+        $methodCall = new MethodCall($callerExpr, $methodName);
+        if (isset($duringArgs[1])) {
+            $secondArg = $duringArgs[1];
+            $newArgs = ArgsFactory::createArgsFromArgArray($secondArg);
+
+            $methodCall->args = $newArgs;
+        }
+
+        $methodCallExpression = new Expression($methodCall);
+
+        return [$nop, $methodCallExpression];
     }
 }

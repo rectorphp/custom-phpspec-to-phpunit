@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Naming;
 
+use Nette\Utils\Strings;
 use PhpParser\Node\Stmt\Class_;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -63,6 +66,23 @@ final class PhpSpecRenaming
         $definedMockVariableNames = $this->letClassMethodAnalyzer->resolveDefinedMockVariableNames($class);
 
         return new TestedObject($className, $propertyName, $testedObjectType, $definedMockVariableNames);
+    }
+
+    public function resolveTestedObjectPropertyNameFromScope(Scope $scope): ?string
+    {
+        $classReflection = $scope->getClassReflection();
+        if (! $classReflection instanceof ClassReflection) {
+            return null;
+        }
+
+        $className = $classReflection->getName();
+
+        /** @var string $shortClassName */
+        $shortClassName = Strings::after($className, '\\', -1);
+
+        $suffixlessClassName = StringUtils::removeSuffixes($shortClassName, [self::SPEC]);
+
+        return lcfirst($suffixlessClassName);
     }
 
     private function resolveTestedObjectPropertyName(Class_ $class): string

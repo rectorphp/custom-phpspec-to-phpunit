@@ -20,7 +20,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\DocFactory;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetClassMethodAnalyzer;
-use Rector\PhpSpecToPHPUnit\PhpSpecMockCollector;
+use Rector\PhpSpecToPHPUnit\ServiceMockResolver;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -31,7 +31,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class MoveParameterMockRector extends AbstractRector
 {
     public function __construct(
-        private readonly PhpSpecMockCollector $phpSpecMockCollector,
+        private readonly ServiceMockResolver    $phpSpecMockCollector,
         private readonly LetClassMethodAnalyzer $letClassMethodAnalyzer,
     ) {
     }
