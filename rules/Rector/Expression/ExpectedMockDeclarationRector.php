@@ -54,7 +54,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
         // replace method name with expects('...')->method('methodName')
         $hasChanged = false;
 
-        $this->traverseNodesWithCallable($firstMethodCall, function (Node $node) use (&$hasChanged) {
+        $this->traverseNodesWithCallable($firstMethodCall, function (Node $node) use (&$hasChanged): ?MethodCall {
             if (! $node instanceof MethodCall) {
                 return null;
             }

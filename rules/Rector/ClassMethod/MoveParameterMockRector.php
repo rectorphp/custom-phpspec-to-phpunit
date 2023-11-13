@@ -31,7 +31,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class MoveParameterMockRector extends AbstractRector
 {
     public function __construct(
-        private readonly ServiceMockResolver $phpSpecMockCollector,
+        private readonly ServiceMockResolver $serviceMockResolver,
         private readonly LetClassMethodAnalyzer $letClassMethodAnalyzer,
     ) {
     }
@@ -58,7 +58,7 @@ final class MoveParameterMockRector extends AbstractRector
                 continue;
             }
 
-            $serviceMocks = $this->phpSpecMockCollector->resolveServiceMocksFromClassMethodParams($classMethod);
+            $serviceMocks = $this->serviceMockResolver->resolveServiceMocksFromClassMethodParams($classMethod);
             if ($serviceMocks === []) {
                 continue;
             }
@@ -69,7 +69,7 @@ final class MoveParameterMockRector extends AbstractRector
             $newAssignExpressions = $this->createMockAssignExpressions($serviceMocks, $letDefinedVariables);
 
             // 2. add assigns
-            $classMethod->stmts = array_merge($newAssignExpressions, (array) $classMethod->stmts);
+            $classMethod->stmts = [...$newAssignExpressions, ...(array) $classMethod->stmts];
 
             // 3. rename following variables
             $this->renameFollowingVariables($classMethod, $serviceMocks, $letDefinedVariables);
@@ -168,10 +168,10 @@ CODE_SAMPLE
         array $serviceMocks,
         array $letDefinedVariables
     ): void {
-        $this->traverseNodesWithCallable((array) $classMethod->stmts, function (\PhpParser\Node $node) use (
+        $this->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use (
             $serviceMocks,
             $letDefinedVariables
-        ) {
+        ): null|PropertyFetch|Variable {
             if (! $node instanceof Variable) {
                 return null;
             }

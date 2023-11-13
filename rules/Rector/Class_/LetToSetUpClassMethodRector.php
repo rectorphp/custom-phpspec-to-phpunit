@@ -116,25 +116,25 @@ CODE_SAMPLE
 
         $mockPropertyNames = PropertyNameResolver::resolveFromPropertyAssigns($mockAssignExpressions);
 
-        $mockObjectAssign = $this->createMockObjectAssign($testedObject, $mockParams);
+        $assignExpression = $this->createMockObjectAssign($testedObject, $mockParams);
 
         // update mock variables to properties references
         $this->mockVariableReplacer->replaceVariableMockByProperties($letClassMethod, $mockPropertyNames);
 
         // add tested object properties
         $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
-        $newProperties = array_merge($mockProperties, [$testedObjectProperty]);
+        $newProperties = [...$mockProperties, $testedObjectProperty];
 
         $this->refactorToSetUpClassMethod($letClassMethod);
 
         $newLetStmts = $mockAssignExpressions;
         if (! $this->hasBeConstructedWithMethodCall($letClassMethod)) {
-            $newLetStmts[] = $mockObjectAssign;
+            $newLetStmts[] = $assignExpression;
         } else {
             $this->changeBeConstructedWithToAnAssign($letClassMethod, $testedObject);
         }
 
-        $letClassMethod->stmts = array_merge($newLetStmts, (array) $letClassMethod->stmts);
+        $letClassMethod->stmts = [...$newLetStmts, ...(array) $letClassMethod->stmts];
 
         $node->stmts = array_merge($newProperties, $node->stmts);
 
@@ -143,7 +143,9 @@ CODE_SAMPLE
 
     private function changeBeConstructedWithToAnAssign(ClassMethod $classMethod, TestedObject $testedObject): void
     {
-        $this->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use ($testedObject) {
+        $this->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use (
+            $testedObject
+        ): ?Assign {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -205,7 +207,7 @@ CODE_SAMPLE
 
     private function hasBeConstructedWithMethodCall(ClassMethod $letClassMethod): bool
     {
-        return (bool) $this->betterNodeFinder->findFirst((array) $letClassMethod->stmts, function (Node $node) {
+        return (bool) $this->betterNodeFinder->findFirst((array) $letClassMethod->stmts, function (Node $node): bool {
             if (! $node instanceof MethodCall) {
                 return false;
             }
@@ -236,7 +238,7 @@ CODE_SAMPLE
      * @param string[] $mockVariableNames
      * @return Arg[]
      */
-    private function normalizeMockVariablesToPropertyFetches(array $args, array $mockVariableNames)
+    private function normalizeMockVariablesToPropertyFetches(array $args, array $mockVariableNames): array
     {
         if ($mockVariableNames === []) {
             return $args;

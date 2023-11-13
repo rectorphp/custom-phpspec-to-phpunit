@@ -15,5 +15,13 @@ return static function (RectorConfig $rectorConfig): void {
         '*/Source/*',
     ]);
 
-    $rectorConfig->sets([MigrationSetList::PHPSPEC_TO_PHPUNIT]);
+    $rectorConfig->sets([
+        \Rector\Set\ValueObject\SetList::INSTANCEOF,
+        \Rector\Set\ValueObject\SetList::NAMING,
+        \Rector\Set\ValueObject\SetList::TYPE_DECLARATION,
+        \Rector\Set\ValueObject\SetList::DEAD_CODE,
+        \Rector\Set\ValueObject\SetList::CODE_QUALITY,
+        \Rector\Set\ValueObject\SetList::CODING_STYLE,
+    ]);
+    // $rectorConfig->sets([MigrationSetList::PHPSPEC_TO_PHPUNIT]);
 };
