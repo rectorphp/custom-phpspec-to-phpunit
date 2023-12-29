@@ -10,14 +10,34 @@ use PHPStan\Type\ObjectType;
 final class TestedObject
 {
     /**
+     * @readonly
+     * @var string
+     */
+    private $className;
+    /**
+     * @readonly
+     * @var string
+     */
+    private $propertyName;
+    /**
+     * @readonly
+     * @var \PHPStan\Type\ObjectType
+     */
+    private $testedObjectType;
+    /**
+     * @var string[]
+     * @readonly
+     */
+    private $definedMockVariableNames;
+    /**
      * @param string[] $definedMockVariableNames
      */
-    public function __construct(
-        private readonly string $className,
-        private readonly string $propertyName,
-        private readonly ObjectType $testedObjectType,
-        private readonly array $definedMockVariableNames
-    ) {
+    public function __construct(string $className, string $propertyName, ObjectType $testedObjectType, array $definedMockVariableNames)
+    {
+        $this->className = $className;
+        $this->propertyName = $propertyName;
+        $this->testedObjectType = $testedObjectType;
+        $this->definedMockVariableNames = $definedMockVariableNames;
     }
 
     public function getClassName(): string
