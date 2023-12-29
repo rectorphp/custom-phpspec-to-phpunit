@@ -13,6 +13,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->skip([
         // for tests
         '*/Source/*',
+
+        \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class => [
+            __DIR__ . '/src/DocFactory.php',
+        ],
     ]);
 
     $rectorConfig->sets([

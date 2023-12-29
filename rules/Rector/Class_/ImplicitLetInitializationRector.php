@@ -108,7 +108,7 @@ CODE_SAMPLE
         $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
 
         $setUpClassMethod = $this->createSetUpClassMethod($testedObject);
-        $node->stmts = array_merge([$testedObjectProperty, $setUpClassMethod], (array) $node->stmts);
+        $node->stmts = [$testedObjectProperty, $setUpClassMethod, ...(array) $node->stmts];
 
         return $node;
     }
@@ -120,9 +120,9 @@ CODE_SAMPLE
         $classMethod->flags |= Class_::MODIFIER_PROTECTED;
 
         $propertyFetch = new PropertyFetch(new Variable('this'), $testedObject->getPropertyName());
-        $new_ = new New_(new FullyQualified($testedObject->getClassName()));
+        $new = new New_(new FullyQualified($testedObject->getClassName()));
 
-        $classMethod->stmts = [new Expression(new Assign($propertyFetch, $new_))];
+        $classMethod->stmts = [new Expression(new Assign($propertyFetch, $new))];
 
         return $classMethod;
     }
