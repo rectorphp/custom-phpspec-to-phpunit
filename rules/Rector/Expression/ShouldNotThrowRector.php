@@ -24,7 +24,6 @@ use Rector\PhpSpecToPHPUnit\NodeFactory\ArgsFactory;
 use Rector\PhpSpecToPHPUnit\NodeFinder\MethodCallFinder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Webmozart\Assert\Assert;
 
 /**
  * @see \Rector\PhpSpecToPHPUnit\Tests\Rector\Expression\ShouldNotThrowRector\ShouldNotThrowRectorTest
@@ -101,8 +100,8 @@ CODE_SAMPLE
 
         $scope = $node->getAttribute(AttributeKey::SCOPE);
         if ($scope instanceof Scope) {
+            /** @var string $testedObjectPropertyName */
             $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyNameFromScope($scope);
-            Assert::string($testedObjectPropertyName);
 
             $callerExpr = new PropertyFetch(new Variable('this'), new Identifier($testedObjectPropertyName));
         } else {

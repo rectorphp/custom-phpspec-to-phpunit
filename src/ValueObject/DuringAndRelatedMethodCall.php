@@ -9,10 +9,8 @@ use PhpParser\BuilderFactory;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
-use Webmozart\Assert\Assert;
 
 final class DuringAndRelatedMethodCall
 {
@@ -76,8 +74,6 @@ final class DuringAndRelatedMethodCall
     private function getDuringMethodName(): string
     {
         $methodName = $this->duringMethodCall->name;
-        Assert::isInstanceOf($methodName, Identifier::class);
-
         return $methodName->toString();
     }
 }

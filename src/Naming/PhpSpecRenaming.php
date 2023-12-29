@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Naming;
 
-use Nette\Utils\Strings;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
@@ -78,7 +77,7 @@ final class PhpSpecRenaming
         $className = $classReflection->getName();
 
         /** @var string $shortClassName */
-        $shortClassName = Strings::after($className, '\\', -1);
+        $shortClassName = StringUtils::after($className, '\\', -1);
 
         $suffixlessClassName = StringUtils::removeSuffixes($shortClassName, [self::SPEC]);
 
