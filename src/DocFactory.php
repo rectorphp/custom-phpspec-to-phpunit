@@ -14,7 +14,7 @@ final class DocFactory
         $comment = sprintf(
             "/** @var \%s|\%s $%s */",
             $serviceMock->getMockClassName(),
-            MockObject::class,
+            'PHPUnit\Framework\MockObject\MockObject',
             $serviceMock->getVariableName() . 'Mock'
         );
 
