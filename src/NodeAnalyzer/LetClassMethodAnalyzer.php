@@ -9,7 +9,6 @@ use PhpParser\Node\Stmt\ClassMethod;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
-use Webmozart\Assert\Assert;
 
 final class LetClassMethodAnalyzer
 {
@@ -39,8 +38,7 @@ final class LetClassMethodAnalyzer
             $variableNames[] = $this->nodeNameResolver->getName($param->var);
         }
 
-        Assert::allString($variableNames);
-
+        /** @var string[] $variableNames */
         return $variableNames;
     }
 }

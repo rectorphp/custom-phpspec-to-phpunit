@@ -6,7 +6,6 @@ namespace Rector\PhpSpecToPHPUnit\ValueObject;
 
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
-use Webmozart\Assert\Assert;
 
 final class TestedObject
 {
@@ -19,7 +18,6 @@ final class TestedObject
         private readonly ObjectType $testedObjectType,
         private readonly array $definedMockVariableNames
     ) {
-        Assert::allString($definedMockVariableNames);
     }
 
     public function getClassName(): string

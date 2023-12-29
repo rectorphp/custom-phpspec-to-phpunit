@@ -1,0 +1,13 @@
+{
+    "name": "rector/custom-phpspec-to-phpunit",
+    "description": "Rector migration rules for PHPSpec to PHPUnit",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rector\\PhpSpecToPHPUnit\\": ["src", "rules"]
+        }
+    }
+}
