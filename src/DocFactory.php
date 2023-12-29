@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit;
 
 use PhpParser\Comment\Doc;
-use PHPUnit\Framework\MockObject\MockObject;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class DocFactory
@@ -28,7 +27,7 @@ final class DocFactory
             "/**%s * @var \%s|\%s%s */",
             PHP_EOL,
             $serviceMock->getMockClassName(),
-            MockObject::class,
+            'PHPUnit\Framework\MockObject\MockObject',
             PHP_EOL
         );
 
