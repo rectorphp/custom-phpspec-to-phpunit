@@ -44,26 +44,13 @@ final class ConsecutiveMockExpectationRector extends AbstractRector
             return null;
         }
 
-        $consecutiveSpecExpectations = $this->consecutiveMethodCallMatcher->matchInClassMethod($node);
-        if ($consecutiveSpecExpectations === []) {
+        $methodNamesConsecutiveMethodCalls = $this->consecutiveMethodCallMatcher->matchInClassMethod($node);
+        if ($methodNamesConsecutiveMethodCalls === []) {
             return null;
         }
 
-        foreach ($consecutiveSpecExpectations as $methodName => $keyAndStmts) {
-            // we handle only consecutive mock expectations, not 1
-            if (count($keyAndStmts) < 2) {
-                continue;
-            }
-
-            dump($methodName);
-
-            $firstKey = array_key_first($keyAndStmts);
-
-            dump(array_keys($keyAndStmts));
-
-            foreach ($keyAndStmts as $stmt) {
-            }
-
+        foreach ($methodNamesConsecutiveMethodCalls as $methodNameConsecutiveMethodCalls) {
+            dump($methodNameConsecutiveMethodCalls->getFirstStmtKey());
             die;
 
             // replace with single->willReturnMap()

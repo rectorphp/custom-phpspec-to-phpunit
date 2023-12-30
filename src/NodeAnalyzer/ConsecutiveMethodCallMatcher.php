@@ -8,12 +8,13 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\Naming\SystemMethodDetector;
+use Rector\PhpSpecToPHPUnit\ValueObject\ConsecutiveMethodCall;
+use Rector\PhpSpecToPHPUnit\ValueObject\MethodNameConsecutiveMethodCalls;
 
 final class ConsecutiveMethodCallMatcher
 {
@@ -23,7 +24,7 @@ final class ConsecutiveMethodCallMatcher
     }
 
     /**
-     * @return array<string, array<int, Expression<MethodCall>>>
+     * @return MethodNameConsecutiveMethodCalls[]
      */
     public function matchInClassMethod(ClassMethod $classMethod): array
     {
@@ -34,31 +35,41 @@ final class ConsecutiveMethodCallMatcher
 
         $consecutiveMockExpectations = [];
 
-        $previousSpecMethodName = null;
         foreach ($classMethod->stmts as $key => $stmt) {
-            // is already converted? skip it
+            if (! $stmt instanceof Expression) {
+                continue;
+            }
+
+            // is already converted in another rule? skip it
             $originalStmt = $stmt->getAttribute(AttributeKey::ORIGINAL_NODE);
             if (! $originalStmt instanceof Node) {
                 continue;
             }
 
             $specMethodName = $this->resolveSpecObjectMethodCallName($stmt);
+
             if (! is_string($specMethodName)) {
                 continue;
             }
 
-            // is spec method call same as previous one?
-            if ($specMethodName === $previousSpecMethodName) {
-                /** @expr Expression<MethodCall> $stmt */
-                $consecutiveMockExpectations[$previousSpecMethodName][$key] = $stmt;
-            }
-
-            $previousSpecMethodName = $specMethodName;
+            $consecutiveMockExpectations[$specMethodName][] = new ConsecutiveMethodCall($key, $specMethodName, $stmt);
         }
 
-        // @todo use value object
+        $methodNameConsecutiveMethodCalls = [];
 
-        return $consecutiveMockExpectations;
+        foreach ($consecutiveMockExpectations as $methodName => $consecutiveMethodCalls) {
+            if (count($consecutiveMethodCalls) < 2) {
+                // keep only consecutive calls, at least 2 calls of same named method
+                continue;
+            }
+
+            $methodNameConsecutiveMethodCalls[] = new MethodNameConsecutiveMethodCalls(
+                $methodName,
+                $consecutiveMethodCalls
+            );
+        }
+
+        return $methodNameConsecutiveMethodCalls;
     }
 
     private function isThisVariable(Expr $expr): bool
@@ -70,17 +81,13 @@ final class ConsecutiveMethodCallMatcher
         return $this->nodeNameResolver->isName($expr, 'this');
     }
 
-    private function resolveSpecObjectMethodCallName(Stmt $stmt): ?string
+    private function resolveSpecObjectMethodCallName(Expression $expression): ?string
     {
-        if (! $stmt instanceof Expression) {
+        if (! $expression->expr instanceof MethodCall) {
             return null;
         }
 
-        if (! $stmt->expr instanceof MethodCall) {
-            return null;
-        }
-
-        $methodCall = $stmt->expr;
+        $methodCall = $expression->expr;
         if ($this->isThisVariable($methodCall->var)) {
             return null;
         }

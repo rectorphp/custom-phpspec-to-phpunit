@@ -35,6 +35,7 @@ return static function (RectorConfig $rectorConfig): void {
 
         ShouldThrowAndInstantiationOrderRector::class,
 
+        // convert into ->willReturnMap()
         ConsecutiveMockExpectationRector::class,
         PromisesToAssertsRector::class,
 
