@@ -106,23 +106,22 @@ CODE_SAMPLE
             return null;
         }
 
+        $this->removeInstanceOfCheck($letClassMethod);
+
         $testedObject = $this->phpSpecRenaming->resolveTestedObject($node);
 
         $mockParams = $letClassMethod->getParams();
 
-        $mockProperties = $this->letMockNodeFactory->createMockProperties($mockParams);
         $mockAssignExpressions = $this->letMockNodeFactory->createMockPropertyAssignExpressions($mockParams);
-
-        $mockPropertyNames = PropertyNameResolver::resolveFromPropertyAssigns($mockAssignExpressions);
 
         $assignExpression = $this->createMockObjectAssign($testedObject, $mockParams);
 
         // update mock variables to properties references
+        $mockPropertyNames = PropertyNameResolver::resolveFromPropertyAssigns($mockAssignExpressions);
         $this->mockVariableReplacer->replaceVariableMockByProperties($letClassMethod, $mockPropertyNames);
 
         // add tested object properties
-        $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
-        $newProperties = [...$mockProperties, $testedObjectProperty];
+        $newProperties = $this->createNewClassProperties($mockParams, $testedObject);
 
         $this->refactorToSetUpClassMethod($letClassMethod);
 
@@ -249,5 +248,39 @@ CODE_SAMPLE
         }
 
         return $args;
+    }
+
+    /**
+     * @param Param[] $mockParams
+     * @return Property[]
+     */
+    private function createNewClassProperties(array $mockParams, TestedObject $testedObject): array
+    {
+        $mockProperties = $this->letMockNodeFactory->createMockProperties($mockParams);
+        $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
+
+        return [...$mockProperties, $testedObjectProperty];
+    }
+
+    /**
+     * Remove instanceof check as handled in native way by typed property
+     */
+    private function removeInstanceOfCheck(ClassMethod $letClassMethod): void
+    {
+        foreach ((array) $letClassMethod->stmts as $key => $stmt) {
+            if (! $stmt instanceof Expression) {
+                continue;
+            }
+
+            if (! $stmt->expr instanceof MethodCall) {
+                continue;
+            }
+
+            if (! $this->isName($stmt->expr->name, PhpSpecMethodName::BE_AN_INSTANCE_OF)) {
+                continue;
+            }
+
+            unset($letClassMethod->stmts[$key]);
+        }
     }
 }
