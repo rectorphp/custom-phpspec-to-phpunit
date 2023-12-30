@@ -13,14 +13,17 @@ final class MethodNameConsecutiveMethodCalls
      * @param ConsecutiveMethodCall[] $consecutiveMethodCalls
      */
     public function __construct(
-        private readonly string $methodName,
         private readonly array $consecutiveMethodCalls
     ) {
     }
 
     public function getMethodName(): string
     {
-        return $this->methodName;
+        foreach ($this->consecutiveMethodCalls as $consecutiveMethodCall) {
+            return $consecutiveMethodCall->getMethodName();
+        }
+
+        throw new ShouldNotHappenException();
     }
 
     /**
@@ -34,7 +37,7 @@ final class MethodNameConsecutiveMethodCalls
     public function getMockVariable(): Variable
     {
         foreach ($this->consecutiveMethodCalls as $consecutiveMethodCall) {
-            return $consecutiveMethodCall->getMockVariable();
+            return new Variable($consecutiveMethodCall->getMockVariableName());
         }
 
         throw new ShouldNotHappenException();
