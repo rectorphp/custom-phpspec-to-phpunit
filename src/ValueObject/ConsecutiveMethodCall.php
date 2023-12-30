@@ -6,18 +6,14 @@ namespace Rector\PhpSpecToPHPUnit\ValueObject;
 
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Exception\ShouldNotHappenException;
 
 final class ConsecutiveMethodCall
 {
-    /**
-     * @param Expression<MethodCall> $expression
-     */
     public function __construct(
         private readonly int $key,
         private readonly string $methodName,
-        private readonly Expression $expression
+        private readonly MethodCall $methodCall
     ) {
     }
 
@@ -31,18 +27,9 @@ final class ConsecutiveMethodCall
         return $this->methodName;
     }
 
-    /**
-     * @return Expression<MethodCall>
-     */
-    public function getExpression(): Expression
-    {
-        return $this->expression;
-    }
-
     public function getMockVariable(): Variable
     {
-        /** @var MethodCall $methodCall */
-        $methodCall = $this->expression->expr;
+        $methodCall = $this->methodCall;
 
         while ($methodCall->var instanceof MethodCall) {
             $methodCall = $methodCall->var;
@@ -53,5 +40,10 @@ final class ConsecutiveMethodCall
         }
 
         return $methodCall->var;
+    }
+
+    public function getMethodCall(): MethodCall
+    {
+        return $this->methodCall;
     }
 }
