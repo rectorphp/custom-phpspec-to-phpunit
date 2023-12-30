@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\PhpSpecToPHPUnit\Set\MigrationSetList;
+use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
+use Rector\Set\ValueObject\SetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
@@ -14,18 +15,15 @@ return static function (RectorConfig $rectorConfig): void {
         // for tests
         '*/Source/*',
 
-        \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class => [
-            __DIR__ . '/src/DocFactory.php',
-        ],
+        StringClassNameToClassConstantRector::class => [__DIR__ . '/src/DocFactory.php'],
     ]);
 
     $rectorConfig->sets([
-        \Rector\Set\ValueObject\SetList::INSTANCEOF,
-        \Rector\Set\ValueObject\SetList::NAMING,
-        \Rector\Set\ValueObject\SetList::TYPE_DECLARATION,
-        \Rector\Set\ValueObject\SetList::DEAD_CODE,
-        \Rector\Set\ValueObject\SetList::CODE_QUALITY,
-        \Rector\Set\ValueObject\SetList::CODING_STYLE,
+        SetList::INSTANCEOF,
+        SetList::NAMING,
+        SetList::TYPE_DECLARATION,
+        SetList::DEAD_CODE,
+        SetList::CODE_QUALITY,
+        SetList::CODING_STYLE,
     ]);
-    // $rectorConfig->sets([MigrationSetList::PHPSPEC_TO_PHPUNIT]);
 };
