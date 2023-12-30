@@ -36,14 +36,33 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LetToSetUpClassMethodRector extends AbstractRector
 {
-    public function __construct(
-        private readonly VisibilityManipulator $visibilityManipulator,
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly LetMockNodeFactory $letMockNodeFactory,
-        private readonly MockVariableReplacer $mockVariableReplacer,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
+     */
+    private $visibilityManipulator;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\LetMockNodeFactory
+     */
+    private $letMockNodeFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\MockVariableReplacer
+     */
+    private $mockVariableReplacer;
+    public function __construct(VisibilityManipulator $visibilityManipulator, PhpSpecRenaming $phpSpecRenaming, LetMockNodeFactory $letMockNodeFactory, MockVariableReplacer $mockVariableReplacer)
+    {
+        $this->visibilityManipulator = $visibilityManipulator;
+        $this->phpSpecRenaming = $phpSpecRenaming;
+        $this->letMockNodeFactory = $letMockNodeFactory;
+        $this->mockVariableReplacer = $mockVariableReplacer;
     }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -132,7 +151,7 @@ CODE_SAMPLE
             $this->changeBeConstructedWithToAnAssign($letClassMethod, $testedObject);
         }
 
-        $letClassMethod->stmts = [...$newLetStmts, ...(array) $letClassMethod->stmts];
+        $letClassMethod->stmts = array_merge($newLetStmts, (array) $letClassMethod->stmts);
 
         $node->stmts = array_merge($newProperties, $node->stmts);
 
@@ -259,7 +278,7 @@ CODE_SAMPLE
         $mockProperties = $this->letMockNodeFactory->createMockProperties($mockParams);
         $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
 
-        return [...$mockProperties, $testedObjectProperty];
+        return array_merge($mockProperties, [$testedObjectProperty]);
     }
 
     /**

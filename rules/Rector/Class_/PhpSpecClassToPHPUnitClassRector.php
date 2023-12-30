@@ -20,12 +20,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly VisibilityManipulator $visibilityManipulator,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    /**
+     * @readonly
+     * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
+     */
+    private $visibilityManipulator;
+    public function __construct(PhpSpecRenaming $phpSpecRenaming, VisibilityManipulator $visibilityManipulator)
+    {
+        $this->phpSpecRenaming = $phpSpecRenaming;
+        $this->visibilityManipulator = $visibilityManipulator;
     }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -42,7 +51,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         // skip already renamed
         /** @var string $className */
         $className = $node->name->toString();
-        if (str_ends_with($className, 'Test')) {
+        if (substr_compare($className, 'Test', -strlen('Test')) === 0) {
             return null;
         }
 

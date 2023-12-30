@@ -30,12 +30,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class MoveParameterMockRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ServiceMockResolver $serviceMockResolver,
-        private readonly LetClassMethodAnalyzer $letClassMethodAnalyzer,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\ServiceMockResolver
+     */
+    private $serviceMockResolver;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetClassMethodAnalyzer
+     */
+    private $letClassMethodAnalyzer;
+    public function __construct(ServiceMockResolver $serviceMockResolver, LetClassMethodAnalyzer $letClassMethodAnalyzer)
+    {
+        $this->serviceMockResolver = $serviceMockResolver;
+        $this->letClassMethodAnalyzer = $letClassMethodAnalyzer;
     }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -69,7 +78,7 @@ final class MoveParameterMockRector extends AbstractRector
             $newAssignExpressions = $this->createMockAssignExpressions($serviceMocks, $letDefinedVariables);
 
             // 2. add assigns
-            $classMethod->stmts = [...$newAssignExpressions, ...(array) $classMethod->stmts];
+            $classMethod->stmts = array_merge($newAssignExpressions, (array) $classMethod->stmts);
 
             // 3. rename following variables
             $this->renameFollowingVariables($classMethod, $serviceMocks, $letDefinedVariables);
@@ -171,7 +180,7 @@ CODE_SAMPLE
         $this->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use (
             $serviceMocks,
             $letDefinedVariables
-        ): null|PropertyFetch|Variable {
+        ) {
             if (! $node instanceof Variable) {
                 return null;
             }
