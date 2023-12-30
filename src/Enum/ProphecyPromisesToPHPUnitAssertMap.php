@@ -19,7 +19,7 @@ final class ProphecyPromisesToPHPUnitAssertMap
         'assertCount' => ['shouldHaveCount'],
         'assertEquals' => ['shouldBeEqualTo', 'shouldEqual'],
         'assertNotEquals' => ['shouldNotBeEqualTo'],
-        'assertContains' => ['shouldContain'],
+        'assertStringContainsString' => ['shouldContain'],
         'assertNotContains' => ['shouldNotContain'],
         // types
         'assertIsIterable' => ['shouldBeArray'],

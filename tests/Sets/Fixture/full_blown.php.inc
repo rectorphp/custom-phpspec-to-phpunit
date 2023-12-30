@@ -47,6 +47,7 @@ class CartSpec extends ObjectBehavior
         $this->item($id)->shouldBeAnInstanceOf(\Ecommerce\Cart\Contract\Item::class);
 
         $item = $this->item($id);
+        $item->getContent()->shouldContain('word');
         $item->quantity()->shouldReturn(10);
     }
 
@@ -121,6 +122,7 @@ final class CartTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(\Ecommerce\Cart\Contract\Item::class, $this->cart->item($id));
 
         $item = $this->cart->item($id);
+        $this->assertStringContainsString('word', $item->getContent());
         $this->assertSame(10, $item->quantity());
     }
 
