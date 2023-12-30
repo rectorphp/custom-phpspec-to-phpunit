@@ -40,6 +40,10 @@ final class ConsecutiveMethodCallMatcher
                 continue;
             }
 
+            if (! $stmt->expr instanceof MethodCall) {
+                continue;
+            }
+
             // is already converted in another rule? skip it
             $originalStmt = $stmt->getAttribute(AttributeKey::ORIGINAL_NODE);
             if (! $originalStmt instanceof Node) {
@@ -47,29 +51,18 @@ final class ConsecutiveMethodCallMatcher
             }
 
             $specMethodName = $this->resolveSpecObjectMethodCallName($stmt);
-
             if (! is_string($specMethodName)) {
                 continue;
             }
 
-            $consecutiveMockExpectations[$specMethodName][] = new ConsecutiveMethodCall($key, $specMethodName, $stmt);
-        }
-
-        $methodNameConsecutiveMethodCalls = [];
-
-        foreach ($consecutiveMockExpectations as $methodName => $consecutiveMethodCalls) {
-            if (count($consecutiveMethodCalls) < 2) {
-                // keep only consecutive calls, at least 2 calls of same named method
-                continue;
-            }
-
-            $methodNameConsecutiveMethodCalls[] = new MethodNameConsecutiveMethodCalls(
-                $methodName,
-                $consecutiveMethodCalls
+            $consecutiveMockExpectations[$specMethodName][] = new ConsecutiveMethodCall(
+                $key,
+                $specMethodName,
+                $stmt->expr
             );
         }
 
-        return $methodNameConsecutiveMethodCalls;
+        return $this->createMethodNameConsecutiveMethodCalls($consecutiveMockExpectations);
     }
 
     private function isThisVariable(Expr $expr): bool
@@ -114,5 +107,28 @@ final class ConsecutiveMethodCallMatcher
         }
 
         return $methodName;
+    }
+
+    /**
+     * @param array<string, ConsecutiveMethodCall[]> $consecutiveMockExpectations
+     * @return MethodNameConsecutiveMethodCalls[]
+     */
+    private function createMethodNameConsecutiveMethodCalls(array $consecutiveMockExpectations): array
+    {
+        $methodNameConsecutiveMethodCalls = [];
+
+        foreach ($consecutiveMockExpectations as $methodName => $consecutiveMethodCalls) {
+            if (count($consecutiveMethodCalls) < 2) {
+                // keep only consecutive calls, at least 2 calls of same named method
+                continue;
+            }
+
+            $methodNameConsecutiveMethodCalls[] = new MethodNameConsecutiveMethodCalls(
+                $methodName,
+                $consecutiveMethodCalls
+            );
+        }
+
+        return $methodNameConsecutiveMethodCalls;
     }
 }

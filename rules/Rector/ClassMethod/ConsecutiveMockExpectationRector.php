@@ -6,6 +6,8 @@ namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
@@ -13,6 +15,7 @@ use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\NodeFinder;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\ConsecutiveMethodCallMatcher;
@@ -83,8 +86,8 @@ class DuringMethodSpec extends ObjectBehavior
 {
     public function is_should(MockedType $mockedType)
     {
-        $mockedType->set('first_key', 100)->shouldBeCalled();
-        $mockedType->set('second_key', 200)->shouldBeCalled();
+        $mockedType->set('first_key')->shouldReturn(100);
+        $mockedType->set('second_key')->shouldReturn(200);
     }
 }
 CODE_SAMPLE
@@ -123,6 +126,61 @@ CODE_SAMPLE
             new Arg(new String_($methodNameConsecutiveMethodCalls->getMethodName())),
         ]);
 
-        return $methodMethodCall;
+        $consecutiveArrayItems = [];
+        foreach ($methodNameConsecutiveMethodCalls->getConsecutiveMethodCalls() as $consecutiveMethodCall) {
+            $inputArgs = $this->resolveInputArgs(
+                $consecutiveMethodCall->getMethodCall(),
+                $methodNameConsecutiveMethodCalls->getMethodName()
+            );
+            $returnArgs = $this->resolveInputArgs($consecutiveMethodCall->getMethodCall(), 'shouldReturn');
+
+            $inputArray = $this->createArrayItemsFromArgs($inputArgs);
+            $returnArray = $this->createArrayItemsFromArgs($returnArgs);
+
+            $singleCallArray = new Array_(array_merge($inputArray, $returnArray));
+
+            $consecutiveArrayItems[] = new ArrayItem($singleCallArray);
+        }
+
+        $consecutiveMapArray = new Array_($consecutiveArrayItems);
+
+        return new MethodCall($methodMethodCall, new Identifier('willReturnMap'), [new Arg($consecutiveMapArray)]);
+    }
+
+    /**
+     * @return Arg[]
+     */
+    private function resolveInputArgs(MethodCall $methodCall, string $desiredMethodName): array
+    {
+        $nodeFinder = new NodeFinder();
+        $desiredMethodCall = $nodeFinder->findFirst($methodCall, function (\PhpParser\Node $node) use (
+            $desiredMethodName
+        ) {
+            if (! $node instanceof MethodCall) {
+                return false;
+            }
+
+            return $this->isName($node->name, $desiredMethodName);
+        });
+
+        if (! $desiredMethodCall instanceof MethodCall) {
+            return [];
+        }
+
+        return $desiredMethodCall->getArgs();
+    }
+
+    /**
+     * @param Arg[] $args
+     * @return ArrayItem[]
+     */
+    private function createArrayItemsFromArgs(array $args): array
+    {
+        $arrayItems = [];
+        foreach ($args as $arg) {
+            $arrayItems[] = new ArrayItem($arg->value);
+        }
+
+        return $arrayItems;
     }
 }

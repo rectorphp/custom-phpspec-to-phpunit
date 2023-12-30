@@ -13,8 +13,8 @@ Merge consecutive mock expectations to single `->willReturnMap()` call
  {
      public function is_should(MockedType $mockedType)
      {
--        $mockedType->set('first_key', 100)->shouldBeCalled();
--        $mockedType->set('second_key', 200)->shouldBeCalled();
+-        $mockedType->set('first_key')->shouldReturn(100);
+-        $mockedType->set('second_key')->shouldReturn(200);
 +        $mockedType->expects($this->exactly(2))->method('set')
 +            ->willReturnMap([
 +                ['first_key', 100],
