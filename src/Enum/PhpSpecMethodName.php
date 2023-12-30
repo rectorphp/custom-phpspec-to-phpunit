@@ -105,4 +105,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const BE_AN_INSTANCE_OF = 'beAnInstanceOf';
+
+    /**
+     * @var string
+     */
+    public const SHOULD_RETURN = 'shouldReturn';
 }

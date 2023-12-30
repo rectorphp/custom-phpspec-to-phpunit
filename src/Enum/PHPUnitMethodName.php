@@ -68,4 +68,14 @@ final class PHPUnitMethodName
      * @var string
      */
     public const TEAR_DOWN = 'tearDown';
+
+    /**
+     * @var string
+     */
+    public const EXACTLY = 'exactly';
+
+    /**
+     * @var string
+     */
+    public const WILL_RETURN_MAP = 'willReturnMap';
 }
