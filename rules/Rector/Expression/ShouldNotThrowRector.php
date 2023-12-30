@@ -30,11 +30,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ShouldNotThrowRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    public function __construct(PhpSpecRenaming $phpSpecRenaming)
+    {
+        $this->phpSpecRenaming = $phpSpecRenaming;
     }
-
     /**
      * @return array<class-string<Node>>
      */
