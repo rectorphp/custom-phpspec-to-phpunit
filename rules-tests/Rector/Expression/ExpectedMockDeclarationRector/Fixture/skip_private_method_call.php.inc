@@ -4,7 +4,7 @@ namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Expression\ExpectedMockDeclaratio
 
 use PhpSpec\ObjectBehavior;
 
-class KeepLocal extends ObjectBehavior
+class SkipLocalPrivateMethodCall extends ObjectBehavior
 {
     public function it_should_succeed()
     {

@@ -21,6 +21,4 @@ return static function (ECSConfig $ecsConfig): void {
     ]);
 
     $ecsConfig->skip(['*/Source/*', '*/Fixture/*', '*/Expected/*']);
-
-    $ecsConfig->lineEnding("\n");
 };
