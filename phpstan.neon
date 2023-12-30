@@ -23,3 +23,8 @@ parameters:
         # known value
         - '#Cannot call method toString\(\) on PhpParser\\Node\\Identifier\|null#'
         - '#Call to an undefined method PhpParser\\Node\\Expr\|PhpParser\\Node\\Identifier\:\:toString\(\)#'
+
+        - '#PHPDoc tag @var for variable \$stmt contains generic type PhpParser\\Node\\Stmt\\Expression<PhpParser\\Node\\Expr\\MethodCall> but class PhpParser\\Node\\Stmt\\Expression is not generic#'
+
+
+        - '#Method Rector\\PhpSpecToPHPUnit\\NodeAnalyzer\\ConsecutiveMethodCallMatcher\:\:matchInClassMethod\(\) should return array<string, array<int, PhpParser\\Node\\Stmt\\Expression<PhpParser\\Node\\Expr\\MethodCall>>> but returns array<string, array<PhpParser\\Node\\Stmt>>#'

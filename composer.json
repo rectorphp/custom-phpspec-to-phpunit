@@ -24,7 +24,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Rector\\PhpSpecToPHPUnit\\Tests\\": ["rules-tests"]
+            "Rector\\PhpSpecToPHPUnit\\Tests\\": ["tests", "rules-tests"]
         },
         "classmap": [
             "stubs",

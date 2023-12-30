@@ -7,6 +7,7 @@ use Rector\PhpSpecToPHPUnit\Rector\Class_\LetGoToTearDownClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\LetToSetUpClassMethodRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PhpSpecClassToPHPUnitClassRector;
 use Rector\PhpSpecToPHPUnit\Rector\Class_\PromisesToAssertsRector;
+use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\ConsecutiveMockExpectationRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\DuringMethodCallRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\MoveParameterMockRector;
 use Rector\PhpSpecToPHPUnit\Rector\ClassMethod\RemoveShouldHaveTypeRector;
@@ -30,11 +31,11 @@ return static function (RectorConfig $rectorConfig): void {
 
         // $this->shouldHaveType()
         RemoveShouldHaveTypeRector::class,
-
         DuringMethodCallRector::class,
 
         ShouldThrowAndInstantiationOrderRector::class,
 
+        ConsecutiveMockExpectationRector::class,
         PromisesToAssertsRector::class,
 
         ExpectedMockDeclarationRector::class,

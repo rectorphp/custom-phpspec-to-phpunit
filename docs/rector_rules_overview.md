@@ -1,4 +1,30 @@
-# 16 Rules Overview
+# 17 Rules Overview
+
+## ConsecutiveMockExpectationRector
+
+Merge consecutive mock expectations to single `->willReturnMap()` call
+
+- class: [`Rector\PhpSpecToPHPUnit\Rector\ClassMethod\ConsecutiveMockExpectationRector`](../rules/Rector/ClassMethod/ConsecutiveMockExpectationRector.php)
+
+```diff
+ use PhpSpec\ObjectBehavior;
+
+ class DuringMethodSpec extends ObjectBehavior
+ {
+     public function is_should(MockedType $mockedType)
+     {
+-        $mockedType->set('first_key', 100)->shouldBeCalled();
+-        $mockedType->set('second_key', 200)->shouldBeCalled();
++        $mockedType->expects($this->exactly(2))->method('set')
++            ->willReturnMap([
++                ['first_key', 100],
++                ['second_key', 200],
++            ]);
+     }
+ }
+```
+
+<br>
 
 ## DuringMethodCallRector
 
