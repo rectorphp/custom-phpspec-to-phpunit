@@ -1,4 +1,4 @@
-# 15 Rules Overview
+# 16 Rules Overview
 
 ## DuringMethodCallRector
 
@@ -37,6 +37,34 @@ From PhpSpec mock expectations to PHPUnit mock expectations
      {
 -        $this->run()->shouldReturn(1000);
 +        $this->expects($this->once())->method('run')->willReturn(1000);
+     }
+ }
+```
+
+<br>
+
+## ImplicitLetInitializationRector
+
+Add implicit object property to `setUp()` PHPUnit method
+
+- class: [`Rector\PhpSpecToPHPUnit\Rector\Class_\ImplicitLetInitializationRector`](../rules/Rector/Class_/ImplicitLetInitializationRector.php)
+
+```diff
+ use PhpSpec\ObjectBehavior;
+
+ final class SomeTypeSpec extends ObjectBehavior
+ {
++    private SomeType $someType;
++
++    protected function setUp(): void
++    {
++        $this->someType = new SomeType();
++    }
++
+     public function let()
+     {
+-        $this->run();
++        $this->someType->run();
      }
  }
 ```
@@ -276,7 +304,7 @@ Handle `shouldNotThrow()` expectations
 -            ['someArguments']
 -        );
 +        // should not throw an exception
-+        $this->result->someMethodCall('someArguments');
++        $this->someMethodCall('someArguments');
      }
  }
 ```
