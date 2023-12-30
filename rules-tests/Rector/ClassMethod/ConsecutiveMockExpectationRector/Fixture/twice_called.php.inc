@@ -7,7 +7,7 @@ use Rector\PhpSpecToPHPUnit\Tests\Rector\ClassMethod\ConsecutiveMockExpectationR
 
 class TwiceCalled extends ObjectBehavior
 {
-    public function is_should(MockedType $mockedType)
+    public function it_should(MockedType $mockedType)
     {
         $mockedType->set('first_key', 100)->shouldBeCalled();
         $mockedType->set('second_key', 200)->shouldBeCalled();

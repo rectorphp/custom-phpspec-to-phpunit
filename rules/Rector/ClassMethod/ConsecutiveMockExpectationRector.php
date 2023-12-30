@@ -5,10 +5,18 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\ConsecutiveMethodCallMatcher;
+use Rector\PhpSpecToPHPUnit\ValueObject\MethodNameConsecutiveMethodCalls;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -50,11 +58,15 @@ final class ConsecutiveMockExpectationRector extends AbstractRector
         }
 
         foreach ($methodNamesConsecutiveMethodCalls as $methodNameConsecutiveMethodCalls) {
-            dump($methodNameConsecutiveMethodCalls->getFirstStmtKey());
-            die;
+            $willReturnMapMethodCall = $this->createWillReturnMapMethodCall($methodNameConsecutiveMethodCalls);
 
             // replace with single->willReturnMap()
-            // array_splice($classMethod->stmts, $firstKey, count($keyAndStmts), []);
+            array_splice(
+                $node->stmts,
+                $methodNameConsecutiveMethodCalls->getFirstStmtKey(),
+                $methodNameConsecutiveMethodCalls->getMethodCallCount(),
+                [new Expression($willReturnMapMethodCall)]
+            );
         }
 
         return null;
@@ -94,5 +106,23 @@ class DuringMethodSpec extends ObjectBehavior
 CODE_SAMPLE
             ),
         ]);
+    }
+
+    private function createWillReturnMapMethodCall(
+        MethodNameConsecutiveMethodCalls $methodNameConsecutiveMethodCalls
+    ): MethodCall {
+        $exactlyMethodCall = new MethodCall(new Variable('this'), new Identifier('exactly'), [
+            new Arg(new LNumber($methodNameConsecutiveMethodCalls->getMethodCallCount())),
+        ]);
+
+        $expectsMethodCall = new MethodCall($methodNameConsecutiveMethodCalls->getMockVariable(), new Identifier(
+            'expects'
+        ), [new Arg($exactlyMethodCall)]);
+
+        $methodMethodCall = new MethodCall($expectsMethodCall, new Identifier('method'), [
+            new Arg(new String_($methodNameConsecutiveMethodCalls->getMethodName())),
+        ]);
+
+        return $methodMethodCall;
     }
 }
