@@ -100,4 +100,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const SHOULD_NOT_THROW = 'shouldNotThrow';
+
+    /**
+     * @var string
+     */
+    public const BE_AN_INSTANCE_OF = 'beAnInstanceOf';
 }
