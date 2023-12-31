@@ -28,7 +28,7 @@ class ResultSpec extends ObjectBehavior
 {
     public function it_is_initializable(SerializerInterface $serializer)
     {
-        $serializer->expects($this->never())->deserialize(Argument::any());
+        $serializer->expects($this->never())->deserialize(Argument::any())->shouldNotBeCalled();
     }
 }
 
