@@ -19,11 +19,15 @@ use Rector\PhpSpecToPHPUnit\ValueObject\MethodNameConsecutiveMethodCalls;
 
 final class WillReturnMapMethodCallFactory
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
-
     public function create(MethodNameConsecutiveMethodCalls $methodNameConsecutiveMethodCalls): MethodCall
     {
         $expectsMethodCall = ExpectsCallFactory::createExpectExactlyCall(
@@ -93,7 +97,7 @@ final class WillReturnMapMethodCallFactory
                 PhpSpecMethodName::SHOULD_RETURN
             );
 
-            $arrayItems = $this->createArrayItemsFromArgs([...$inputArgs, ...$returnArgs]);
+            $arrayItems = $this->createArrayItemsFromArgs(array_merge($inputArgs, $returnArgs));
             $singleCallArray = new Array_($arrayItems);
 
             $consecutiveArrayItems[] = new ArrayItem($singleCallArray);
