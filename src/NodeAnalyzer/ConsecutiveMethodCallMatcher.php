@@ -15,6 +15,7 @@ use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\Naming\SystemMethodDetector;
 use Rector\PhpSpecToPHPUnit\ValueObject\ConsecutiveMethodCall;
 use Rector\PhpSpecToPHPUnit\ValueObject\MethodNameConsecutiveMethodCalls;
+use Rector\PhpSpecToPHPUnit\ValueObject\VariableNameAndMethodName;
 
 final class ConsecutiveMethodCallMatcher
 {
@@ -50,14 +51,15 @@ final class ConsecutiveMethodCallMatcher
                 continue;
             }
 
-            $specMethodName = $this->resolveSpecObjectMethodCallName($stmt);
-            if (! is_string($specMethodName)) {
+            $variableNameAndMethodName = $this->resolveSpecObjectMethodCallName($stmt);
+            if (! $variableNameAndMethodName instanceof VariableNameAndMethodName) {
                 continue;
             }
 
-            $consecutiveMockExpectations[$specMethodName][] = new ConsecutiveMethodCall(
+            $consecutiveMockExpectations[$variableNameAndMethodName->getHash()][] = new ConsecutiveMethodCall(
                 $key,
-                $specMethodName,
+                $variableNameAndMethodName->getVariableName(),
+                $variableNameAndMethodName->getMethodName(),
                 $stmt->expr
             );
         }
@@ -74,7 +76,7 @@ final class ConsecutiveMethodCallMatcher
         return $this->nodeNameResolver->isName($expr, 'this');
     }
 
-    private function resolveSpecObjectMethodCallName(Expression $expression): ?string
+    private function resolveSpecObjectMethodCallName(Expression $expression): ?VariableNameAndMethodName
     {
         if (! $expression->expr instanceof MethodCall) {
             return null;
@@ -106,7 +108,12 @@ final class ConsecutiveMethodCallMatcher
             return null;
         }
 
-        return $methodName;
+        $variableName = $this->nodeNameResolver->getName($methodCall->var);
+        if (! is_string($variableName)) {
+            return null;
+        }
+
+        return new VariableNameAndMethodName($variableName, $methodName);
     }
 
     /**
@@ -117,16 +124,13 @@ final class ConsecutiveMethodCallMatcher
     {
         $methodNameConsecutiveMethodCalls = [];
 
-        foreach ($consecutiveMockExpectations as $methodName => $consecutiveMethodCalls) {
+        foreach ($consecutiveMockExpectations as $hash => $consecutiveMethodCalls) {
             if (count($consecutiveMethodCalls) < 2) {
                 // keep only consecutive calls, at least 2 calls of same named method
                 continue;
             }
 
-            $methodNameConsecutiveMethodCalls[] = new MethodNameConsecutiveMethodCalls(
-                $methodName,
-                $consecutiveMethodCalls
-            );
+            $methodNameConsecutiveMethodCalls[] = new MethodNameConsecutiveMethodCalls($consecutiveMethodCalls);
         }
 
         return $methodNameConsecutiveMethodCalls;

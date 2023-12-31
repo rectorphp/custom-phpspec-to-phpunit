@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\ValueObject;
 
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\Variable;
-use Rector\Core\Exception\ShouldNotHappenException;
 
 final class ConsecutiveMethodCall
 {
     public function __construct(
         private readonly int $key,
+        private readonly string $variableName,
         private readonly string $methodName,
         private readonly MethodCall $methodCall
     ) {
@@ -27,19 +26,9 @@ final class ConsecutiveMethodCall
         return $this->methodName;
     }
 
-    public function getMockVariable(): Variable
+    public function getMockVariableName(): string
     {
-        $methodCall = $this->methodCall;
-
-        while ($methodCall->var instanceof MethodCall) {
-            $methodCall = $methodCall->var;
-        }
-
-        if (! $methodCall->var instanceof Variable) {
-            throw new ShouldNotHappenException();
-        }
-
-        return $methodCall->var;
+        return $this->variableName;
     }
 
     public function getMethodCall(): MethodCall
