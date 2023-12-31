@@ -19,12 +19,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DuringMethodCallRector extends AbstractRector
 {
-    public function __construct(
-        private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
-        private readonly ExpectExceptionMethodCallFactory $expectExceptionMethodCallFactory,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher
+     */
+    private $duringAndRelatedMethodCallMatcher;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\ExpectExceptionMethodCallFactory
+     */
+    private $expectExceptionMethodCallFactory;
+    public function __construct(DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher, ExpectExceptionMethodCallFactory $expectExceptionMethodCallFactory)
+    {
+        $this->duringAndRelatedMethodCallMatcher = $duringAndRelatedMethodCallMatcher;
+        $this->expectExceptionMethodCallFactory = $expectExceptionMethodCallFactory;
     }
-
     /**
      * @return array<class-string<Node>>
      */

@@ -63,7 +63,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! str_starts_with($namespaceName, 'spec\\')) {
+        if (strncmp($namespaceName, 'spec\\', strlen('spec\\')) !== 0) {
             return null;
         }
 
