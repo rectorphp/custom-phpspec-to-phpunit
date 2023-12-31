@@ -15,9 +15,11 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\Generic\GenericClassStringType;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\SystemMethodDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\ExpectsCallFactory;
+use Rector\PhpSpecToPHPUnit\NodeFinder\MethodCallFinder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -44,6 +46,9 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             return null;
         }
 
+        // handled in another rule
+        $hasShouldNotBeCalled = MethodCallFinder::hasByName($node, PhpSpecMethodName::SHOULD_NOT_BE_CALLED);
+
         $firstMethodCall = $node->expr;
 
         // usually a chain method call
@@ -51,10 +56,13 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             return null;
         }
 
-        // replace method name with expects('...')->method('methodName')
+        // replace ->method('...') with expects('...')->method('methodName')
         $hasChanged = false;
 
-        $this->traverseNodesWithCallable($firstMethodCall, function (Node $node) use (&$hasChanged): ?MethodCall {
+        $this->traverseNodesWithCallable($firstMethodCall, function (Node $node) use (
+            &$hasChanged,
+            $hasShouldNotBeCalled
+        ): ?MethodCall {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -74,7 +82,13 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             /** @var string $methodName */
             $methodName = $this->getName($node->name);
 
-            $expectsMethodCall = ExpectsCallFactory::createExpectsOnceCall($node->var);
+            // handled already in another method
+            if ($hasShouldNotBeCalled) {
+                $expectsMethodCall = $node->var;
+            } else {
+                $expectsMethodCall = ExpectsCallFactory::createExpectsOnceCall($node->var);
+            }
+
             $methodMethodCall = ExpectsCallFactory::createMethodCall($expectsMethodCall, $methodName);
 
             $callArgs = $node->getArgs();

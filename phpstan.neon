@@ -4,6 +4,7 @@ parameters:
     paths:
         - config
         - src
+        - tests
         - rules
         - rules-tests
 

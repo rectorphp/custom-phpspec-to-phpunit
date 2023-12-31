@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\Expression;
 
-use PhpParser\Builder\Method;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
@@ -13,6 +12,7 @@ use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
+use Rector\PhpSpecToPHPUnit\NodeFinder\MethodCallFinder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -38,50 +38,25 @@ final class ShouldNeverBeCalledRector extends AbstractRector
             return null;
         }
 
-        $hasFound = false;
-
-        // find shouldNotBeCalled() as part of method call chain
-        $this->traverseNodesWithCallable($node, function (Node $node) use (&$hasFound) {
-            if (! $node instanceof MethodCall) {
-                return null;
-            }
-
-            if (! $this->isName($node->name, PhpSpecMethodName::SHOULD_NOT_BE_CALLED)) {
-                return null;
-            }
-
-            $hasFound = true;
-
-            // remove call
-            return $node->var;
-        });
-
-        if ($hasFound === false) {
+        if (! MethodCallFinder::hasByName($node, PhpSpecMethodName::SHOULD_NOT_BE_CALLED)) {
             return null;
         }
 
-        /** @var MethodCall $nestedMethodCall */
-        $nestedMethodCall = $node->expr;
+        $topMostMethodCall = $this->resolveTopMostMethodCall($node->expr);
 
-        $thisOnceMethodCall = $this->nodeFactory->createLocalMethodCall(PHPUnitMethodName::NEVER);
-        $args = [new Arg($thisOnceMethodCall)];
+        $neverMethodCall = $this->nodeFactory->createLocalMethodCall(PHPUnitMethodName::NEVER);
+        $args = [new Arg($neverMethodCall)];
 
-        while ($nestedMethodCall->var instanceof MethodCall) {
-            $nestedMethodCall = $nestedMethodCall->var;
-        }
+        $topMostMethodCall->var = new MethodCall($topMostMethodCall->var, PHPUnitMethodName::EXPECTS, $args);
 
-        // topmost method call
-        $nestedMethodCall->var = new MethodCall($nestedMethodCall->var, PHPUnitMethodName::EXPECTS, $args);
         return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition(
-            'Handle shouldNotBeCalled() expectations',
-            [
-                new CodeSample(
-                    <<<'CODE_SAMPLE'
+        return new RuleDefinition('Change shouldNotBeCalled() to $this->expects($this->never()) check', [
+            new CodeSample(
+                <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
 
 class ResultSpec extends ObjectBehavior
@@ -92,8 +67,8 @@ class ResultSpec extends ObjectBehavior
     }
 }
 CODE_SAMPLE
-                    ,
-                    <<<'CODE_SAMPLE'
+                ,
+                <<<'CODE_SAMPLE'
 use PhpSpec\ObjectBehavior;
 
 class ResultSpec extends ObjectBehavior
@@ -104,8 +79,17 @@ class ResultSpec extends ObjectBehavior
     }
 }
 CODE_SAMPLE
-                ),
-            ]
-        );
+            ),
+        ]);
+    }
+
+    private function resolveTopMostMethodCall(MethodCall $methodCall): MethodCall
+    {
+        $nestedMethodCall = $methodCall;
+        while ($nestedMethodCall->var instanceof MethodCall) {
+            $nestedMethodCall = $nestedMethodCall->var;
+        }
+
+        return $nestedMethodCall;
     }
 }

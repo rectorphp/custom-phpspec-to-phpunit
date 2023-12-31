@@ -35,6 +35,11 @@ final class RemoveShouldBeCalledRector extends AbstractRector
             return $node->var;
         }
 
+        if ($this->isName($node->name, PhpSpecMethodName::SHOULD_NOT_BE_CALLED)) {
+            // The shouldNeverBeCalled() is implicit and not needed, handled by another rule
+            return $node->var;
+        }
+
         if ($this->isName($node->name, PhpSpecMethodName::WILL_RETURN) && $node->getArgs() === []) {
             return $node->var;
         }
