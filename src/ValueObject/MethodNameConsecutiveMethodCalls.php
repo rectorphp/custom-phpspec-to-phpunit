@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\ValueObject;
 
 use PhpParser\Node\Expr\Variable;
-use Rector\Core\Exception\ShouldNotHappenException;
 
 final class MethodNameConsecutiveMethodCalls
 {
     /**
-     * @param ConsecutiveMethodCall[] $consecutiveMethodCalls
+     * @param ConsecutiveMethodCall[]&non-empty-array $consecutiveMethodCalls
      */
     public function __construct(
         private readonly array $consecutiveMethodCalls
@@ -22,8 +21,6 @@ final class MethodNameConsecutiveMethodCalls
         foreach ($this->consecutiveMethodCalls as $consecutiveMethodCall) {
             return $consecutiveMethodCall->getMethodName();
         }
-
-        throw new ShouldNotHappenException();
     }
 
     /**
@@ -39,8 +36,6 @@ final class MethodNameConsecutiveMethodCalls
         foreach ($this->consecutiveMethodCalls as $consecutiveMethodCall) {
             return new Variable($consecutiveMethodCall->getMockVariableName());
         }
-
-        throw new ShouldNotHappenException();
     }
 
     public function getFirstStmtKey(): int
@@ -48,8 +43,6 @@ final class MethodNameConsecutiveMethodCalls
         foreach ($this->consecutiveMethodCalls as $consecutiveMethodCall) {
             return $consecutiveMethodCall->getKey();
         }
-
-        throw new ShouldNotHappenException();
     }
 
     public function getMethodCallCount(): int
