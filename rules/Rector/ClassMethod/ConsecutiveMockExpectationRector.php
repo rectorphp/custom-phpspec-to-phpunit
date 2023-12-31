@@ -52,14 +52,14 @@ final class ConsecutiveMockExpectationRector extends AbstractRector
             return null;
         }
 
-        foreach ($methodNamesConsecutiveMethodCalls as $methodNameConsecutiveMethodCalls) {
-            $willReturnMapMethodCall = $this->willReturnMapMethodCallFactory->create($methodNameConsecutiveMethodCalls);
+        foreach ($methodNamesConsecutiveMethodCalls as $methodNameConsecutiveMethodCall) {
+            $willReturnMapMethodCall = $this->willReturnMapMethodCallFactory->create($methodNameConsecutiveMethodCall);
 
             // replace with single->willReturnMap()
             array_splice(
                 $node->stmts,
-                $methodNameConsecutiveMethodCalls->getFirstStmtKey(),
-                $methodNameConsecutiveMethodCalls->getMethodCallCount(),
+                $methodNameConsecutiveMethodCall->getFirstStmtKey(),
+                $methodNameConsecutiveMethodCall->getMethodCallCount(),
                 [new Expression($willReturnMapMethodCall)]
             );
         }

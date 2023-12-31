@@ -124,13 +124,13 @@ final class ConsecutiveMethodCallMatcher
     {
         $methodNameConsecutiveMethodCalls = [];
 
-        foreach ($consecutiveMockExpectations as $hash => $consecutiveMethodCalls) {
-            if (count($consecutiveMethodCalls) < 2) {
+        foreach ($consecutiveMockExpectations as $consecutiveMockExpectation) {
+            if (count($consecutiveMockExpectation) < 2) {
                 // keep only consecutive calls, at least 2 calls of same named method
                 continue;
             }
 
-            $methodNameConsecutiveMethodCalls[] = new MethodNameConsecutiveMethodCalls($consecutiveMethodCalls);
+            $methodNameConsecutiveMethodCalls[] = new MethodNameConsecutiveMethodCalls($consecutiveMockExpectation);
         }
 
         return $methodNameConsecutiveMethodCalls;

@@ -48,7 +48,7 @@ final class WillReturnMapMethodCallFactory
     private function resolveInputArgs(MethodCall $methodCall, string $desiredMethodName): array
     {
         $nodeFinder = new NodeFinder();
-        $desiredMethodCall = $nodeFinder->findFirst($methodCall, function (Node $node) use ($desiredMethodName) {
+        $desiredMethodCall = $nodeFinder->findFirst($methodCall, function (Node $node) use ($desiredMethodName): bool {
             if (! $node instanceof MethodCall) {
                 return false;
             }
@@ -93,7 +93,7 @@ final class WillReturnMapMethodCallFactory
                 PhpSpecMethodName::SHOULD_RETURN
             );
 
-            $arrayItems = $this->createArrayItemsFromArgs(array_merge($inputArgs, $returnArgs));
+            $arrayItems = $this->createArrayItemsFromArgs([...$inputArgs, ...$returnArgs]);
             $singleCallArray = new Array_($arrayItems);
 
             $consecutiveArrayItems[] = new ArrayItem($singleCallArray);

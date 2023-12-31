@@ -56,7 +56,7 @@ final class StringUtils
      */
     private static function pos(string $haystack, string $needle, int $nth = 1): ?int
     {
-        if (! $nth) {
+        if ($nth === 0) {
             return null;
         } elseif ($nth > 0) {
             if ($needle === '') {
@@ -65,7 +65,7 @@ final class StringUtils
 
             $pos = 0;
             while (($pos = strpos($haystack, $needle, $pos)) !== false && --$nth) {
-                $pos++;
+                ++$pos;
             }
         } else {
             $len = strlen($haystack);
@@ -77,7 +77,7 @@ final class StringUtils
 
             $pos = $len - 1;
             while (($pos = strrpos($haystack, $needle, $pos - $len)) !== false && ++$nth) {
-                $pos--;
+                --$pos;
             }
         }
 
