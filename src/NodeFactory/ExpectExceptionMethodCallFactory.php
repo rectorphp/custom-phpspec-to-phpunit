@@ -11,11 +11,14 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
+use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
+use Rector\ValueObject\MethodName;
 
 final class ExpectExceptionMethodCallFactory
 {
@@ -42,8 +45,10 @@ final class ExpectExceptionMethodCallFactory
     /**
      * @return Expression<MethodCall>
      */
-    public function createMethodCallStmt(DuringAndRelatedMethodCall $duringAndRelatedMethodCall): Expression
-    {
+    public function createMethodCallStmt(
+        DuringAndRelatedMethodCall $duringAndRelatedMethodCall,
+        TestedObject $testedObject
+    ): Expression {
         $exceptionMethodCall = $duringAndRelatedMethodCall->getExceptionMethodCall();
 
         if ($exceptionMethodCall->var instanceof PropertyFetch) {
@@ -55,6 +60,12 @@ final class ExpectExceptionMethodCallFactory
 
         $calledMethodName = $duringAndRelatedMethodCall->getCalledMethodName();
         $calledArgs = $duringAndRelatedMethodCall->getCalledArgs();
+
+        if ($calledMethodName === MethodName::CONSTRUCT) {
+            // special case with new
+            $new = new New_(new FullyQualified($testedObject->getClassName()), $calledArgs);
+            return new Expression($new);
+        }
 
         $objectMethodCall = new MethodCall($callerExpr, $calledMethodName, $calledArgs);
 
