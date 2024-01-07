@@ -3,6 +3,7 @@
     "description": "Rector migration rules for PHPSpec to PHPUnit",
     "license": "MIT",
     "bin": [
+        "bin/phpspec-to-phpunit",
         "bin/phpspec-to-phpunit.php"
     ],
     "require": {
