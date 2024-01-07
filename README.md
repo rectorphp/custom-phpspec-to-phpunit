@@ -10,7 +10,9 @@
 composer require rector/custom-phpspec-to-phpunit --dev
 ```
 
-## Register set
+## Usage
+
+1. Register set
 
 ```php
 $rectorConfig->sets([
@@ -18,6 +20,14 @@ $rectorConfig->sets([
 ]);
 ```
 
-Other resources to handle rest of changes manually:
+2. Run on specific spec directory
+
+```bash
+vendor/bin/rector process spec
+```
+
+<br>
+
+This package handles 99 % of changes. Explore these resources to handle edge-cases manually:
 
 * https://johannespichler.com/writing-custom-phpspec-matchers/
