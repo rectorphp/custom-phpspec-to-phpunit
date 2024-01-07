@@ -67,6 +67,12 @@ final class ExpectedMockDeclarationRector extends AbstractRector
                 return null;
             }
 
+            // rename method
+            if ($node->name->toString() === PhpSpecMethodName::WILL_THROW) {
+                $node->name = new Node\Identifier(PHPUnitMethodName::WILL_THROW_EXCEPTION);
+                return $node;
+            }
+
             // typically the top method call must be on a variable
             if (! $node->var instanceof Variable && ! $node->var instanceof PropertyFetch) {
                 return null;
@@ -92,7 +98,6 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             $methodMethodCall = ExpectsCallFactory::createMethodCall($expectsMethodCall, $methodName);
 
             $callArgs = $node->getArgs();
-
             if ($callArgs !== []) {
                 return $this->appendWithMethodCall($methodMethodCall, $callArgs[0]->value);
             }
@@ -154,7 +159,6 @@ CODE_SAMPLE
                     // will return callable
                     $expr = $expr->getArgs()[0]
 ->value;
-
                     return new MethodCall($methodCall, PHPUnitMethodName::WILL_RETURN, [new Arg($expr)]);
                 }
 

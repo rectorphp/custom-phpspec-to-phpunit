@@ -110,4 +110,9 @@ final class PhpSpecMethodName
      * @var string
      */
     public const SHOULD_RETURN = 'shouldReturn';
+
+    /**
+     * @var string
+     */
+    public const WILL_THROW = 'willThrow';
 }
