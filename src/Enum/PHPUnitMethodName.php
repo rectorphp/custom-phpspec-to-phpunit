@@ -78,4 +78,9 @@ final class PHPUnitMethodName
      * @var string
      */
     public const WILL_RETURN_MAP = 'willReturnMap';
+
+    /**
+     * @var string
+     */
+    public const WILL_THROW_EXCEPTION = 'willThrowException';
 }
