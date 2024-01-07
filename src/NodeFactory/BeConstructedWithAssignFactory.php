@@ -12,9 +12,9 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name\FullyQualified;
-use Rector\Core\PhpParser\Node\NodeFactory;
-use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\PhpParser\Node\NodeFactory;
+use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 
 final class BeConstructedWithAssignFactory

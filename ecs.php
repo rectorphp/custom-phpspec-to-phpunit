@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-use PhpCsFixer\Fixer\FunctionNotation\FunctionTypehintSpaceFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 
 return static function (ECSConfig $ecsConfig): void {
-    $ecsConfig->sets([SetList::SYMPLIFY, SetList::COMMON, SetList::CLEAN_CODE, SetList::PSR_12]);
-
-    $ecsConfig->rules([FunctionTypehintSpaceFixer::class]);
+    $ecsConfig->sets([SetList::SYMPLIFY, SetList::COMMON, SetList::PSR_12]);
 
     $ecsConfig->paths([
         __DIR__ . '/src',
@@ -18,6 +15,7 @@ return static function (ECSConfig $ecsConfig): void {
         __DIR__ . '/config',
         __DIR__ . '/ecs.php',
         __DIR__ . '/rector.php',
+        __DIR__ . '/bin',
     ]);
 
     $ecsConfig->skip(['*/Source/*', '*/Fixture/*', '*/Expected/*']);

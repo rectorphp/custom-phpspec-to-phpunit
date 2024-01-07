@@ -16,12 +16,12 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\DocFactory;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetClassMethodAnalyzer;
 use Rector\PhpSpecToPHPUnit\ServiceMockResolver;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
