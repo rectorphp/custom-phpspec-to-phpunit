@@ -11,6 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * @api use din bin
+ */
 final class RenameSuffixCommand extends Command
 {
     protected function configure(): void
