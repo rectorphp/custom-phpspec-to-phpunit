@@ -28,7 +28,7 @@ final class IsArrayTypeTest extends \PHPUnit\Framework\TestCase
 {
     public function testArrayType(): void
     {
-        $this->assertIsIterable($isArrayType->shippingAddresses());
+        $this->assertIsIterable($this->isArrayType->shippingAddresses());
     }
 }
 

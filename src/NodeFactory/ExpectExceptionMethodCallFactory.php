@@ -14,6 +14,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Exception\ShouldNotHappenException;
+use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
 
 final class ExpectExceptionMethodCallFactory
@@ -56,6 +57,7 @@ final class ExpectExceptionMethodCallFactory
         $calledArgs = $duringAndRelatedMethodCall->getCalledArgs();
 
         $objectMethodCall = new MethodCall($callerExpr, $calledMethodName, $calledArgs);
+
         return new Expression($objectMethodCall);
     }
 
@@ -71,7 +73,7 @@ final class ExpectExceptionMethodCallFactory
             $arg = new Arg($expr);
         }
 
-        return new MethodCall(new Variable('this'), 'expectException', [$arg]);
+        return new MethodCall(new Variable('this'), PHPUnitMethodName::EXPECT_EXCEPTION, [$arg]);
     }
 
     private function createThisExpectExceptionMessage(Expr $expr): ?MethodCall
