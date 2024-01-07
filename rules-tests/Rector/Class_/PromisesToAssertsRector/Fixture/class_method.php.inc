@@ -24,7 +24,7 @@ class TestClassMethod extends ObjectBehavior
 {
     public function let_some_other()
     {
-        $testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
+        $this->testClassMethod = new \Rector\PhpSpecToPHPUnit\TestClassMethod(5);
     }
 }
 

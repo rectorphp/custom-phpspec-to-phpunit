@@ -28,7 +28,7 @@ final class ShouldReturnTest extends \PHPUnit\Framework\TestCase
 {
     public function testReturnsId(): void
     {
-        $this->assertSame(5, $shouldReturn->id());
+        $this->assertSame(5, $this->shouldReturn->id());
     }
 }
 

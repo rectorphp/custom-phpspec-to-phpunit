@@ -38,12 +38,12 @@ final class BinValidatorTest extends \PHPUnit\Framework\TestCase
         $secondTypeOneMock = $this->createMock(\spec\Fixture\Project\SecondType::class);
         /** @var \spec\Fixture\Project\SecondType|\PHPUnit\Framework\MockObject\MockObject $secondTypeTwoMock */
         $secondTypeTwoMock = $this->createMock(\spec\Fixture\Project\SecondType::class);
-        $binValidator = new \Fixture\Project\BinValidator($secondTypeOneMock, $secondTypeTwoMock);
+        $this->binValidator = new \Fixture\Project\BinValidator($secondTypeOneMock, $secondTypeTwoMock);
         $secondTypeOneMock->expects($this->once())->method('getName');
         $secondTypeOneMock->expects($this->once())->method('validate')->with(123);
         $secondTypeTwoMock->expects($this->once())->method('getName');
         $secondTypeTwoMock->expects($this->once())->method('validate')->with(456);
-        $binValidator->someMethodCall(new BinToValidate());
+        $this->binValidator->someMethodCall(new BinToValidate());
     }
 }
 

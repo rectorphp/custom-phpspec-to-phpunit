@@ -53,7 +53,7 @@ final class PromisesToAssertsRector extends AbstractRector
         $class = $node;
         $testedObject = $this->phpSpecRenaming->resolveTestedObject($class);
 
-        $testedObjectPropertyFetchOrVariable = $this->createTestedObjectPropertyFetch($class);
+        $testedObjectPropertyFetch = $this->createTestedObjectPropertyFetch($class);
 
         $localMethodNames = $this->getLocalMethodNames($node);
 
@@ -72,7 +72,7 @@ final class PromisesToAssertsRector extends AbstractRector
 
             $this->traverseNodesWithCallable($classMethod, function (Node $node) use (
                 $class,
-                $testedObjectPropertyFetchOrVariable,
+                $testedObjectPropertyFetch,
                 $testedObject,
                 &$hasChanged,
                 $localMethodNames,
@@ -123,7 +123,7 @@ final class PromisesToAssertsRector extends AbstractRector
                     return $this->beConstructedWithAssignFactory->create(
                         $node,
                         $testedObject->getClassName(),
-                        $testedObjectPropertyFetchOrVariable
+                        $testedObjectPropertyFetch
                     );
                 }
 
@@ -139,7 +139,7 @@ final class PromisesToAssertsRector extends AbstractRector
                         $assertMethod,
                         $node->var,
                         $args[0]->value ?? null,
-                        $testedObjectPropertyFetchOrVariable
+                        $testedObjectPropertyFetch
                     );
                 }
 
@@ -149,7 +149,7 @@ final class PromisesToAssertsRector extends AbstractRector
 
                 if ($this->isName($node->name, PhpSpecMethodName::CLONE)) {
                     $hasChanged = true;
-                    return new Clone_($testedObjectPropertyFetchOrVariable);
+                    return new Clone_($testedObjectPropertyFetch);
                 }
 
                 $methodName = $this->getName($node->name);
@@ -167,7 +167,7 @@ final class PromisesToAssertsRector extends AbstractRector
                     return $node;
                 }
 
-                $node->var = $testedObjectPropertyFetchOrVariable;
+                $node->var = $testedObjectPropertyFetch;
                 $hasChanged = true;
 
                 return $node;
@@ -227,16 +227,11 @@ CODE_SAMPLE
         return $this->isName($methodCall->name, PHPUnitMethodName::CREATE_MOCK);
     }
 
-    private function createTestedObjectPropertyFetch(Class_ $class): PropertyFetch|Variable
+    private function createTestedObjectPropertyFetch(Class_ $class): PropertyFetch
     {
-        $hasLetClassMethod = (bool) $class->getMethod(PhpSpecMethodName::LET);
-
         $testedObject = $this->phpSpecRenaming->resolveTestedObject($class);
-        if ($hasLetClassMethod) {
-            return new PropertyFetch(new Variable('this'), $testedObject->getPropertyName());
-        }
 
-        return new Variable($testedObject->getPropertyName());
+        return new PropertyFetch(new Variable('this'), $testedObject->getPropertyName());
     }
 
     /**

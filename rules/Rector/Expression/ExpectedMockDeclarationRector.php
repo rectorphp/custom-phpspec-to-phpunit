@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\Generic\GenericClassStringType;
@@ -69,7 +70,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
 
             // rename method
             if ($node->name->toString() === PhpSpecMethodName::WILL_THROW) {
-                $node->name = new Node\Identifier(PHPUnitMethodName::WILL_THROW_EXCEPTION);
+                $node->name = new Identifier(PHPUnitMethodName::WILL_THROW_EXCEPTION);
                 return $node;
             }
 
@@ -89,11 +90,9 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             $methodName = $this->getName($node->name);
 
             // handled already in another method
-            if ($hasShouldNotBeCalled) {
-                $expectsMethodCall = $node->var;
-            } else {
-                $expectsMethodCall = ExpectsCallFactory::createExpectsOnceCall($node->var);
-            }
+            $expectsMethodCall = $hasShouldNotBeCalled ? $node->var : ExpectsCallFactory::createExpectsOnceCall(
+                $node->var
+            );
 
             $methodMethodCall = ExpectsCallFactory::createMethodCall($expectsMethodCall, $methodName);
 

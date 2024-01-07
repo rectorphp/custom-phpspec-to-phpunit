@@ -13,6 +13,7 @@
     },
     "require-dev": {
         "rector/rector": "dev-main",
+        "nikic/php-parser": "^4.18",
         "phpunit/phpunit": "^10.5",
         "phpstan/phpstan": "^1.10.50",
         "symplify/phpstan-extensions": "^11.4",
