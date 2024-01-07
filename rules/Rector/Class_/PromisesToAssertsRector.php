@@ -27,13 +27,27 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class PromisesToAssertsRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly AssertMethodCallFactory $assertMethodCallFactory,
-        private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory
+     */
+    private $assertMethodCallFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory
+     */
+    private $beConstructedWithAssignFactory;
+    public function __construct(PhpSpecRenaming $phpSpecRenaming, AssertMethodCallFactory $assertMethodCallFactory, BeConstructedWithAssignFactory $beConstructedWithAssignFactory)
+    {
+        $this->phpSpecRenaming = $phpSpecRenaming;
+        $this->assertMethodCallFactory = $assertMethodCallFactory;
+        $this->beConstructedWithAssignFactory = $beConstructedWithAssignFactory;
     }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -46,7 +60,7 @@ final class PromisesToAssertsRector extends AbstractRector
      * @param Class_ $node
      * @return Node|Node[]|null
      */
-    public function refactor(Node $node): Node|array|null
+    public function refactor(Node $node)
     {
         $hasChanged = false;
 
@@ -70,26 +84,17 @@ final class PromisesToAssertsRector extends AbstractRector
                 continue;
             }
 
-            $this->traverseNodesWithCallable($classMethod, function (Node $node) use (
-                $class,
-                $testedObjectPropertyFetchOrVariable,
-                $testedObject,
-                &$hasChanged,
-                $localMethodNames,
-            ) {
+            $this->traverseNodesWithCallable($classMethod, function (Node $node) use ($class, $testedObjectPropertyFetchOrVariable, $testedObject, &$hasChanged, $localMethodNames) {
                 if (! $node instanceof MethodCall) {
                     return null;
                 }
-
                 if ($this->isName($node->name, PHPUnitMethodName::ANY)) {
                     return null;
                 }
-
                 // unwrap getWrappedObject()
                 if ($this->isName($node->name, PhpSpecMethodName::GET_WRAPPED_OBJECT)) {
                     return $node->var;
                 }
-
                 if ($this->isNames(
                     $node->name,
                     [PhpSpecMethodName::DURING_INSTANTIATION, PhpSpecMethodName::DURING]
@@ -97,27 +102,23 @@ final class PromisesToAssertsRector extends AbstractRector
                     // handled in another rule
                     return null;
                 }
-
                 // skip reserved names
                 $methodName = $this->getName($node->name);
                 if (! is_string($methodName)) {
                     return null;
                 }
-
                 // skip local method names
                 if (in_array($methodName, $localMethodNames, true)) {
                     return null;
                 }
-
                 // handled elsewhere
                 if ($this->isNames(
                     $node->name,
                     [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::EXPECT_EXCEPTION]
-                ) || str_starts_with($methodName, 'assert')) {
+                ) || strncmp($methodName, 'assert', strlen('assert')) === 0) {
                     return null;
                 }
-
-                if (str_starts_with($methodName, PhpSpecMethodName::BE_CONSTRUCTED)) {
+                if (strncmp($methodName, PhpSpecMethodName::BE_CONSTRUCTED, strlen(PhpSpecMethodName::BE_CONSTRUCTED)) === 0) {
                     $hasChanged = true;
 
                     return $this->beConstructedWithAssignFactory->create(
@@ -126,7 +127,6 @@ final class PromisesToAssertsRector extends AbstractRector
                         $testedObjectPropertyFetchOrVariable
                     );
                 }
-
                 $args = $node->args;
                 foreach (ProphecyPromisesToPHPUnitAssertMap::PROMISES_BY_ASSERT_METHOD as $assertMethod => $promiseMethods) {
                     if (! $this->isNames($node->name, $promiseMethods)) {
@@ -142,34 +142,27 @@ final class PromisesToAssertsRector extends AbstractRector
                         $testedObjectPropertyFetchOrVariable
                     );
                 }
-
                 if ($this->shouldSkip($node)) {
                     return null;
                 }
-
                 if ($this->isName($node->name, PhpSpecMethodName::CLONE)) {
                     $hasChanged = true;
                     return new Clone_($testedObjectPropertyFetchOrVariable);
                 }
-
                 $methodName = $this->getName($node->name);
                 if ($methodName === null) {
                     return null;
                 }
-
                 // it's a local method call, skip
                 if ($class->getMethod($methodName) instanceof ClassMethod) {
                     return null;
                 }
-
                 // direct PHPUnit method calls, no need to call on property
                 if (SystemMethodDetector::detect($methodName)) {
                     return $node;
                 }
-
                 $node->var = $testedObjectPropertyFetchOrVariable;
                 $hasChanged = true;
-
                 return $node;
             });
         }
@@ -227,7 +220,10 @@ CODE_SAMPLE
         return $this->isName($methodCall->name, PHPUnitMethodName::CREATE_MOCK);
     }
 
-    private function createTestedObjectPropertyFetch(Class_ $class): PropertyFetch|Variable
+    /**
+     * @return \PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable
+     */
+    private function createTestedObjectPropertyFetch(Class_ $class)
     {
         $hasLetClassMethod = (bool) $class->getMethod(PhpSpecMethodName::LET);
 

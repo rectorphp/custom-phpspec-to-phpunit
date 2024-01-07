@@ -19,17 +19,35 @@ use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 
 final class BeConstructedWithAssignFactory
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly ValueResolver $valueResolver,
-        private readonly NodeFactory $nodeFactory
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\NodeFactory
+     */
+    private $nodeFactory;
+    public function __construct(NodeNameResolver $nodeNameResolver, ValueResolver $valueResolver, NodeFactory $nodeFactory)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->valueResolver = $valueResolver;
+        $this->nodeFactory = $nodeFactory;
     }
 
+    /**
+     * @param \PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable $propertyFetchOrVariable
+     */
     public function create(
         MethodCall $methodCall,
         string $testedClass,
-        PropertyFetch|Variable $propertyFetchOrVariable
+        $propertyFetchOrVariable
     ): ?Assign {
         if ($this->nodeNameResolver->isName($methodCall->name, PhpSpecMethodName::BE_CONSTRUCTED_WITH)) {
             $new = new New_(new FullyQualified($testedClass));
