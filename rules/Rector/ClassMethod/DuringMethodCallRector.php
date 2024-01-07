@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\ClassMethod;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
+use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher;
 use Rector\PhpSpecToPHPUnit\NodeFactory\ExpectExceptionMethodCallFactory;
 use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
@@ -22,6 +23,7 @@ final class DuringMethodCallRector extends AbstractRector
     public function __construct(
         private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
         private readonly ExpectExceptionMethodCallFactory $expectExceptionMethodCallFactory,
+        private readonly PhpSpecRenaming $phpSpecRenaming,
     ) {
     }
 
@@ -30,40 +32,53 @@ final class DuringMethodCallRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [ClassMethod::class];
+        return [Class_::class];
     }
 
     /**
-     * @param ClassMethod $node
+     * @param Node\Stmt\Class_ $node
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $node->isPublic() || $node->stmts === null) {
-            return null;
-        }
+        $testedObject = $this->phpSpecRenaming->resolveTestedObject($node);
 
-        // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
-        if ($this->isNames($node, PhpSpecMethodName::RESERVED_CLASS_METHOD_NAMES)) {
-            return null;
-        }
+        $hasChanged = false;
 
-        foreach ($node->stmts as $key => $stmt) {
-            $duringAndRelatedMethodCall = $this->duringAndRelatedMethodCallMatcher->match(
-                $stmt,
-                PhpSpecMethodName::DURING
-            );
-
-            if (! $duringAndRelatedMethodCall instanceof DuringAndRelatedMethodCall) {
+        foreach ($node->getMethods() as $classMethod) {
+            if (! $classMethod->isPublic() || $classMethod->stmts === null) {
                 continue;
             }
 
-            $newStmts = $this->expectExceptionMethodCallFactory->createExpectExceptionStmts(
-                $duringAndRelatedMethodCall
-            );
-            $newStmts[] = $this->expectExceptionMethodCallFactory->createMethodCallStmt($duringAndRelatedMethodCall);
+            // special case, @see https://johannespichler.com/writing-custom-phpspec-matchers/
+            if ($this->isNames($node, PhpSpecMethodName::RESERVED_CLASS_METHOD_NAMES)) {
+                continue;
+            }
 
-            array_splice($node->stmts, $key, 1, $newStmts);
+            foreach ($classMethod->stmts as $key => $stmt) {
+                $duringAndRelatedMethodCall = $this->duringAndRelatedMethodCallMatcher->match(
+                    $stmt,
+                    PhpSpecMethodName::DURING
+                );
 
+                if (! $duringAndRelatedMethodCall instanceof DuringAndRelatedMethodCall) {
+                    continue;
+                }
+
+                $newStmts = $this->expectExceptionMethodCallFactory->createExpectExceptionStmts(
+                    $duringAndRelatedMethodCall
+                );
+                $newStmts[] = $this->expectExceptionMethodCallFactory->createMethodCallStmt(
+                    $duringAndRelatedMethodCall,
+                    $testedObject
+                );
+
+                array_splice($classMethod->stmts, $key, 1, $newStmts);
+
+                $hasChanged = true;
+            }
+        }
+
+        if ($hasChanged) {
             return $node;
         }
 
