@@ -83,4 +83,9 @@ final class PHPUnitMethodName
      * @var string
      */
     public const WILL_THROW_EXCEPTION = 'willThrowException';
+
+    /**
+     * @var string
+     */
+    public const EXPECT_EXCEPTION = 'expectException';
 }
