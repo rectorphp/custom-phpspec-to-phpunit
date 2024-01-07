@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * @api use din bin
@@ -26,16 +27,13 @@ final class RenameSuffixCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-
         $source = (string) $input->getArgument('source');
 
-        $formerSpecFileFinder = Finder::create()
-            ->files()
-            ->name('*Spec.php')
-            ->in($source)
-            ->getIterator();
+        $specSuffixFileFinder = $this->findSpecSuffixFilesInDirectory($source);
 
-        foreach ($formerSpecFileFinder as $fileInfo) {
+        $symfonyStyle->title(sprintf('Found %d "*Spec.php" files', count($specSuffixFileFinder)));
+
+        foreach ($specSuffixFileFinder as $fileInfo) {
             // get short file name without suffix
             $shortFilePath = $fileInfo->getRelativePathname();
             $bareFileName = str_replace('Spec.php', '', $shortFilePath);
@@ -55,5 +53,16 @@ final class RenameSuffixCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * @return Finder<SplFileInfo>
+     */
+    private function findSpecSuffixFilesInDirectory(string $source): Finder
+    {
+        return Finder::create()
+            ->files()
+            ->name('*Spec.php')
+            ->in($source);
     }
 }

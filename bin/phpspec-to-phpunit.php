@@ -21,7 +21,6 @@ foreach ($possibleAutoloadPaths as $possibleAutoloadPath) {
     }
 }
 
-
 $application = new Application();
 $application->add(new RenameSuffixCommand());
 
