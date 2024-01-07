@@ -33,10 +33,11 @@ final class RenameSuffixCommand extends Command
 
         $symfonyStyle->title(sprintf('Found %d "*Spec.php" files', count($specSuffixFileFinder)));
 
-        foreach ($specSuffixFileFinder as $fileInfo) {
+        /** @var SplFileInfo $fileInfo */
+        foreach ($formerSpecFileFinder as $fileInfo) {
             // get short file name without suffix
-            $shortFilePath = $fileInfo->getRelativePathname();
-            $bareFileName = str_replace('Spec.php', '', $shortFilePath);
+            $shortFilePath = $fileInfo->getBasename('.php');
+            $bareFileName = str_replace('Spec', '', $shortFilePath);
 
             $testShortClassName = $bareFileName . 'Test';
 
