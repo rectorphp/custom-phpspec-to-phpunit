@@ -16,9 +16,9 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
 use PHPUnit\Framework\MockObject\MockObject;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\PhpParser\Node\NodeFactory;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\PhpSpecToPHPUnit\DocFactory;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 

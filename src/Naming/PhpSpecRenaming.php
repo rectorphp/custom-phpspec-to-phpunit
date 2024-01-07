@@ -8,7 +8,7 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\LetClassMethodAnalyzer;
 use Rector\PhpSpecToPHPUnit\StringUtils;

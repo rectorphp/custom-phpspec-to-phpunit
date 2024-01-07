@@ -7,8 +7,8 @@ namespace Rector\PhpSpecToPHPUnit\Rector\Namespace_;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Namespace_;
-use Rector\Core\Rector\AbstractRector;
 use Rector\PhpSpecToPHPUnit\StringUtils;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
