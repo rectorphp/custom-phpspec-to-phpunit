@@ -32,14 +32,20 @@ final class AssertMethodCallFactory
     ): MethodCall {
         $this->isBoolAssert = false;
 
-        // special case with bool!
+        $isAssertNull = $expected instanceof Expr && $this->valueResolver->isNull($expected);
+
         if ($expected instanceof Expr) {
-            $name = $this->resolveBoolMethodName($name, $expected);
+            if ($isAssertNull) {
+                $name = 'assertNull';
+            } else {
+                // special case with bool!
+                $name = $this->resolveBoolMethodName($name, $expected);
+            }
         }
 
         $assetMethodCall = $this->nodeFactory->createMethodCall('this', $name);
 
-        if (! $this->isBoolAssert && $expected instanceof Expr) {
+        if (! $this->isBoolAssert && $expected instanceof Expr && ! $isAssertNull) {
             $assetMethodCall->args[] = new Arg($this->thisToTestedObjectPropertyFetch(
                 $expected,
                 $testedPropertyFetchOrVariable

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\ClassMethod;
 
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Class_;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher;

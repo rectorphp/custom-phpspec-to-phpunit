@@ -33,6 +33,7 @@ class CartSpec extends ObjectBehavior
         $item = $this->item($id);
 
         $item->id()->shouldReturn($id);
+        $item->id()->shouldReturn(null);
         $item->quantity()->shouldReturn(4);
     }
 
@@ -108,6 +109,7 @@ final class CartTest extends \PHPUnit\Framework\TestCase
         $item = $this->cart->item($id);
 
         $this->assertSame($id, $item->id());
+        $this->assertNull($item->id());
         $this->assertSame(4, $item->quantity());
     }
 
