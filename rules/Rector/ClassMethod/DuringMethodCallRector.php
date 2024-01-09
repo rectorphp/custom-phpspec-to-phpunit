@@ -20,13 +20,27 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DuringMethodCallRector extends AbstractRector
 {
-    public function __construct(
-        private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
-        private readonly ExpectExceptionMethodCallFactory $expectExceptionMethodCallFactory,
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeAnalyzer\DuringAndRelatedMethodCallMatcher
+     */
+    private $duringAndRelatedMethodCallMatcher;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\ExpectExceptionMethodCallFactory
+     */
+    private $expectExceptionMethodCallFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    public function __construct(DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher, ExpectExceptionMethodCallFactory $expectExceptionMethodCallFactory, PhpSpecRenaming $phpSpecRenaming)
+    {
+        $this->duringAndRelatedMethodCallMatcher = $duringAndRelatedMethodCallMatcher;
+        $this->expectExceptionMethodCallFactory = $expectExceptionMethodCallFactory;
+        $this->phpSpecRenaming = $phpSpecRenaming;
     }
-
     /**
      * @return array<class-string<Node>>
      */
