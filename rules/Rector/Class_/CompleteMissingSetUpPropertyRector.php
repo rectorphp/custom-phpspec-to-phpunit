@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Stmt\PropertyProperty;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Name;
+use PhpParser\Node\Identifier;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
@@ -82,10 +90,10 @@ CODE_SAMPLE
                 continue;
             }
 
-            $this->traverseNodesWithCallable($classMethod, function (\PhpParser\Node $node) use (
+            $this->traverseNodesWithCallable($classMethod, function (Node $node) use (
                 &$requiredPropertyNames
-            ) {
-                if (! $node instanceof Node\Expr\MethodCall) {
+            ): ?MethodCall {
+                if (! $node instanceof MethodCall) {
                     return null;
                 }
 
@@ -102,7 +110,7 @@ CODE_SAMPLE
                 $requiredPropertyNames[] = $variableName;
 
                 // replace with property fetch
-                $node->var = new Node\Expr\PropertyFetch(new Variable('this'), $variableName);
+                $node->var = new PropertyFetch(new Variable('this'), $variableName);
 
                 return $node;
             });
@@ -122,7 +130,7 @@ CODE_SAMPLE
             }
 
             $newProperties[] = new Property(Class_::MODIFIER_PRIVATE, [
-                new Node\Stmt\PropertyProperty($requiredPropertyName),
+                new PropertyProperty($requiredPropertyName),
             ]);
         }
 
@@ -134,20 +142,20 @@ CODE_SAMPLE
 
         $setUpClassMethod = $node->getMethod('setUp');
         if ($setUpClassMethod instanceof ClassMethod) {
-            $setUpClassMethod->stmts[] = new Node\Stmt\Expression(new Node\Expr\Assign(
-                new Node\Expr\PropertyFetch(new Variable('this'), $requiredPropertyName),
+            $setUpClassMethod->stmts[] = new Expression(new Assign(
+                new PropertyFetch(new Variable('this'), $requiredPropertyName),
                 // @todo resolve object type from FQN
-                new Node\Expr\New_(new Node\Name($requiredPropertyName))
+                new New_(new Name($requiredPropertyName))
             ));
         } else {
             $setUpClassMethod = new Node\Stmt\ClassMethod('setUp');
             $setUpClassMethod->flags = Class_::MODIFIER_PROTECTED;
-            $setUpClassMethod->returnType = new Node\Identifier('void');
+            $setUpClassMethod->returnType = new Identifier('void');
 
-            $setUpClassMethod->stmts[] = new Node\Stmt\Expression(new Node\Expr\Assign(
-                new Node\Expr\PropertyFetch(new Variable('this'), $requiredPropertyName),
+            $setUpClassMethod->stmts[] = new Expression(new Assign(
+                new PropertyFetch(new Variable('this'), $requiredPropertyName),
                 // @todo resolve object type from FQN
-                new Node\Expr\New_(new Node\Name($requiredPropertyName))
+                new New_(new Name($requiredPropertyName))
             ));
 
             $node->stmts = array_merge([$setUpClassMethod], $node->stmts);

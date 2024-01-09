@@ -35,9 +35,11 @@ final class WillCallableAssertFactory
             if (! $node instanceof BinaryOp) {
                 return false;
             }
+
             if ($node->right instanceof ConstFetch) {
                 return true;
             }
+
             return $node->right instanceof Scalar;
         });
 
