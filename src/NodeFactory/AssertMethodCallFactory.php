@@ -35,12 +35,7 @@ final class AssertMethodCallFactory
         $isAssertNull = $expected instanceof Expr && $this->valueResolver->isNull($expected);
 
         if ($expected instanceof Expr) {
-            if ($isAssertNull) {
-                $name = 'assertNull';
-            } else {
-                // special case with bool!
-                $name = $this->resolveBoolMethodName($name, $expected);
-            }
+            $name = $isAssertNull ? 'assertNull' : $this->resolveBoolMethodName($name, $expected);
         }
 
         $assetMethodCall = $this->nodeFactory->createMethodCall('this', $name);
