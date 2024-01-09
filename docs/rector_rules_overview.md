@@ -293,7 +293,7 @@ Rename test method from underscore PhpSpec syntax to test* PHPUnit syntax
 
 ## ShouldNeverBeCalledRector
 
-Handle `shouldNotBeCalled()` expectations
+Change `shouldNotBeCalled()` to `$this->expects($this->never())` check
 
 - class: [`Rector\PhpSpecToPHPUnit\Rector\Expression\ShouldNeverBeCalledRector`](../rules/Rector/Expression/ShouldNeverBeCalledRector.php)
 

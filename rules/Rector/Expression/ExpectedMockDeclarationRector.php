@@ -7,6 +7,8 @@ namespace Rector\PhpSpecToPHPUnit\Rector\Expression;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\BinaryOp;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
@@ -14,11 +16,14 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\NodeFinder;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\Generic\GenericClassStringType;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 use Rector\PhpSpecToPHPUnit\Naming\SystemMethodDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\ExpectsCallFactory;
+use Rector\PhpSpecToPHPUnit\NodeFactory\WillCallableAssertFactory;
 use Rector\PhpSpecToPHPUnit\NodeFinder\MethodCallFinder;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -29,6 +34,11 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ExpectedMockDeclarationRector extends AbstractRector
 {
+    public function __construct(
+        private readonly WillCallableAssertFactory $willCallableAssertFactory
+    ) {
+    }
+
     /**
      * @return array<class-string<Node>>
      */
@@ -63,9 +73,14 @@ final class ExpectedMockDeclarationRector extends AbstractRector
         $this->traverseNodesWithCallable($firstMethodCall, function (Node $node) use (
             &$hasChanged,
             $hasShouldNotBeCalled
-        ): ?MethodCall {
+        ): null|int|MethodCall {
             if (! $node instanceof MethodCall) {
                 return null;
+            }
+
+            // special case for nested callable
+            if ($this->isName($node->name, PHPUnitMethodName::CALLALBLE)) {
+                return NodeTraverser::STOP_TRAVERSAL;
             }
 
             // rename method
@@ -158,6 +173,13 @@ CODE_SAMPLE
                     // will return callable
                     $expr = $expr->getArgs()[0]
 ->value;
+
+                    // special case for assert in closure - must contain binary ops as copares
+                    $nodeFinder = new NodeFinder();
+                    if ($expr instanceof Closure && $nodeFinder->findInstanceOf($expr, BinaryOp::class)) {
+                        return $this->willCallableAssertFactory->create($methodCall, $expr);
+                    }
+
                     return new MethodCall($methodCall, PHPUnitMethodName::WILL_RETURN, [new Arg($expr)]);
                 }
 

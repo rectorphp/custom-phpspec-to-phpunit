@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Rector\PhpSpecToPHPUnit\Command\RenameSuffixCommand;
+use Rector\PhpSpecToPHPUnit\Command\RenameFileSuffixCommand;
 use Symfony\Component\Console\Application;
 
 $possibleAutoloadPaths = [
@@ -22,7 +22,7 @@ foreach ($possibleAutoloadPaths as $possibleAutoloadPath) {
 }
 
 $application = new Application();
-$application->add(new RenameSuffixCommand());
+$application->add(new RenameFileSuffixCommand());
 
 // hide irrelevant commands
 $application->get('help')
