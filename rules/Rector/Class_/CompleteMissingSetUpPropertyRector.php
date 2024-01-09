@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Stmt\PropertyProperty;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Name;
-use PhpParser\Node\Identifier;
 use PhpParser\Node;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\PropertyProperty;
 use PHPStan\Node\ClassMethod;
 use PHPStan\Type\ErrorType;
 use Rector\Rector\AbstractRector;
@@ -140,23 +140,25 @@ CODE_SAMPLE
 
         // 3. add setup method, property and replace variable with a property fetch
 
-        $setUpClassMethod = $node->getMethod('setUp');
-        if ($setUpClassMethod instanceof ClassMethod) {
-            $setUpClassMethod->stmts[] = new Expression(new Assign(
+        $assignExpressions = [];
+        foreach ($requiredPropertyNames as $requiredPropertyName) {
+            $assign = new Assign(
                 new PropertyFetch(new Variable('this'), $requiredPropertyName),
                 // @todo resolve object type from FQN
-                new New_(new Name($requiredPropertyName))
-            ));
+                new New_(new FullyQualified($requiredPropertyName))
+            );
+
+            $assignExpressions[] = new Expression($assign);
+        }
+
+        $setUpClassMethod = $node->getMethod('setUp');
+        if ($setUpClassMethod instanceof ClassMethod) {
+            $setUpClassMethod->stmts = array_merge((array) $setUpClassMethod->stmts, $assignExpressions);
         } else {
             $setUpClassMethod = new Node\Stmt\ClassMethod('setUp');
             $setUpClassMethod->flags = Class_::MODIFIER_PROTECTED;
             $setUpClassMethod->returnType = new Identifier('void');
-
-            $setUpClassMethod->stmts[] = new Expression(new Assign(
-                new PropertyFetch(new Variable('this'), $requiredPropertyName),
-                // @todo resolve object type from FQN
-                new New_(new Name($requiredPropertyName))
-            ));
+            $setUpClassMethod->stmts = $assignExpressions;
 
             $node->stmts = array_merge([$setUpClassMethod], $node->stmts);
         }

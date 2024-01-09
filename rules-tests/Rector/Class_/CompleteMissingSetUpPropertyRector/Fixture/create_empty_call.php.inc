@@ -25,7 +25,7 @@ final class CreateEmptyCall extends TestCase
     private $someVariable;
     protected function setUp(): void
     {
-        $this->someVariable = new someVariable();
+        $this->someVariable = new \someVariable();
     }
     public function testSomething()
     {
