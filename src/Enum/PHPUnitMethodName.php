@@ -88,4 +88,19 @@ final class PHPUnitMethodName
      * @var string
      */
     public const EXPECT_EXCEPTION = 'expectException';
+
+    /**
+     * @var string
+     */
+    public const CALLALBLE = 'callable';
+
+    /**
+     * @var string
+     */
+    public const ASSERT_SAME = 'assertSame';
+
+    /**
+     * @var string
+     */
+    public const ASSERT_NOT_SAME = 'assertNotSame';
 }
