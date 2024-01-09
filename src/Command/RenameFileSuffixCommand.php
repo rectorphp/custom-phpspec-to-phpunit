@@ -12,10 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-/**
- * @api use din bin
- */
-final class RenameSuffixCommand extends Command
+final class RenameFileSuffixCommand extends Command
 {
     protected function configure(): void
     {
