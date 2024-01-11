@@ -4,11 +4,11 @@ namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LearnFromPHPUnitReportRect
 
 use PHPUnit\Framework\TestCase;
 
-final class CreateEmptyCall extends TestCase
+final class MoreThanOnce extends TestCase
 {
     public function testSomething()
     {
-        $someVariable->someCall();
+        $this->someMock->expect($this->once())->method('someMethod');
     }
 }
 
@@ -20,16 +20,11 @@ namespace Rector\PhpSpecToPHPUnit\Tests\Rector\Class_\LearnFromPHPUnitReportRect
 
 use PHPUnit\Framework\TestCase;
 
-final class CreateEmptyCall extends TestCase
+final class MoreThanOnce extends TestCase
 {
-    private $someVariable;
-    protected function setUp(): void
-    {
-        $this->someVariable = new \someVariable();
-    }
     public function testSomething()
     {
-        $this->someVariable->someCall();
+        $this->someMock->expect($this->atLeastOnce())->method('someMethod');
     }
 }
 

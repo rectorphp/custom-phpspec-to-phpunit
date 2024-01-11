@@ -103,4 +103,9 @@ final class PHPUnitMethodName
      * @var string
      */
     public const ASSERT_NOT_SAME = 'assertNotSame';
+
+    /**
+     * @var string
+     */
+    public const AT_LEAST_ONCE = 'atLeastOnce';
 }

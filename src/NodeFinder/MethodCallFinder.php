@@ -17,6 +17,32 @@ final class MethodCallFinder
         return $foundMethodCall instanceof MethodCall;
     }
 
+    /**
+     * Looks for $this->method('desiredMethod');
+     */
+    public static function hasMethodMockByName(Node $node, string $desiredMethodName): bool
+    {
+        $nodeFinder = new NodeFinder();
+
+        return (bool) $nodeFinder->find($node, function (\PhpParser\Node $node) use ($desiredMethodName) {
+            if (! $node instanceof MethodCall) {
+                return null;
+            }
+
+            if ($node->name->toString() !== 'method') {
+                return null;
+            }
+
+            $firstArg = $node->getArgs()[0];
+            if (! $firstArg->value instanceof Node\Scalar\String_) {
+                return null;
+            }
+
+            $string = $firstArg->value;
+            return $string->value === $desiredMethodName;
+        });
+    }
+
     public static function findByName(Node $node, string $desiredMethodName): ?MethodCall
     {
         $nodeFinder = new NodeFinder();
@@ -30,14 +56,10 @@ final class MethodCallFinder
                 return false;
             }
 
-            $methodName = $node->name->toString();
-            return $methodName === $desiredMethodName;
+            return $node->name->toString() === $desiredMethodName;
         });
 
-        if (! $foundMethodCall instanceof MethodCall) {
-            return null;
-        }
-
+        /** @var MethodCall|null $foundMethodCall */
         return $foundMethodCall;
     }
 }
