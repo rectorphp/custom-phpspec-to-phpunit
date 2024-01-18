@@ -51,7 +51,7 @@ final class WillCallableAssertFactory
 
         $callableArgs = [new Arg($closure)];
 
-        $callableWrapMethodCall = new MethodCall(new Variable('this'), PHPUnitMethodName::CALLALBLE, $callableArgs);
+        $callableWrapMethodCall = new MethodCall(new Variable('this'), PHPUnitMethodName::CALLBACK, $callableArgs);
         return new MethodCall($methodCall, PHPUnitMethodName::WITH, [new Arg($callableWrapMethodCall)]);
     }
 

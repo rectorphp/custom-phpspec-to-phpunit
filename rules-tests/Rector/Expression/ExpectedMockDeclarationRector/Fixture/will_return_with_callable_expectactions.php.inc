@@ -29,7 +29,7 @@ class WillReturnWithCallableExpectations extends ObjectBehavior
 {
     public function it_should_succeed(SomeMailer $someMailer)
     {
-        $someMailer->expects($this->once())->method('send')->with($this->callable(function (SomeClass $someClass) {
+        $someMailer->expects($this->once())->method('send')->with($this->callback(function (SomeClass $someClass) {
             $this->assertSame('first', $someClass->getFirst());
             $this->assertSame('second', $someClass->getSecond());
             return true;

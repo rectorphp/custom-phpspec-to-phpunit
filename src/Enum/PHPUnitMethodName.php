@@ -92,7 +92,7 @@ final class PHPUnitMethodName
     /**
      * @var string
      */
-    public const CALLALBLE = 'callable';
+    public const CALLBACK = 'callback';
 
     /**
      * @var string

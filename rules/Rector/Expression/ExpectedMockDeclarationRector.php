@@ -79,7 +79,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             }
 
             // special case for nested callable
-            if ($this->isName($node->name, PHPUnitMethodName::CALLALBLE)) {
+            if ($this->isName($node->name, PHPUnitMethodName::CALLBACK)) {
                 return NodeTraverser::STOP_TRAVERSAL;
             }
 
