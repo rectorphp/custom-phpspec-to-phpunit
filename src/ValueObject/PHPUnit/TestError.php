@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\ValueObject\PHPUnit;
 
-final readonly class TestError
+final class TestError
 {
-    public function __construct(
-        private string $errorContents
-    ) {
+    /**
+     * @readonly
+     * @var string
+     */
+    private $errorContents;
+    public function __construct(string $errorContents)
+    {
+        $this->errorContents = $errorContents;
     }
 
     public function getErrorContents(): string

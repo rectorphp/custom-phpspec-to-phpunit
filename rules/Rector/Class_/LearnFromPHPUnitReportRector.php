@@ -28,11 +28,18 @@ use Webmozart\Assert\Assert;
  */
 final class LearnFromPHPUnitReportRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    private ?string $phpunitReportFilePath = null;
+    /**
+     * @var \Rector\PhpSpecToPHPUnit\PHPUnit\PHPUnitResultAnalyzer
+     */
+    private $phpUnitResultAnalyzer;
+    /**
+     * @var string|null
+     */
+    private $phpunitReportFilePath;
 
-    public function __construct(
-        private PHPUnitResultAnalyzer $phpUnitResultAnalyzer,
-    ) {
+    public function __construct(PHPUnitResultAnalyzer $phpUnitResultAnalyzer)
+    {
+        $this->phpUnitResultAnalyzer = $phpUnitResultAnalyzer;
     }
 
     /**
@@ -146,9 +153,12 @@ CODE_SAMPLE
         $this->phpunitReportFilePath = $phpunitReportFilePath;
     }
 
+    /**
+     * @param \Rector\PhpSpecToPHPUnit\ValueObject\PHPUnit\NoCallTestError|\Rector\PhpSpecToPHPUnit\ValueObject\PHPUnit\MoreThanOnceTestError $noCallsTestError
+     */
     private function matchTestClassMethod(
         Class_ $class,
-        NoCallTestError|MoreThanOnceTestError $noCallsTestError
+        $noCallsTestError
     ): ?ClassMethod {
         // are we in the right test class?
         if (! $this->isName($class, $noCallsTestError->getTestClass())) {

@@ -22,11 +22,15 @@ use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 
 final class WillCallableAssertFactory
 {
-    public function __construct(
-        private readonly NodeFinder $nodeFinder,
-    ) {
+    /**
+     * @readonly
+     * @var \PhpParser\NodeFinder
+     */
+    private $nodeFinder;
+    public function __construct(NodeFinder $nodeFinder)
+    {
+        $this->nodeFinder = $nodeFinder;
     }
-
     public function create(MethodCall $methodCall, Closure $closure): MethodCall
     {
         // collect all expectations and turn them to assertSame() or similar

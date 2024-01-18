@@ -34,9 +34,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ExpectedMockDeclarationRector extends AbstractRector
 {
-    public function __construct(
-        private readonly WillCallableAssertFactory $willCallableAssertFactory
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\WillCallableAssertFactory
+     */
+    private $willCallableAssertFactory;
+    public function __construct(WillCallableAssertFactory $willCallableAssertFactory)
+    {
+        $this->willCallableAssertFactory = $willCallableAssertFactory;
     }
 
     /**
@@ -73,7 +78,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
         $this->traverseNodesWithCallable($firstMethodCall, function (Node $node) use (
             &$hasChanged,
             $hasShouldNotBeCalled
-        ): null|int|MethodCall {
+        ) {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -163,7 +168,7 @@ CODE_SAMPLE
             /** @var string $className */
             $className = $this->getName($expr->class);
 
-            if (str_ends_with($className, 'Argument')) {
+            if (substr_compare($className, 'Argument', -strlen('Argument')) === 0) {
                 if ($this->isName($expr->name, 'any')) {
                     // no added value having this method
                     return $methodCall;

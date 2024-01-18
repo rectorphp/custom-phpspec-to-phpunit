@@ -19,9 +19,14 @@ use Rector\PhpSpecToPHPUnit\ValueObject\VariableNameAndMethodName;
 
 final class ConsecutiveMethodCallMatcher
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     /**
