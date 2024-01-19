@@ -10,7 +10,7 @@ class WithArgumentSpec extends ObjectBehavior
     public function it_should_succeed()
     {
         $someMock = $this->createMock(SomeMethodType::class);
-        $someMock->hasFailed('yes')->shouldBeCalled();
+        $someMock->hasFailed('yes', 'again')->shouldBeCalled();
     }
 }
 
@@ -28,7 +28,7 @@ class WithArgumentSpec extends ObjectBehavior
     public function it_should_succeed()
     {
         $someMock = $this->createMock(SomeMethodType::class);
-        $someMock->expects($this->once())->method('hasFailed')->with('yes')->shouldBeCalled();
+        $someMock->expects($this->once())->method('hasFailed')->with('yes', 'again')->shouldBeCalled();
     }
 }
 

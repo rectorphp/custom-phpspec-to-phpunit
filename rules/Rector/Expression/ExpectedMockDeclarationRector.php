@@ -6,7 +6,6 @@ namespace Rector\PhpSpecToPHPUnit\Rector\Expression;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
@@ -113,7 +112,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
 
             $callArgs = $node->getArgs();
             if ($callArgs !== []) {
-                return $this->appendWithMethodCall($methodMethodCall, $callArgs[0]->value);
+                return $this->appendWithMethodCall($methodMethodCall, $callArgs);
             }
 
             return $methodMethodCall;
@@ -157,39 +156,46 @@ CODE_SAMPLE
         ]);
     }
 
-    private function appendWithMethodCall(MethodCall $methodCall, Expr $expr): MethodCall
+    /**
+     * @param Arg[] $args
+     */
+    private function appendWithMethodCall(MethodCall $methodCall, array $args): MethodCall
     {
-        if ($expr instanceof StaticCall) {
-            /** @var string $className */
-            $className = $this->getName($expr->class);
+        foreach ($args as $arg) {
+            if ($arg->value instanceof StaticCall) {
+                $staticCall = $arg->value;
 
-            if (str_ends_with($className, 'Argument')) {
-                if ($this->isName($expr->name, 'any')) {
-                    // no added value having this method
-                    return $methodCall;
-                }
+                /** @var string $className */
+                $className = $this->getName($staticCall->class);
 
-                if ($this->isName($expr->name, 'that')) {
-                    // will return callable
-                    $expr = $expr->getArgs()[0]
-->value;
-
-                    // special case for assert in closure - must contain binary ops as copares
-                    $nodeFinder = new NodeFinder();
-                    if ($expr instanceof Closure && $nodeFinder->findInstanceOf($expr, BinaryOp::class)) {
-                        return $this->willCallableAssertFactory->create($methodCall, $expr);
+                if (str_ends_with($className, 'Argument')) {
+                    if ($this->isName($staticCall->name, 'any')) {
+                        // no added value having this method
+                        return $methodCall;
                     }
 
-                    return new MethodCall($methodCall, PHPUnitMethodName::WILL_RETURN, [new Arg($expr)]);
-                }
+                    if ($this->isName($staticCall->name, 'that')) {
+                        // will return callable
+                        $expr = $staticCall->getArgs()[0]
+                            ->value;
 
-                if ($this->isName($expr->name, 'type')) {
-                    $expr = $this->createIsTypeOrIsInstanceOf($expr);
+                        // special case for assert in closure - must contain binary ops as copares
+                        $nodeFinder = new NodeFinder();
+                        if ($expr instanceof Closure && $nodeFinder->findInstanceOf($expr, BinaryOp::class)) {
+                            return $this->willCallableAssertFactory->create($methodCall, $expr);
+                        }
+
+                        return new MethodCall($methodCall, PHPUnitMethodName::WILL_RETURN, [new Arg($expr)]);
+                    }
+
+                    if ($this->isName($staticCall->name, 'type')) {
+                        $arg->value = $this->createIsTypeOrIsInstanceOf($staticCall);
+                    }
                 }
             }
         }
 
-        return new MethodCall($methodCall, PHPUnitMethodName::WITH, [new Arg($expr)]);
+        return new MethodCall($methodCall, PHPUnitMethodName::WITH, $args);
     }
 
     private function createIsTypeOrIsInstanceOf(StaticCall $staticCall): MethodCall
