@@ -22,11 +22,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class SplitSetUpMockRector extends AbstractRector
 {
-    public function __construct(
-        private ValueResolver $valueResolver,
-    ) {
+    /**
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
     }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -155,7 +158,7 @@ CODE_SAMPLE
                 $classMethodName = $this->getName($classMethod);
 
                 // we look only for test methods
-                if (! str_starts_with($classMethodName, 'test')) {
+                if (strncmp($classMethodName, 'test', strlen('test')) !== 0) {
                     continue;
                 }
 
@@ -223,7 +226,7 @@ CODE_SAMPLE
                 $classMethodName = $this->getName($classMethod);
 
                 // we look only for test methods
-                if (! str_starts_with($classMethodName, 'test')) {
+                if (strncmp($classMethodName, 'test', strlen('test')) !== 0) {
                     continue;
                 }
 
