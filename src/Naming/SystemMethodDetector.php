@@ -20,10 +20,8 @@ final class SystemMethodDetector
         foreach (self::METHOD_NAME_CLASSES as $methodNameClass) {
             $reflectionClass = new ReflectionClass($methodNameClass);
 
-            foreach ($reflectionClass->getConstants() as $constantValue) {
-                if ($methodName === $constantValue) {
-                    return true;
-                }
+            if (in_array($methodName, $reflectionClass->getConstants(), true)) {
+                return true;
             }
         }
 

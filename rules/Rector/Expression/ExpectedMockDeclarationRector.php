@@ -18,8 +18,10 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PHPStan\Type\Generic\GenericClassStringType;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
+use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\Naming\SystemMethodDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\ExpectsCallFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\WillCallableAssertFactory;
@@ -34,7 +36,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class ExpectedMockDeclarationRector extends AbstractRector
 {
     public function __construct(
-        private readonly WillCallableAssertFactory $willCallableAssertFactory
+        private readonly WillCallableAssertFactory $willCallableAssertFactory,
+        private readonly PhpSpecRenaming $phpSpecRenaming,
     ) {
     }
 
@@ -56,9 +59,6 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             return null;
         }
 
-        // handled in another rule
-        $hasShouldNotBeCalled = MethodCallFinder::hasByName($node, PhpSpecMethodName::SHOULD_NOT_BE_CALLED);
-
         $firstMethodCall = $node->expr;
 
         // usually a chain method call
@@ -68,6 +68,9 @@ final class ExpectedMockDeclarationRector extends AbstractRector
 
         // replace ->method('...') with expects('...')->method('methodName')
         $hasChanged = false;
+
+        // handled in another rule
+        $hasShouldNotBeCalled = MethodCallFinder::hasByName($node, PhpSpecMethodName::SHOULD_NOT_BE_CALLED);
 
         $this->traverseNodesWithCallable($firstMethodCall, function (Node $node) use (
             &$hasChanged,
@@ -83,7 +86,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
             }
 
             // rename method
-            if ($node->name->toString() === PhpSpecMethodName::WILL_THROW) {
+            if ($this->isName($node->name, PhpSpecMethodName::WILL_THROW)) {
                 $node->name = new Identifier(PHPUnitMethodName::WILL_THROW_EXCEPTION);
                 return $node;
             }
@@ -162,6 +165,17 @@ CODE_SAMPLE
     private function appendWithMethodCall(MethodCall $methodCall, array $args): MethodCall
     {
         foreach ($args as $arg) {
+            // flip $this to tested object property fetch
+            if ($arg->value instanceof Variable && $this->isName($arg->value, 'this')) {
+                $scope = $arg->getAttribute(AttributeKey::SCOPE);
+
+                /** @var string $testedObjectPropertyName */
+                $testedObjectPropertyName = $this->phpSpecRenaming->resolveTestedObjectPropertyNameFromScope($scope);
+
+                $arg->value = new PropertyFetch($arg->value, $testedObjectPropertyName);
+                continue;
+            }
+
             if ($arg->value instanceof StaticCall) {
                 $staticCall = $arg->value;
 
