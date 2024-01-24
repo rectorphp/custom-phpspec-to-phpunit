@@ -9,7 +9,8 @@
     ],
     "require": {
         "php": ">=8.2",
-        "symfony/finder": "^7.0"
+        "symfony/finder": "^7.0",
+        "tomasvotruba/phpunit-json-result-printer": "^0.1.1"
     },
     "require-dev": {
         "rector/rector": "dev-main",
