@@ -35,12 +35,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ExpectedMockDeclarationRector extends AbstractRector
 {
-    public function __construct(
-        private readonly WillCallableAssertFactory $willCallableAssertFactory,
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-    ) {
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\NodeFactory\WillCallableAssertFactory
+     */
+    private $willCallableAssertFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming
+     */
+    private $phpSpecRenaming;
+    public function __construct(WillCallableAssertFactory $willCallableAssertFactory, PhpSpecRenaming $phpSpecRenaming)
+    {
+        $this->willCallableAssertFactory = $willCallableAssertFactory;
+        $this->phpSpecRenaming = $phpSpecRenaming;
     }
-
     /**
      * @return array<class-string<Node>>
      */
@@ -75,7 +84,7 @@ final class ExpectedMockDeclarationRector extends AbstractRector
         $this->traverseNodesWithCallable($firstMethodCall, function (Node $node) use (
             &$hasChanged,
             $hasShouldNotBeCalled
-        ): null|int|MethodCall {
+        ) {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -182,7 +191,7 @@ CODE_SAMPLE
                 /** @var string $className */
                 $className = $this->getName($staticCall->class);
 
-                if (str_ends_with($className, 'Argument')) {
+                if (substr_compare($className, 'Argument', -strlen('Argument')) === 0) {
                     if ($this->isName($staticCall->name, 'any')) {
                         // no added value having this method
                         return $methodCall;

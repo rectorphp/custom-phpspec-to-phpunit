@@ -15,12 +15,12 @@ final class PHPUnitResultAnalyzer
     /**
      * @var MoreThanOnceTestError[]
      */
-    private array $moreThanOnceTestErrors = [];
+    private $moreThanOnceTestErrors = [];
 
     /**
      * @var NoCallTestError[]
      */
-    private array $noCallTestErrors = [];
+    private $noCallTestErrors = [];
 
     /**
      * @return MoreThanOnceTestError[]

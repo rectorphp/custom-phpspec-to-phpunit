@@ -1,59 +1,17 @@
 {
     "name": "rector/custom-phpspec-to-phpunit",
-    "type": "rector-extension",
-    "license": "MIT",
     "description": "Rector migration rules for PHPSpec to PHPUnit",
+    "license": "MIT",
     "bin": [
         "bin/phpspec-to-phpunit",
         "bin/phpspec-to-phpunit.php"
     ],
     "require": {
-        "php": ">=8.2",
-        "symfony/finder": "^7.0",
-        "tomasvotruba/phpunit-json-result-printer": "^0.1.1"
-    },
-    "require-dev": {
-        "rector/rector": "dev-main",
-        "nikic/php-parser": "^4.18",
-        "phpunit/phpunit": "^10.5",
-        "phpstan/phpstan": "^1.10.55",
-        "symplify/phpstan-extensions": "^11.4",
-        "symplify/easy-coding-standard": "^12.1",
-        "phpstan/extension-installer": "^1.3",
-        "symplify/rule-doc-generator": "^12.1",
-        "tomasvotruba/class-leak": "^0.2.5",
-        "tracy/tracy": "^2.10"
+        "php": ">=7.2"
     },
     "autoload": {
         "psr-4": {
             "Rector\\PhpSpecToPHPUnit\\": ["src", "rules"]
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Rector\\PhpSpecToPHPUnit\\Tests\\": ["tests", "rules-tests"]
-        },
-        "classmap": [
-            "stubs",
-            "tests/Sets/Source"
-        ],
-        "files": [
-            "tests/functions.php"
-        ]
-    },
-    "scripts": {
-        "phpstan": "vendor/bin/phpstan analyse --ansi --error-format symplify",
-        "check-cs": "vendor/bin/ecs check --ansi",
-        "fix-cs": "vendor/bin/ecs check --fix --ansi",
-        "docs": "vendor/bin/rule-doc-generator generate src rules --output-file docs/rector_rules_overview.md --ansi"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "platform-check": false,
-        "allow-plugins": {
-            "phpstan/extension-installer": true,
-            "rector/extension-installer": true
         }
     }
 }
