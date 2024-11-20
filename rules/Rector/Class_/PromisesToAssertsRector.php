@@ -46,9 +46,8 @@ final class PromisesToAssertsRector extends AbstractRector
 
     /**
      * @param Class_ $node
-     * @return Node|Node[]|null
      */
-    public function refactor(Node $node): Node|array|null
+    public function refactor(Node $node): Node|null
     {
         $hasChanged = false;
 

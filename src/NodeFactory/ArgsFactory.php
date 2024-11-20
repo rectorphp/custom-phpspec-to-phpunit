@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\NodeFactory;
 
 use PhpParser\Node\Arg;
-use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Array_;
 
 final class ArgsFactory
@@ -23,10 +22,6 @@ final class ArgsFactory
 
         $array = $arg->value;
         foreach ($array->items as $arrayItem) {
-            if (! $arrayItem instanceof ArrayItem) {
-                continue;
-            }
-
             $newArgs[] = new Arg($arrayItem->value);
         }
 

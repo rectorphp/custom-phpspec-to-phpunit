@@ -80,7 +80,7 @@ CODE_SAMPLE
     /**
      * @param Class_ $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node
     {
         if ($this->phpunitReportFilePath === null) {
             throw new ShouldNotHappenException();
