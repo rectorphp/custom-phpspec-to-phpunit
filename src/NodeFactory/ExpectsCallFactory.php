@@ -9,7 +9,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 
@@ -32,10 +32,10 @@ final class ExpectsCallFactory
 
     public static function createExpectExactlyCall(int $count, Variable $callerVariable): MethodCall
     {
-        $countLNumber = new LNumber($count);
+        $int = new Int_($count);
 
         $exactlyMethodCall = new MethodCall(new Variable('this'), new Identifier(PHPUnitMethodName::EXACTLY), [
-            new Arg($countLNumber),
+            new Arg($int),
         ]);
 
         return new MethodCall($callerVariable, new Identifier(PHPUnitMethodName::EXPECTS), [

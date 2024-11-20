@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Clone_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -76,7 +78,7 @@ final class PromisesToAssertsRector extends AbstractRector
                 $testedObject,
                 &$hasChanged,
                 $localMethodNames,
-            ) {
+            ): null|Expr|Assign|MethodCall|Clone_ {
                 if (! $node instanceof MethodCall) {
                     return null;
                 }

@@ -36,7 +36,7 @@ final class DuringMethodCallRector extends AbstractRector
     }
 
     /**
-     * @param Node\Stmt\Class_ $node
+     * @param Class_ $node
      */
     public function refactor(Node $node): ?Node
     {

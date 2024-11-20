@@ -7,6 +7,7 @@ namespace Rector\PhpSpecToPHPUnit\NodeFinder;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\NodeFinder;
 
 final class MethodCallFinder
@@ -24,7 +25,7 @@ final class MethodCallFinder
     {
         $nodeFinder = new NodeFinder();
 
-        return (bool) $nodeFinder->find($node, function (\PhpParser\Node $node) use ($desiredMethodName) {
+        return (bool) $nodeFinder->find($node, function (Node $node) use ($desiredMethodName): ?bool {
             if (! $node instanceof MethodCall) {
                 return null;
             }
@@ -34,7 +35,7 @@ final class MethodCallFinder
             }
 
             $firstArg = $node->getArgs()[0];
-            if (! $firstArg->value instanceof Node\Scalar\String_) {
+            if (! $firstArg->value instanceof String_) {
                 return null;
             }
 
