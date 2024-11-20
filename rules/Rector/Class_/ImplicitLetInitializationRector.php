@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\New_;
@@ -117,7 +118,7 @@ CODE_SAMPLE
     {
         $classMethod = new ClassMethod(MethodName::SET_UP);
         $classMethod->returnType = new Identifier('void');
-        $classMethod->flags |= Class_::MODIFIER_PROTECTED;
+        $classMethod->flags |= Modifiers::PROTECTED;
 
         $propertyFetch = new PropertyFetch(new Variable('this'), $testedObject->getPropertyName());
         $new = new New_(new FullyQualified($testedObject->getClassName()));

@@ -80,7 +80,7 @@ CODE_SAMPLE
     /**
      * @param Class_ $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node
     {
         if ($this->phpunitReportFilePath === null) {
             throw new ShouldNotHappenException();
@@ -112,14 +112,14 @@ CODE_SAMPLE
         // 2. second
         $noCallsTestErrors = $this->phpUnitResultAnalyzer->resolveNoCallTestErrors($this->phpunitReportFilePath);
 
-        foreach ($noCallsTestErrors as $noCallsTestError) {
-            $testClassMethod = $this->matchTestClassMethod($node, $noCallsTestError);
+        foreach ($noCallsTestErrors as $noCallTestError) {
+            $testClassMethod = $this->matchTestClassMethod($node, $noCallTestError);
             if (! $testClassMethod instanceof ClassMethod) {
                 continue;
             }
 
             foreach ((array) $testClassMethod->stmts as $classMethodStmt) {
-                if (! MethodCallFinder::hasMethodMockByName($classMethodStmt, $noCallsTestError->getMockedMethod())) {
+                if (! MethodCallFinder::hasMethodMockByName($classMethodStmt, $noCallTestError->getMockedMethod())) {
                     continue;
                 }
 
@@ -158,9 +158,9 @@ CODE_SAMPLE
         return $class->getMethod($noCallsTestError->getTestClassMethod());
     }
 
-    private function replaceThisOnceWithAtLeastOnce(Stmt $stsmt): void
+    private function replaceThisOnceWithAtLeastOnce(Stmt $stmt): void
     {
-        $this->traverseNodesWithCallable($stsmt, function (Node $node): ?Node {
+        $this->traverseNodesWithCallable($stmt, function (Node $node): ?Node {
             if (! $node instanceof MethodCall) {
                 return null;
             }

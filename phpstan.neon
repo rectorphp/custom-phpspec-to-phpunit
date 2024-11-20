@@ -10,6 +10,8 @@ parameters:
 
     reportUnmatchedIgnoredErrors: false
 
+    treatPhpDocTypesAsCertain: false
+
     excludePaths:
         - */Fixture/*
 
@@ -24,3 +26,6 @@ parameters:
         # known value
         - '#Cannot call method toString\(\) on PhpParser\\Node\\Identifier\|null#'
         - '#Call to an undefined method PhpParser\\Node\\Expr\|PhpParser\\Node\\Identifier\:\:toString\(\)#'
+
+        -
+            identifier: phpstanApi.instanceofType

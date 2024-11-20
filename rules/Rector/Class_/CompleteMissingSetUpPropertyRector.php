@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
@@ -13,10 +14,10 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
+use PhpParser\Node\PropertyItem;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
-use PhpParser\Node\Stmt\PropertyProperty;
 use PHPStan\Node\ClassMethod;
 use PHPStan\Type\ErrorType;
 use Rector\Rector\AbstractRector;
@@ -129,9 +130,7 @@ CODE_SAMPLE
                 continue;
             }
 
-            $newProperties[] = new Property(Class_::MODIFIER_PRIVATE, [
-                new PropertyProperty($requiredPropertyName),
-            ]);
+            $newProperties[] = new Property(Modifiers::PRIVATE, [new PropertyItem($requiredPropertyName)]);
         }
 
         if ($newProperties === []) {
@@ -156,7 +155,7 @@ CODE_SAMPLE
             $setUpClassMethod->stmts = array_merge((array) $setUpClassMethod->stmts, $assignExpressions);
         } else {
             $setUpClassMethod = new Node\Stmt\ClassMethod('setUp');
-            $setUpClassMethod->flags = Class_::MODIFIER_PROTECTED;
+            $setUpClassMethod->flags = Modifiers::PROTECTED;
             $setUpClassMethod->returnType = new Identifier('void');
             $setUpClassMethod->stmts = $assignExpressions;
 

@@ -4,7 +4,7 @@
 
 ## Install
 
-* runs on PHP 7.2+
+* runs on PHP 7.4+
 
 ```bash
 composer require rector/custom-phpspec-to-phpunit --dev

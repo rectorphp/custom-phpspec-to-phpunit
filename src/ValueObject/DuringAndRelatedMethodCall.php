@@ -63,7 +63,14 @@ final class DuringAndRelatedMethodCall
         $builderFactory = new BuilderFactory();
 
         $array = $secondArg->value;
-        return $builderFactory->args($array->items);
+
+        $values = [];
+
+        foreach ($array->items as $item) {
+            $values[] = $item->value;
+        }
+
+        return $builderFactory->args($values);
     }
 
     public function getExceptionMethodCall(): MethodCall
