@@ -93,6 +93,13 @@ final class WillReturnMapMethodCallFactory
                 PhpSpecMethodName::SHOULD_RETURN
             );
 
+            if (empty($returnArgs)) {
+                $returnArgs = $this->resolveInputArgs(
+                    $consecutiveMethodCall->getMethodCall(),
+                    PhpSpecMethodName::WILL_RETURN
+                );
+            }
+
             $arrayItems = $this->createArrayItemsFromArgs([...$inputArgs, ...$returnArgs]);
             $singleCallArray = new Array_($arrayItems);
 
