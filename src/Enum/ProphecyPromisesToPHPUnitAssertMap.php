@@ -13,7 +13,7 @@ final class ProphecyPromisesToPHPUnitAssertMap
      * @var array<string, string[]>
      */
     public const PROMISES_BY_ASSERT_METHOD = [
-        'assertInstanceOf' => ['shouldBeAnInstanceOf', 'shouldHaveType', 'shouldReturnAnInstanceOf'],
+        'assertInstanceOf' => ['shouldBeAnInstanceOf', 'shouldHaveType', 'shouldReturnAnInstanceOf', 'shouldImplement'],
         'assertSame' => ['shouldBe', 'shouldReturn'],
         'assertNotSame' => ['shouldNotBe', 'shouldNotReturn'],
         'assertCount' => ['shouldHaveCount'],
