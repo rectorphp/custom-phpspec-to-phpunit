@@ -27,13 +27,11 @@ use PhpSpec\ObjectBehavior;
 
 final class SomeTestedClassTest extends \PHPUnit\Framework\TestCase
 {
-    private SomeTestedClass $someTestedClass;
-
+    private \Set\Sylius\SomeTestedClass $someTestedClass;
     protected function setUp(): void
     {
-        $this->someTestedClass = new SomeTestedClass();
+        $this->someTestedClass = new \Set\Sylius\SomeTestedClass();
     }
-
     public function testImplements(): void
     {
         $this->assertInstanceOf(RandomInterface::class, $this->someTestedClass);

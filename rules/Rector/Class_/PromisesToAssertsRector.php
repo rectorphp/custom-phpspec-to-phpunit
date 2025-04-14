@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\Rector\Class_;
 
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Identifier;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
@@ -12,6 +14,8 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\NodeFinder;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\ProphecyPromisesToPHPUnitAssertMap;
@@ -19,7 +23,10 @@ use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
 use Rector\PhpSpecToPHPUnit\Naming\SystemMethodDetector;
 use Rector\PhpSpecToPHPUnit\NodeFactory\AssertMethodCallFactory;
 use Rector\PhpSpecToPHPUnit\NodeFactory\BeConstructedWithAssignFactory;
+use Rector\PhpSpecToPHPUnit\NodeFactory\SetUpInstanceFactory;
+use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
 use Rector\Rector\AbstractRector;
+use Rector\ValueObject\MethodName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -28,11 +35,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class PromisesToAssertsRector extends AbstractRector
 {
+    private NodeFinder $nodeFinder;
+
     public function __construct(
         private readonly PhpSpecRenaming $phpSpecRenaming,
         private readonly AssertMethodCallFactory $assertMethodCallFactory,
         private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
+        private readonly SetUpInstanceFactory $setUpInstanceFactory,
     ) {
+        $this->nodeFinder = new NodeFinder();
     }
 
     /**
@@ -57,6 +68,8 @@ final class PromisesToAssertsRector extends AbstractRector
 
         $localMethodNames = $this->getLocalMethodNames($node);
 
+        $needsSetUp = true;
+
         foreach ($node->getMethods() as $classMethod) {
             if (! $classMethod->isPublic()) {
                 continue;
@@ -67,7 +80,13 @@ final class PromisesToAssertsRector extends AbstractRector
                 $classMethod,
                 [PhpSpecMethodName::LET, PhpSpecMethodName::LET_GO, PhpSpecMethodName::GET_MATCHERS]
             )) {
+                $needsSetUp = false;
                 continue;
+            }
+
+            // if all methods have this call, no need to add setUp()
+            if ($this->hasBeConstructedMethodCall($classMethod)) {
+                $needsSetUp = false;
             }
 
             $this->traverseNodesWithCallable($classMethod, function (Node $node) use (
@@ -158,7 +177,7 @@ final class PromisesToAssertsRector extends AbstractRector
                 }
 
                 // it's a local method call, skip
-                if ($class->getMethod($methodName) instanceof Node\Stmt\ClassMethod) {
+                if ($class->getMethod($methodName) instanceof ClassMethod) {
                     return null;
                 }
 
@@ -176,6 +195,16 @@ final class PromisesToAssertsRector extends AbstractRector
 
         if (! $hasChanged) {
             return null;
+        }
+
+        // add setUp() method with the property
+        if ($needsSetUp && ! $class->getMethod(MethodName::SET_UP)) {
+            $testedObject = $this->phpSpecRenaming->resolveTestedObject($node);
+            $setUpClassMethod = $this->setUpInstanceFactory->createSetUpClassMethod($testedObject);
+
+            $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
+
+            $class->stmts = array_merge([$testedObjectProperty, $setUpClassMethod], $class->stmts);
         }
 
         return $node;
@@ -246,5 +275,30 @@ CODE_SAMPLE
 
         /** @var string[] $localMethodNames */
         return $localMethodNames;
+    }
+
+    private function createTestedObjectProperty(TestedObject $testedObject): Property
+    {
+        return $this->nodeFactory->createPrivatePropertyFromNameAndType(
+            $testedObject->getPropertyName(),
+            $testedObject->getTestedObjectType()
+        );
+    }
+
+    private function hasBeConstructedMethodCall(ClassMethod $classMethod): bool
+    {
+        $methodCall = $this->nodeFinder->findFirst((array) $classMethod->stmts, function (Node $node): bool {
+            if (! $node instanceof MethodCall) {
+                return false;
+            }
+
+            if (! $node->name instanceof Identifier) {
+                return false;
+            }
+
+            return $node->name->toString() === 'beConstructedWith';
+        });
+
+        return $methodCall instanceof MethodCall;
     }
 }

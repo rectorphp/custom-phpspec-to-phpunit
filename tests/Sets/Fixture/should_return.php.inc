@@ -26,6 +26,11 @@ use Sets\Source\Cart;
 
 final class ShouldReturnTest extends \PHPUnit\Framework\TestCase
 {
+    private \PhpSpecToPHPUnit\Fixture\ShouldReturn $shouldReturn;
+    protected function setUp(): void
+    {
+        $this->shouldReturn = new \PhpSpecToPHPUnit\Fixture\ShouldReturn();
+    }
     public function testReturnsId(): void
     {
         $this->assertSame(5, $this->shouldReturn->id());
