@@ -13,9 +13,13 @@ use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class ServiceMockResolver
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-    ) {
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     /**

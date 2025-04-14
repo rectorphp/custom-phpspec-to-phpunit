@@ -39,7 +39,7 @@ final class RenameFileSuffixCommand extends Command
             $testShortClassName = $bareFileName . 'Test';
 
             // has test case class in it?
-            if (! str_contains($fileInfo->getContents(), 'class ' . $testShortClassName)) {
+            if (strpos($fileInfo->getContents(), 'class ' . $testShortClassName) === false) {
                 continue;
             }
 
