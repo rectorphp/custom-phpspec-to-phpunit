@@ -12,7 +12,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
-use PHPStan\Node\ClassMethod;
 use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 use Rector\PhpSpecToPHPUnit\Enum\ProphecyPromisesToPHPUnitAssertMap;
@@ -159,7 +158,7 @@ final class PromisesToAssertsRector extends AbstractRector
                 }
 
                 // it's a local method call, skip
-                if ($class->getMethod($methodName) instanceof ClassMethod) {
+                if ($class->getMethod($methodName) instanceof Node\Stmt\ClassMethod) {
                     return null;
                 }
 
