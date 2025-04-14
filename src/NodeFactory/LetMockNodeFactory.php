@@ -15,7 +15,6 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
-use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\PhpSpecToPHPUnit\DocFactory;
@@ -42,7 +41,7 @@ final class LetMockNodeFactory
             $mockProperty = $this->crateMockProperty($parameterName);
 
             if (! $param->type instanceof Name) {
-                throw new ShouldNotHappenException();
+                throw new \Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException();
             }
 
             $mockedClass = $param->type->toString();
@@ -68,7 +67,7 @@ final class LetMockNodeFactory
         foreach ($params as $param) {
             $parameterName = $this->createMockVariableName($param);
             if (! $param->type instanceof Name) {
-                throw new ShouldNotHappenException();
+                throw new \Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException();
             }
 
             $mockPropertyFetch = new PropertyFetch(new Variable('this'), new Identifier($parameterName));

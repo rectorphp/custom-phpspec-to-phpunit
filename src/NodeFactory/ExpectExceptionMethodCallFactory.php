@@ -14,7 +14,6 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Exception\ShouldNotHappenException;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
 use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
