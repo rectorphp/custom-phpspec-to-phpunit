@@ -15,7 +15,6 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\ObjectType;
-use PHPUnit\Framework\MockObject\MockObject;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpParser\Node\NodeFactory;
@@ -88,8 +87,7 @@ final class LetMockNodeFactory
 
     private function crateMockProperty(string $parameterName): Property
     {
-        $objectType = new ObjectType(MockObject::class);
-
+        $objectType = new ObjectType('PHPUnit\Framework\MockObject\MockObject');
         return $this->nodeFactory->createPrivatePropertyFromNameAndType($parameterName, $objectType);
     }
 

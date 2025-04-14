@@ -76,7 +76,7 @@ final class ExpectExceptionMethodCallFactory
     {
         if ($expr instanceof New_) {
             if ($expr->class instanceof Class_) {
-                throw new ShouldNotHappenException();
+                throw new \Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException();
             }
 
             $arg = new Arg(new ClassConstFetch($expr->class, 'class'));

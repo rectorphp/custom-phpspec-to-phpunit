@@ -9,7 +9,11 @@ return RectorConfig::configure()
     ->withImportNames()
     ->withPaths([__DIR__ . '/config', __DIR__ . '/src', __DIR__ . '/rules', __DIR__ . '/rules-tests'])
     ->withSkip([
-        StringClassNameToClassConstantRector::class => [__DIR__ . '/src/DocFactory.php'],
+        StringClassNameToClassConstantRector::class => [
+            __DIR__ . '/src/DocFactory.php',
+            __DIR__ . '/src/NodeFactory/LetMockNodeFactory.php',
+            __DIR__ . '/rules/Rector/Class_/PhpSpecClassToPHPUnitClassRector.php',
+        ],
     ])
     ->withPreparedSets(
         instanceOf: true,

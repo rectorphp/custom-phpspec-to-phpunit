@@ -61,7 +61,6 @@ final class DuringAndRelatedMethodCall
         }
 
         $builderFactory = new BuilderFactory();
-
         $array = $secondArg->value;
 
         $values = [];
