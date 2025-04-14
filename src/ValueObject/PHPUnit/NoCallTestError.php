@@ -6,14 +6,17 @@ namespace Rector\PhpSpecToPHPUnit\ValueObject\PHPUnit;
 
 final class NoCallTestError
 {
-    public function __construct(
+    private string $testClass;
+    private string $testClassMethod;
+    private string $mockedMethod;
+    public function __construct(string $testClass, string $testClassMethod, string $mockedMethod)
+    {
         /**
          * @var class-string
          */
-        private string $testClass,
-        private string $testClassMethod,
-        private string $mockedMethod
-    ) {
+        $this->testClass = $testClass;
+        $this->testClassMethod = $testClassMethod;
+        $this->mockedMethod = $mockedMethod;
     }
 
     public function getTestClass(): string

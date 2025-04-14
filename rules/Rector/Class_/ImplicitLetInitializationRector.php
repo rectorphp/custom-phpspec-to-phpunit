@@ -32,9 +32,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ImplicitLetInitializationRector extends AbstractRector
 {
-    public function __construct(
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-    ) {
+    /**
+     * @readonly
+     */
+    private PhpSpecRenaming $phpSpecRenaming;
+    public function __construct(PhpSpecRenaming $phpSpecRenaming)
+    {
+        $this->phpSpecRenaming = $phpSpecRenaming;
     }
 
     /**
@@ -109,7 +113,7 @@ CODE_SAMPLE
         $testedObjectProperty = $this->createTestedObjectProperty($testedObject);
 
         $setUpClassMethod = $this->createSetUpClassMethod($testedObject);
-        $node->stmts = [$testedObjectProperty, $setUpClassMethod, ...(array) $node->stmts];
+        $node->stmts = array_merge([$testedObjectProperty, $setUpClassMethod], (array) $node->stmts);
 
         return $node;
     }

@@ -19,9 +19,13 @@ use Rector\PhpSpecToPHPUnit\ValueObject\MethodNameConsecutiveMethodCalls;
 
 final class WillReturnMapMethodCallFactory
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-    ) {
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     public function create(MethodNameConsecutiveMethodCalls $methodNameConsecutiveMethodCalls): MethodCall
@@ -100,7 +104,7 @@ final class WillReturnMapMethodCallFactory
                 );
             }
 
-            $arrayItems = $this->createArrayItemsFromArgs([...$inputArgs, ...$returnArgs]);
+            $arrayItems = $this->createArrayItemsFromArgs(array_merge($inputArgs, $returnArgs));
             $singleCallArray = new Array_($arrayItems);
 
             $consecutiveArrayItems[] = new ArrayItem($singleCallArray);

@@ -23,9 +23,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ShouldThrowAndInstantiationOrderRector extends AbstractRector
 {
-    public function __construct(
-        private readonly DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher,
-    ) {
+    /**
+     * @readonly
+     */
+    private DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher;
+    public function __construct(DuringAndRelatedMethodCallMatcher $duringAndRelatedMethodCallMatcher)
+    {
+        $this->duringAndRelatedMethodCallMatcher = $duringAndRelatedMethodCallMatcher;
     }
 
     /**

@@ -24,10 +24,18 @@ use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class LetMockNodeFactory
 {
-    public function __construct(
-        private readonly NodeFactory $nodeFactory,
-        private readonly NodeNameResolver $nodeNameResolver,
-    ) {
+    /**
+     * @readonly
+     */
+    private NodeFactory $nodeFactory;
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    public function __construct(NodeFactory $nodeFactory, NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeFactory = $nodeFactory;
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     /**

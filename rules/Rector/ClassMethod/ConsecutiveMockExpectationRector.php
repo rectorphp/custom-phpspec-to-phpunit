@@ -19,10 +19,18 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ConsecutiveMockExpectationRector extends AbstractRector
 {
-    public function __construct(
-        private readonly ConsecutiveMethodCallMatcher $consecutiveMethodCallMatcher,
-        private readonly WillReturnMapMethodCallFactory $willReturnMapMethodCallFactory,
-    ) {
+    /**
+     * @readonly
+     */
+    private ConsecutiveMethodCallMatcher $consecutiveMethodCallMatcher;
+    /**
+     * @readonly
+     */
+    private WillReturnMapMethodCallFactory $willReturnMapMethodCallFactory;
+    public function __construct(ConsecutiveMethodCallMatcher $consecutiveMethodCallMatcher, WillReturnMapMethodCallFactory $willReturnMapMethodCallFactory)
+    {
+        $this->consecutiveMethodCallMatcher = $consecutiveMethodCallMatcher;
+        $this->willReturnMapMethodCallFactory = $willReturnMapMethodCallFactory;
     }
 
     /**

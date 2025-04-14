@@ -14,10 +14,18 @@ use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 
 final class DuringAndRelatedMethodCall
 {
-    public function __construct(
-        private readonly MethodCall $duringMethodCall,
-        private readonly MethodCall $exceptionMethodCall,
-    ) {
+    /**
+     * @readonly
+     */
+    private MethodCall $duringMethodCall;
+    /**
+     * @readonly
+     */
+    private MethodCall $exceptionMethodCall;
+    public function __construct(MethodCall $duringMethodCall, MethodCall $exceptionMethodCall)
+    {
+        $this->duringMethodCall = $duringMethodCall;
+        $this->exceptionMethodCall = $exceptionMethodCall;
     }
 
     public function getCalledMethodName(): string

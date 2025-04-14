@@ -12,9 +12,13 @@ use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 
 final class MockVariableReplacer
 {
-    public function __construct(
-        private readonly SimpleCallableNodeTraverser $simpleCallableNodeTraverser,
-    ) {
+    /**
+     * @readonly
+     */
+    private SimpleCallableNodeTraverser $simpleCallableNodeTraverser;
+    public function __construct(SimpleCallableNodeTraverser $simpleCallableNodeTraverser)
+    {
+        $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
     }
 
     /**

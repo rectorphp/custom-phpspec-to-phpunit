@@ -8,12 +8,28 @@ use PhpParser\Node\Expr\MethodCall;
 
 final class ConsecutiveMethodCall
 {
-    public function __construct(
-        private readonly int $key,
-        private readonly string $variableName,
-        private readonly string $methodName,
-        private readonly MethodCall $methodCall
-    ) {
+    /**
+     * @readonly
+     */
+    private int $key;
+    /**
+     * @readonly
+     */
+    private string $variableName;
+    /**
+     * @readonly
+     */
+    private string $methodName;
+    /**
+     * @readonly
+     */
+    private MethodCall $methodCall;
+    public function __construct(int $key, string $variableName, string $methodName, MethodCall $methodCall)
+    {
+        $this->key = $key;
+        $this->variableName = $variableName;
+        $this->methodName = $methodName;
+        $this->methodCall = $methodCall;
     }
 
     public function getKey(): int

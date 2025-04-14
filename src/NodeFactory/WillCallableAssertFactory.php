@@ -22,9 +22,13 @@ use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
 
 final class WillCallableAssertFactory
 {
-    public function __construct(
-        private readonly NodeFinder $nodeFinder,
-    ) {
+    /**
+     * @readonly
+     */
+    private NodeFinder $nodeFinder;
+    public function __construct(NodeFinder $nodeFinder)
+    {
+        $this->nodeFinder = $nodeFinder;
     }
 
     public function create(MethodCall $methodCall, Closure $closure): MethodCall

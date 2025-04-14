@@ -9,11 +9,16 @@ use PhpParser\Node\Expr\Variable;
 final class MethodNameConsecutiveMethodCalls
 {
     /**
+     * @var ConsecutiveMethodCall[]&non-empty-array
+     * @readonly
+     */
+    private array $consecutiveMethodCalls;
+    /**
      * @param ConsecutiveMethodCall[]&non-empty-array $consecutiveMethodCalls
      */
-    public function __construct(
-        private readonly array $consecutiveMethodCalls
-    ) {
+    public function __construct(array $consecutiveMethodCalls)
+    {
+        $this->consecutiveMethodCalls = $consecutiveMethodCalls;
     }
 
     public function getMethodName(): string
