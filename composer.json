@@ -16,14 +16,13 @@
         "symfony/console": "^7.1"
     },
     "require-dev": {
-        "rector/rector": "dev-main",
-        "nikic/php-parser": "^5.3.1",
-        "phpunit/phpunit": "^10.5",
-        "phpstan/phpstan": "^2.0",
-        "symplify/easy-coding-standard": "^12.1",
+        "rector/rector": "^2.0",
+        "nikic/php-parser": "^5.4",
+        "phpunit/phpunit": "^11.5",
+        "phpstan/phpstan": "^2.1",
+        "phpecs/phpecs": "^2.0",
         "phpstan/extension-installer": "^1.3",
-        "symplify/rule-doc-generator": "^12.1",
-        "tomasvotruba/class-leak": "^0.2.5",
+        "tomasvotruba/class-leak": "^2.0",
         "tracy/tracy": "^2.10"
     },
     "autoload": {
@@ -47,7 +46,7 @@
         "phpstan": "vendor/bin/phpstan analyse --ansi",
         "check-cs": "vendor/bin/ecs check --ansi",
         "fix-cs": "vendor/bin/ecs check --fix --ansi",
-        "docs": "vendor/bin/rule-doc-generator generate src rules --output-file docs/rector_rules_overview.md --ansi"
+        "phpunit":  "vendor/bin/phpunit --colors=always"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

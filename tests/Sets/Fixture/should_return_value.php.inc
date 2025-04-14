@@ -4,7 +4,7 @@ namespace Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
 
-class ShouldReturnSpec extends ObjectBehavior
+class ShouldReturnValueSpec extends ObjectBehavior
 {
     public function let()
     {
@@ -30,17 +30,17 @@ namespace Sets\Fixture;
 
 use PhpSpec\ObjectBehavior;
 
-final class ShouldReturnTest extends \PHPUnit\Framework\TestCase
+final class ShouldReturnValueTest extends \PHPUnit\Framework\TestCase
 {
-    private \Sets\Fixture\ShouldReturn $shouldReturn;
+    private \Sets\Fixture\ShouldReturnValue $shouldReturnValue;
     protected function setUp(): void
     {
-        $this->shouldReturn = new \Sets\Fixture\ShouldReturn('some');
+        $this->shouldReturnValue = new \Sets\Fixture\ShouldReturnValue('some');
     }
 
     public function testCalculateZeroPriceWhenCartIsEmpty(): void
     {
-        $price = $this->shouldReturn->price();
+        $price = $this->shouldReturnValue->price();
 
         $this->assertInstanceOf('someType', $price);
         $this->assertSame(0.0, $price->withVat());

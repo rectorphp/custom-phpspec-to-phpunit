@@ -93,7 +93,7 @@ final class WillReturnMapMethodCallFactory
                 PhpSpecMethodName::SHOULD_RETURN
             );
 
-            if (empty($returnArgs)) {
+            if ($returnArgs === []) {
                 $returnArgs = $this->resolveInputArgs(
                     $consecutiveMethodCall->getMethodCall(),
                     PhpSpecMethodName::WILL_RETURN
