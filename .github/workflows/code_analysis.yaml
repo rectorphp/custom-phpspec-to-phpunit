@@ -18,7 +18,7 @@ jobs:
                 actions:
                     -
                         name: 'Active Classes'
-                        run: vendor/bin/class-leak check config bin src rules --skip-type="Rector\PhpSpecToPHPUnit\Rector\Class_\ImplicitLetInitializationRector"
+                        run: vendor/bin/class-leak check config bin src rules
 
                     -
                         name: "Composer Analyser"
