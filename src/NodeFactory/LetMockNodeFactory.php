@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\NodeFactory;
 
-use Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -19,6 +18,7 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\PhpSpecToPHPUnit\DocFactory;
+use Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
 final class LetMockNodeFactory
