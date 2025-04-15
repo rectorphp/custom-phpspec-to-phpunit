@@ -35,14 +35,34 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class PromisesToAssertsRector extends AbstractRector
 {
+    /**
+     * @readonly
+     */
+    private PhpSpecRenaming $phpSpecRenaming;
+    /**
+     * @readonly
+     */
+    private AssertMethodCallFactory $assertMethodCallFactory;
+    /**
+     * @readonly
+     */
+    private BeConstructedWithAssignFactory $beConstructedWithAssignFactory;
+    /**
+     * @readonly
+     */
+    private SetUpInstanceFactory $setUpInstanceFactory;
     private NodeFinder $nodeFinder;
 
     public function __construct(
-        private readonly PhpSpecRenaming $phpSpecRenaming,
-        private readonly AssertMethodCallFactory $assertMethodCallFactory,
-        private readonly BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
-        private readonly SetUpInstanceFactory $setUpInstanceFactory,
+        PhpSpecRenaming $phpSpecRenaming,
+        AssertMethodCallFactory $assertMethodCallFactory,
+        BeConstructedWithAssignFactory $beConstructedWithAssignFactory,
+        SetUpInstanceFactory $setUpInstanceFactory
     ) {
+        $this->phpSpecRenaming = $phpSpecRenaming;
+        $this->assertMethodCallFactory = $assertMethodCallFactory;
+        $this->beConstructedWithAssignFactory = $beConstructedWithAssignFactory;
+        $this->setUpInstanceFactory = $setUpInstanceFactory;
         $this->nodeFinder = new NodeFinder();
     }
 
@@ -57,7 +77,7 @@ final class PromisesToAssertsRector extends AbstractRector
     /**
      * @param Class_ $node
      */
-    public function refactor(Node $node): Node|null
+    public function refactor(Node $node): ?\PhpParser\Node
     {
         $hasChanged = false;
 
@@ -94,8 +114,8 @@ final class PromisesToAssertsRector extends AbstractRector
                 $testedObjectPropertyFetch,
                 $testedObject,
                 &$hasChanged,
-                $localMethodNames,
-            ): null|Expr|Assign|MethodCall|Clone_ {
+                $localMethodNames
+            ) {
                 if (! $node instanceof MethodCall) {
                     return null;
                 }
@@ -132,11 +152,11 @@ final class PromisesToAssertsRector extends AbstractRector
                 if ($this->isNames(
                     $node->name,
                     [PhpSpecMethodName::GET_MATCHERS, PhpSpecMethodName::EXPECT_EXCEPTION]
-                ) || str_starts_with($methodName, 'assert')) {
+                ) || strncmp($methodName, 'assert', strlen('assert')) === 0) {
                     return null;
                 }
 
-                if (str_starts_with($methodName, PhpSpecMethodName::BE_CONSTRUCTED)) {
+                if (strncmp($methodName, PhpSpecMethodName::BE_CONSTRUCTED, strlen(PhpSpecMethodName::BE_CONSTRUCTED)) === 0) {
                     $hasChanged = true;
 
                     return $this->beConstructedWithAssignFactory->create(

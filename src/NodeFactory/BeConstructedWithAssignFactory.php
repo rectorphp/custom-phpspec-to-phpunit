@@ -19,11 +19,23 @@ use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 
 final class BeConstructedWithAssignFactory
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly ValueResolver $valueResolver,
-        private readonly NodeFactory $nodeFactory
-    ) {
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
+    /**
+     * @readonly
+     */
+    private NodeFactory $nodeFactory;
+    public function __construct(NodeNameResolver $nodeNameResolver, ValueResolver $valueResolver, NodeFactory $nodeFactory)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->valueResolver = $valueResolver;
+        $this->nodeFactory = $nodeFactory;
     }
 
     public function create(

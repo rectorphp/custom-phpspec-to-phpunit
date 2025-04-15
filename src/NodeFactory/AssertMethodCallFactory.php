@@ -15,20 +15,35 @@ use Rector\PhpParser\Node\Value\ValueResolver;
 
 final class AssertMethodCallFactory
 {
+    /**
+     * @readonly
+     */
+    private NodeFactory $nodeFactory;
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    /**
+     * @readonly
+     */
+    private ValueResolver $valueResolver;
     private bool $isBoolAssert = false;
 
-    public function __construct(
-        private readonly NodeFactory $nodeFactory,
-        private readonly NodeNameResolver $nodeNameResolver,
-        private readonly ValueResolver $valueResolver
-    ) {
+    public function __construct(NodeFactory $nodeFactory, NodeNameResolver $nodeNameResolver, ValueResolver $valueResolver)
+    {
+        $this->nodeFactory = $nodeFactory;
+        $this->nodeNameResolver = $nodeNameResolver;
+        $this->valueResolver = $valueResolver;
     }
 
+    /**
+     * @param \PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable $testedPropertyFetchOrVariable
+     */
     public function createAssertMethod(
         string $name,
         Expr $value,
         ?Expr $expected,
-        PropertyFetch|Variable $testedPropertyFetchOrVariable
+        $testedPropertyFetchOrVariable
     ): MethodCall {
         $this->isBoolAssert = false;
 
@@ -75,7 +90,10 @@ final class AssertMethodCallFactory
         return $name;
     }
 
-    private function thisToTestedObjectPropertyFetch(Expr $expr, PropertyFetch|Variable $propertyFetchOrVariable): Expr
+    /**
+     * @param \PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable $propertyFetchOrVariable
+     */
+    private function thisToTestedObjectPropertyFetch(Expr $expr, $propertyFetchOrVariable): Expr
     {
         if (! $expr instanceof Variable) {
             return $expr;

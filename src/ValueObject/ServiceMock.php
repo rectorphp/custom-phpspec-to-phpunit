@@ -6,14 +6,21 @@ namespace Rector\PhpSpecToPHPUnit\ValueObject;
 
 use Stringable;
 
-final class ServiceMock implements Stringable
+final class ServiceMock
 {
-    public function __construct(
-        private readonly string $variableName,
-        private readonly string $mockClassName
-    ) {
+    /**
+     * @readonly
+     */
+    private string $variableName;
+    /**
+     * @readonly
+     */
+    private string $mockClassName;
+    public function __construct(string $variableName, string $mockClassName)
+    {
+        $this->variableName = $variableName;
+        $this->mockClassName = $mockClassName;
     }
-
     /**
      * To enable in array unique
      */
@@ -21,12 +28,10 @@ final class ServiceMock implements Stringable
     {
         return $this->variableName;
     }
-
     public function getVariableName(): string
     {
         return $this->variableName;
     }
-
     public function getMockClassName(): string
     {
         return $this->mockClassName;

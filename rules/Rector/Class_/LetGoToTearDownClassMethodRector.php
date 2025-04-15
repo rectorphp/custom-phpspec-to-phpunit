@@ -20,9 +20,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LetGoToTearDownClassMethodRector extends AbstractRector
 {
-    public function __construct(
-        private readonly VisibilityManipulator $visibilityManipulator,
-    ) {
+    /**
+     * @readonly
+     */
+    private VisibilityManipulator $visibilityManipulator;
+    public function __construct(VisibilityManipulator $visibilityManipulator)
+    {
+        $this->visibilityManipulator = $visibilityManipulator;
     }
 
     /**

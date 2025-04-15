@@ -12,9 +12,13 @@ use Rector\PhpSpecToPHPUnit\Enum\PhpSpecMethodName;
 
 final class LetClassMethodAnalyzer
 {
-    public function __construct(
-        private readonly NodeNameResolver $nodeNameResolver,
-    ) {
+    /**
+     * @readonly
+     */
+    private NodeNameResolver $nodeNameResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver)
+    {
+        $this->nodeNameResolver = $nodeNameResolver;
     }
 
     /**

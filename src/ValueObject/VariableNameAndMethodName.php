@@ -6,10 +6,12 @@ namespace Rector\PhpSpecToPHPUnit\ValueObject;
 
 final class VariableNameAndMethodName
 {
-    public function __construct(
-        private string $variableName,
-        private string $methodName
-    ) {
+    private string $variableName;
+    private string $methodName;
+    public function __construct(string $variableName, string $methodName)
+    {
+        $this->variableName = $variableName;
+        $this->methodName = $methodName;
     }
 
     public function getVariableName(): string
