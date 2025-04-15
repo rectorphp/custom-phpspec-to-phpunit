@@ -38,6 +38,10 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
+        if (! $node->name instanceof Identifier) {
+            return null;
+        }
+
         // skip already renamed
         /** @var string $className */
         $className = $node->name->toString();
