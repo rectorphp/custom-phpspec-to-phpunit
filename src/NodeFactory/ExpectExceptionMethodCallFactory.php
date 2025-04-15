@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\NodeFactory;
 
+use Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -75,7 +76,7 @@ final class ExpectExceptionMethodCallFactory
     {
         if ($expr instanceof New_) {
             if ($expr->class instanceof Class_) {
-                throw new \Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException();
+                throw new ShouldNotHappenException();
             }
 
             $arg = new Arg(new ClassConstFetch($expr->class, 'class'));

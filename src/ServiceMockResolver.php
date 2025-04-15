@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit;
 
+use Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -45,7 +46,7 @@ final class ServiceMockResolver
 
         // this should be always typed
         if (! $param->type instanceof Name) {
-            throw new \Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException(sprintf(
+            throw new ShouldNotHappenException(sprintf(
                 'Param "%s" must be typed',
                 $variableName
             ));

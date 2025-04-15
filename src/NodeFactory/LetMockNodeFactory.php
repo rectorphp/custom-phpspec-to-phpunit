@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\NodeFactory;
 
+use Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\PropertyFetch;
@@ -41,7 +42,7 @@ final class LetMockNodeFactory
             $mockProperty = $this->crateMockProperty($parameterName);
 
             if (! $param->type instanceof Name) {
-                throw new \Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException();
+                throw new ShouldNotHappenException();
             }
 
             $mockedClass = $param->type->toString();
@@ -67,7 +68,7 @@ final class LetMockNodeFactory
         foreach ($params as $param) {
             $parameterName = $this->createMockVariableName($param);
             if (! $param->type instanceof Name) {
-                throw new \Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException();
+                throw new ShouldNotHappenException();
             }
 
             $mockPropertyFetch = new PropertyFetch(new Variable('this'), new Identifier($parameterName));
