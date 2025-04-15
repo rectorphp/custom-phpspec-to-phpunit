@@ -18,7 +18,11 @@ jobs:
                 actions:
                     -
                         name: 'Active Classes'
-                        run: vendor/bin/class-leak check config bin src rules --skip-type="Rector\PhpSpecToPHPUnit\Rector\Class_\ImplicitLetInitializationRector" --skip-type="Rector\PhpSpecToPHPUnit\Rector\Class_\LearnFromPHPUnitReportRector"
+                        run: vendor/bin/class-leak check config bin src rules --skip-type="Rector\PhpSpecToPHPUnit\Rector\Class_\ImplicitLetInitializationRector"
+
+                    -
+                        name: "Composer Analyser"
+                        run: vendor/bin/composer-dependency-analyser
 
         name: ${{ matrix.actions.name }}
         runs-on: ubuntu-latest
