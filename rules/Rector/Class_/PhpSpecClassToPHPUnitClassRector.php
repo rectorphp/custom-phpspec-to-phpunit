@@ -9,6 +9,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use Rector\PhpSpecToPHPUnit\Naming\PhpSpecRenaming;
+use Rector\PHPUnit\Enum\PHPUnitClassName;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -52,7 +53,7 @@ final class PhpSpecClassToPHPUnitClassRector extends AbstractRector
         // rename class and parent class
         $phpunitTestClassName = $this->phpSpecRenaming->createPHPUnitTestClassName($node);
         $node->name = new Identifier($phpunitTestClassName);
-        $node->extends = new FullyQualified('PHPUnit\Framework\TestCase');
+        $node->extends = new FullyQualified(PHPUnitClassName::TEST_CASE);
 
         $this->visibilityManipulator->makeFinal($node);
 
