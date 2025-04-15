@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rector\PhpSpecToPHPUnit\NodeFactory;
 
-use Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -16,6 +15,7 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Expression;
 use Rector\PhpSpecToPHPUnit\Enum\PHPUnitMethodName;
+use Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException;
 use Rector\PhpSpecToPHPUnit\ValueObject\DuringAndRelatedMethodCall;
 use Rector\PhpSpecToPHPUnit\ValueObject\TestedObject;
 use Rector\ValueObject\MethodName;
