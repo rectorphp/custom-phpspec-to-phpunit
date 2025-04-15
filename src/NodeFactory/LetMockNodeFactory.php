@@ -18,6 +18,7 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\PhpSpecToPHPUnit\DocFactory;
+use Rector\PhpSpecToPHPUnit\Enum\PHPUnitClassName;
 use Rector\PhpSpecToPHPUnit\Exception\ShouldNotHappenException;
 use Rector\PhpSpecToPHPUnit\ValueObject\ServiceMock;
 
@@ -87,7 +88,7 @@ final class LetMockNodeFactory
 
     private function crateMockProperty(string $parameterName): Property
     {
-        $objectType = new ObjectType('PHPUnit\Framework\MockObject\MockObject');
+        $objectType = new ObjectType(PHPUnitClassName::MOCK_OBJECT);
         return $this->nodeFactory->createPrivatePropertyFromNameAndType($parameterName, $objectType);
     }
 
